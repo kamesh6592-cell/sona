@@ -1787,14 +1787,12 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Configure Microsoft provider with tenant-specific endpoint
-        const microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
-        microsoftProvider.setCustomParameters({
-            prompt: 'select_account',
-            // Use tenant-specific endpoint instead of /common
-            // Replace 'your-tenant-id' with your actual Azure AD tenant ID
-            tenant: 'c74fd0f3-60b9-4e99-98a8-534d4ec777df' 
-        });
+       // Configure Microsoft provider with common endpoint for multi-tenancy
+const microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
+microsoftProvider.setCustomParameters({
+    prompt: 'select_account',
+    tenant: 'common' // Use common endpoint instead of specific tenant
+});
 
         // Language translations
         const translations = {
