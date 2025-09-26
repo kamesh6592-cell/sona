@@ -37,7 +37,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     
     <style>
-        /* CSS Variables for theming */
+        /* CSS Variables for theming - Light Mode */
         :root {
             --primary-blue: #0a192f;
             --secondary-blue: #172a45;
@@ -61,6 +61,39 @@
             --border-radius: 16px;
             --input-padding: 1rem;
             --button-padding: 1rem 1.5rem;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --header-background: #ffffff;
+            --footer-background: #f1f5f9;
+            --input-background: #ffffff;
+            --input-border: #e2e8f0;
+            --button-text: #0a192f;
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --primary-blue: #0f172a;
+            --secondary-blue: #1e293b;
+            --accent-blue: #334155;
+            --primary-yellow: #f1c40f;
+            --secondary-yellow: #f9e79f;
+            --accent-yellow: #ffd700;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #60a5fa;
+            --glass-bg: rgba(30, 41, 59, 0.5);
+            --glass-border: rgba(148, 163, 184, 0.1);
+            --background-color: #0f172a;
+            --card-background: #1e293b;
+            --header-background: #1e293b;
+            --footer-background: #0f172a;
+            --input-background: #334155;
+            --input-border: #475569;
+            --button-text: #0f172a;
         }
 
         /* Base styles */
@@ -77,13 +110,14 @@
 
         body {
             font-family: var(--font-family);
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            background-color: var(--background-color);
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
             position: relative;
+            transition: background-color 0.3s ease;
         }
 
         /* Background pattern */
@@ -102,15 +136,16 @@
 
         /* Header */
         .header {
-            background: rgba(10, 25, 47, 0.95);
+            background-color: var(--header-background);
             backdrop-filter: blur(10px);
-            padding: 1.5rem 2rem;
+            padding: 1rem 2rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             z-index: 100;
             border-bottom: 1px solid var(--glass-border);
+            transition: background-color 0.3s ease;
         }
 
         .logo-container {
@@ -120,7 +155,7 @@
         }
 
         .logo {
-            height: 60px;
+            height: 50px;
             width: auto;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
             transition: var(--transition);
@@ -131,26 +166,165 @@
         }
 
         .logo-text {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--text-primary);
-            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary-blue);
+            transition: var(--transition);
         }
 
-        /* Main container */
+        /* Header Controls */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: relative;
+        }
+
+        .language-button {
+            background: none;
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .language-button:hover {
+            background-color: var(--glass-bg);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .language-option:hover {
+            background-color: var(--glass-bg);
+        }
+
+        .language-option.active {
+            background-color: var(--primary-yellow);
+            color: var(--button-text);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--input-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--glass-bg);
+        }
+
+        /* Main Container */
         .main-container {
             flex: 1;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            border-bottom: 2px solid var(--glass-border);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .tab-button:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-button.active {
+            color: var(--primary-yellow);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-yellow);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Login Container */
         .login-container {
-            background: var(--glass-bg);
+            background-color: var(--card-background);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 3rem;
@@ -158,10 +332,12 @@
             box-shadow: var(--card-shadow);
             width: 100%;
             max-width: 500px;
+            margin: 0 auto;
             animation: fadeInUp 0.6s ease-out;
             position: relative;
             overflow: hidden;
             border: 1px solid var(--glass-border);
+            transition: background-color 0.3s ease;
         }
 
         .login-container::before {
@@ -190,7 +366,7 @@
         h1 {
             font-size: 2.25rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--primary-blue);
             margin-bottom: 0.5rem;
             background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
             -webkit-background-clip: text;
@@ -237,11 +413,11 @@
             width: 100%;
             padding: var(--input-padding);
             padding-left: 3.5rem;
-            border: 2px solid var(--glass-border);
+            border: 2px solid var(--input-border);
             border-radius: var(--border-radius);
             font-size: 1rem;
             transition: var(--transition);
-            background: var(--glass-bg);
+            background-color: var(--input-background);
             color: var(--text-primary);
             font-family: var(--font-family);
         }
@@ -278,7 +454,7 @@
 
         .password-toggle:hover {
             color: var(--text-primary);
-            background: var(--glass-bg);
+            background-color: var(--glass-bg);
         }
 
         /* Form options */
@@ -344,7 +520,7 @@
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
-            color: var(--primary-blue);
+            color: var(--button-text);
             box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
         }
 
@@ -442,7 +618,7 @@
             border-radius: 30px;
             font-size: 0.875rem;
             font-weight: 600;
-            background: var(--glass-bg);
+            background-color: var(--glass-bg);
             color: var(--text-secondary);
             transition: var(--transition);
             cursor: pointer;
@@ -466,14 +642,14 @@
         }
 
         .role-badge:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
             border-color: var(--primary-yellow);
             transform: translateY(-2px);
         }
 
         .role-badge.active {
-            background: var(--primary-yellow);
-            color: var(--primary-blue);
+            background-color: var(--primary-yellow);
+            color: var(--button-text);
             border-color: var(--primary-yellow);
             box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3);
         }
@@ -522,7 +698,7 @@
         .security-notice {
             margin-top: 2rem;
             padding: 1.25rem;
-            background: rgba(241, 196, 15, 0.1);
+            background-color: rgba(241, 196, 15, 0.1);
             border-radius: var(--border-radius);
             font-size: 0.875rem;
             color: var(--text-primary);
@@ -541,7 +717,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.7);
             display: none;
             justify-content: center;
             align-items: center;
@@ -551,7 +727,7 @@
         }
 
         .modal-content {
-            background: var(--glass-bg);
+            background-color: var(--card-background);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 3rem;
@@ -564,6 +740,7 @@
             animation: modalFadeIn 0.3s ease-out;
             box-shadow: var(--card-shadow);
             border: 1px solid var(--glass-border);
+            transition: background-color 0.3s ease;
         }
 
         @keyframes modalFadeIn {
@@ -591,7 +768,7 @@
 
         .close-btn:hover {
             color: var(--text-primary);
-            background: var(--glass-bg);
+            background-color: var(--glass-bg);
         }
 
         .modal h2 {
@@ -605,7 +782,7 @@
             margin-top: 0.75rem;
             height: 4px;
             border-radius: 2px;
-            background: var(--glass-border);
+            background-color: var(--glass-border);
             overflow: hidden;
         }
 
@@ -617,17 +794,17 @@
 
         .password-strength.weak .password-strength-bar {
             width: 33%;
-            background: var(--error);
+            background-color: var(--error);
         }
 
         .password-strength.medium .password-strength-bar {
             width: 66%;
-            background: var(--warning);
+            background-color: var(--warning);
         }
 
         .password-strength.strong .password-strength-bar {
             width: 100%;
-            background: var(--success);
+            background-color: var(--success);
         }
 
         .password-strength-text {
@@ -657,15 +834,15 @@
         }
 
         .notification.success {
-            background: var(--success);
+            background-color: var(--success);
         }
 
         .notification.error {
-            background: var(--error);
+            background-color: var(--error);
         }
 
         .notification.info {
-            background: var(--info);
+            background-color: var(--info);
         }
 
         /* Tooltip */
@@ -699,13 +876,14 @@
 
         /* Footer */
         .footer {
-            background: rgba(10, 25, 47, 0.95);
+            background-color: var(--footer-background);
             backdrop-filter: blur(10px);
             padding: 2rem;
             text-align: center;
             color: var(--text-secondary);
             border-top: 1px solid var(--glass-border);
             font-size: 0.875rem;
+            transition: background-color 0.3s ease;
         }
 
         .footer-content {
@@ -733,7 +911,7 @@
             position: fixed;
             bottom: 10px;
             left: 10px;
-            background: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 10px;
             border-radius: 5px;
@@ -777,6 +955,103 @@
             display: flex;
         }
 
+        /* About Section */
+        .about-section {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .about-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+        }
+
+        .about-section p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background-color: var(--glass-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+            border: 1px solid var(--glass-border);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--primary-yellow);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .contact-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .contact-icon {
+            color: var(--primary-yellow);
+            font-size: 1.25rem;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             html {
@@ -816,6 +1091,20 @@
                 padding: 10px 15px;
                 font-size: 0.9rem;
             }
+            
+            .header-controls {
+                gap: 0.5rem;
+            }
+            
+            .language-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .theme-toggle {
+                width: 36px;
+                height: 36px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -825,10 +1114,12 @@
             
             .header {
                 padding: 0.75rem;
+                flex-direction: column;
+                gap: 1rem;
             }
             
             .logo {
-                height: 50px;
+                height: 40px;
             }
             
             .logo-text {
@@ -850,6 +1141,10 @@
             .btn {
                 padding: 0.875rem 1.25rem;
             }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 320px) {
@@ -862,7 +1157,7 @@
             }
             
             .logo {
-                height: 40px;
+                height: 35px;
             }
             
             .logo-text {
@@ -947,16 +1242,16 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--secondary-blue);
+            background-color: var(--secondary-blue);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--primary-yellow);
+            background-color: var(--primary-yellow);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-yellow);
+            background-color: var(--accent-yellow);
         }
     </style>
 </head>
@@ -969,96 +1264,288 @@
             <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" alt="Sona College of Technology Logo" class="logo">
             <span class="logo-text">Sona College of Technology</span>
         </div>
+        
+        <div class="header-controls">
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <button class="language-button" id="languageButton">
+                    <i class="fas fa-globe"></i>
+                    <span id="currentLanguage">English</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="language-dropdown" id="languageDropdown">
+                    <div class="language-option active" data-lang="en">
+                        <span>🇬🇧</span>
+                        <span>English</span>
+                    </div>
+                    <div class="language-option" data-lang="hi">
+                        <span>🇮🇳</span>
+                        <span>हिन्दी</span>
+                    </div>
+                    <div class="language-option" data-lang="ta">
+                        <span>🇮🇳</span>
+                        <span>தமிழ்</span>
+                    </div>
+                    <div class="language-option" data-lang="te">
+                        <span>🇮🇳</span>
+                        <span>తెలుగు</span>
+                    </div>
+                    <div class="language-option" data-lang="kn">
+                        <span>🇮🇳</span>
+                        <span>ಕನ್ನಡ</span>
+                    </div>
+                    <div class="language-option" data-lang="ml">
+                        <span>🇮🇳</span>
+                        <span>മലയാളം</span>
+                    </div>
+                    <div class="language-option" data-lang="mr">
+                        <span>🇮🇳</span>
+                        <span>मराठी</span>
+                    </div>
+                    <div class="language-option" data-lang="bn">
+                        <span>🇮🇳</span>
+                        <span>বাংলা</span>
+                    </div>
+                    <div class="language-option" data-lang="gu">
+                        <span>🇮🇳</span>
+                        <span>ગુજરાતી</span>
+                    </div>
+                    <div class="language-option" data-lang="pa">
+                        <span>🇮🇳</span>
+                        <span>ਪੰਜਾਬੀ</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
     </header>
     
     <!-- Main Container -->
     <div class="main-container">
-        <div class="login-container">
-            <div class="app-title">
-                <h1>Communication Platform</h1>
-                <p class="subtitle">Secure Hierarchical Communication System</p>
-            </div>
-            
-            <form id="loginForm" aria-label="Login form">
-                <div class="form-group">
-                    <label for="collegeId">College ID</label>
-                    <div class="input-container">
-                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
-                        <input type="text" id="collegeId" required aria-required="true" placeholder="Enter your College ID" autocomplete="username">
-                    </div>
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" data-tab="login" data-i18n="login">Login</button>
+            <button class="tab-button" data-tab="about" data-i18n="about">About</button>
+            <button class="tab-button" data-tab="contact" data-i18n="contact">Contact</button>
+        </div>
+        
+        <!-- Login Tab -->
+        <div class="tab-content active" id="login-tab">
+            <div class="login-container">
+                <div class="app-title">
+                    <h1 data-i18n="platform-title">Communication Platform</h1>
+                    <p class="subtitle" data-i18n="platform-subtitle">Secure Hierarchical Communication System</p>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="input-container">
-                        <i class="fas fa-lock input-icon" aria-hidden="true"></i>
-                        <input type="password" id="password" required aria-required="true" placeholder="Enter your password" autocomplete="current-password">
-                        <button type="button" class="password-toggle tooltip" id="passwordToggle" aria-label="Toggle password visibility">
-                            <i class="fas fa-eye" aria-hidden="true"></i>
-                            <span class="tooltiptext">Toggle password visibility</span>
+                
+                <form id="loginForm" aria-label="Login form">
+                    <div class="form-group">
+                        <label for="collegeId" data-i18n="college-id">College ID</label>
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon" aria-hidden="true"></i>
+                            <input type="text" id="collegeId" required aria-required="true" placeholder="Enter your College ID" autocomplete="username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" data-i18n="password">Password</label>
+                        <div class="input-container">
+                            <i class="fas fa-lock input-icon" aria-hidden="true"></i>
+                            <input type="password" id="password" required aria-required="true" placeholder="Enter your password" autocomplete="current-password">
+                            <button type="button" class="password-toggle tooltip" id="passwordToggle" aria-label="Toggle password visibility">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                <span class="tooltiptext" data-i18n="toggle-password">Toggle password visibility</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="role" data-i18n="role">Role</label>
+                        <div class="input-container">
+                            <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
+                            <select id="role" required aria-required="true">
+                                <option value="" data-i18n="select-role">Select Your Role</option>
+                                <option value="student" data-i18n="student">Student</option>
+                                <option value="faculty" data-i18n="faculty">Faculty</option>
+                                <option value="hod" data-i18n="hod">Head of Department</option>
+                                <option value="principal" data-i18n="principal">Principal</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="role-badges" role="group" aria-label="Role selection">
+                        <button type="button" class="role-badge role-student" data-role="student" aria-pressed="false">
+                            <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                            <span data-i18n="student">Student</span>
+                        </button>
+                        <button type="button" class="role-badge role-faculty" data-role="faculty" aria-pressed="false">
+                            <i class="fas fa-chalkboard-teacher" aria-hidden="true"></i>
+                            <span data-i18n="faculty">Faculty</span>
+                        </button>
+                        <button type="button" class="role-badge role-hod" data-role="hod" aria-pressed="false">
+                            <i class="fas fa-user-tie" aria-hidden="true"></i>
+                            <span data-i18n="hod">HOD</span>
+                        </button>
+                        <button type="button" class="role-badge role-principal" data-role="principal" aria-pressed="false">
+                            <i class="fas fa-user-shield" aria-hidden="true"></i>
+                            <span data-i18n="principal">Principal</span>
                         </button>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="role">Role</label>
-                    <div class="input-container">
-                        <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
-                        <select id="role" required aria-required="true">
-                            <option value="">Select Your Role</option>
-                            <option value="student">Student</option>
-                            <option value="faculty">Faculty</option>
-                            <option value="hod">Head of Department</option>
-                            <option value="principal">Principal</option>
-                        </select>
+                    
+                    <div class="form-options">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            <label for="rememberMe" data-i18n="remember-me">Remember Me</label>
+                        </div>
+                        <a href="#" class="forgot-link" id="forgotPassword" data-i18n="forgot-password">Forgot Password?</a>
                     </div>
+                    
+                    <button type="submit" class="btn btn-primary" aria-live="polite">
+                        <span class="btn-text" data-i18n="login-to-platform">Login to Platform</span>
+                    </button>
+                </form>
+                
+                <div class="divider">
+                    <span data-i18n="or">OR</span>
                 </div>
                 
-                <div class="role-badges" role="group" aria-label="Role selection">
-                    <button type="button" class="role-badge role-student" data-role="student" aria-pressed="false">
-                        <i class="fas fa-graduation-cap" aria-hidden="true"></i> Student
-                    </button>
-                    <button type="button" class="role-badge role-faculty" data-role="faculty" aria-pressed="false">
-                        <i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Faculty
-                    </button>
-                    <button type="button" class="role-badge role-hod" data-role="hod" aria-pressed="false">
-                        <i class="fas fa-user-tie" aria-hidden="true"></i> HOD
-                    </button>
-                    <button type="button" class="role-badge role-principal" data-role="principal" aria-pressed="false">
-                        <i class="fas fa-user-shield" aria-hidden="true"></i> Principal
-                    </button>
-                </div>
-                
-                <div class="form-options">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="rememberMe" name="rememberMe">
-                        <label for="rememberMe">Remember Me</label>
-                    </div>
-                    <a href="#" class="forgot-link" id="forgotPassword">Forgot Password?</a>
-                </div>
-                
-                <button type="submit" class="btn btn-primary" aria-live="polite">
-                    <span class="btn-text">Login to Platform</span>
+                <button type="button" class="btn btn-google" id="googleLoginBtn" aria-live="polite">
+                    <i class="fab fa-google" aria-hidden="true"></i>
+                    <span class="btn-text" data-i18n="login-with-google">Login with Google</span>
                 </button>
-            </form>
-            
-            <div class="divider">
-                <span>OR</span>
+                
+                <button type="button" class="btn btn-microsoft" id="microsoftLoginBtn" aria-live="polite">
+                    <i class="fab fa-microsoft" aria-hidden="true"></i>
+                    <span class="btn-text" data-i18n="login-with-microsoft">Login with Microsoft</span>
+                </button>
+                
+                <p class="register-link">
+                    <span data-i18n="new-to-platform">New to Sona Communication?</span>
+                    <a href="#" id="registerLink" data-i18n="create-account">Create an account</a>
+                </p>
+                
+                <div class="security-notice">
+                    <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                    <span data-i18n="security-notice">All communications are end-to-end encrypted</span>
+                </div>
             </div>
-            
-            <button type="button" class="btn btn-google" id="googleLoginBtn" aria-live="polite">
-                <i class="fab fa-google" aria-hidden="true"></i>
-                <span class="btn-text">Login with Google</span>
-            </button>
-            
-            <button type="button" class="btn btn-microsoft" id="microsoftLoginBtn" aria-live="polite">
-                <i class="fab fa-microsoft" aria-hidden="true"></i>
-                <span class="btn-text">Login with Microsoft</span>
-            </button>
-            
-            <p class="register-link">New to Sona Communication? <a href="#" id="registerLink">Create an account</a></p>
-            
-            <div class="security-notice">
-                <i class="fas fa-shield-alt" aria-hidden="true"></i>
-                <span>All communications are end-to-end encrypted</span>
+        </div>
+        
+        <!-- About Tab -->
+        <div class="tab-content" id="about-tab">
+            <div class="about-section">
+                <h2 data-i18n="about-title">About Sona Communication Platform</h2>
+                <p data-i18n="about-description">
+                    The Sona Communication Platform is a secure hierarchical communication system designed specifically for Sona College of Technology. It enables seamless communication between students, faculty, heads of departments, and the principal while maintaining proper organizational structure and security.
+                </p>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="feature-title" data-i18n="secure-communication">Secure Communication</h3>
+                        <p class="feature-description" data-i18n="secure-communication-desc">
+                            End-to-end encryption ensures that all communications remain private and secure.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-sitemap"></i>
+                        </div>
+                        <h3 class="feature-title" data-i18n="hierarchical-structure">Hierarchical Structure</h3>
+                        <p class="feature-description" data-i18n="hierarchical-structure-desc">
+                            Organized communication flow that respects the college's organizational hierarchy.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="feature-title" data-i18n="cross-platform">Cross-Platform</h3>
+                        <p class="feature-description" data-i18n="cross-platform-desc">
+                            Accessible from any device with a web browser, ensuring connectivity anytime, anywhere.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="feature-title" data-i18n="user-friendly">User-Friendly</h3>
+                        <p class="feature-description" data-i18n="user-friendly-desc">
+                            Intuitive interface designed for users of all technical skill levels.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Tab -->
+        <div class="tab-content" id="contact-tab">
+            <div class="contact-section">
+                <h2 data-i18n="contact-title">Contact Us</h2>
+                <p data-i18n="contact-description">
+                    Have questions or feedback? Reach out to our support team and we'll get back to you as soon as possible.
+                </p>
+                
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="contactName" data-i18n="name">Name</label>
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon" aria-hidden="true"></i>
+                            <input type="text" id="contactName" required placeholder="Your name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactEmail" data-i18n="email">Email</label>
+                        <div class="input-container">
+                            <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
+                            <input type="email" id="contactEmail" required placeholder="Your email address">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactSubject" data-i18n="subject">Subject</label>
+                        <div class="input-container">
+                            <i class="fas fa-tag input-icon" aria-hidden="true"></i>
+                            <input type="text" id="contactSubject" required placeholder="Subject of your message">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactMessage" data-i18n="message">Message</label>
+                        <div class="input-container">
+                            <i class="fas fa-comment-alt input-icon" aria-hidden="true"></i>
+                            <textarea id="contactMessage" required placeholder="Your message" rows="5" style="resize: vertical; padding-left: 3.5rem; padding-top: 1rem; width: 100%; border: 2px solid var(--input-border); border-radius: var(--border-radius); background-color: var(--input-background); color: var(--text-primary); font-family: var(--font-family);"></textarea>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text" data-i18n="send-message">Send Message</span>
+                    </button>
+                </form>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt contact-icon"></i>
+                        <span data-i18n="address">Sona College of Technology, Salem, Tamil Nadu 636005</span>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone contact-icon"></i>
+                        <span data-i18n="phone">+91 427 409 9999</span>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <span data-i18n="support-email">support@sonatech.ac.in</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1067,79 +1554,79 @@
     <div class="modal" id="registerModal" role="dialog" aria-labelledby="registerModalTitle" aria-modal="true">
         <div class="modal-content">
             <button class="close-btn" id="closeRegister" aria-label="Close registration modal">&times;</button>
-            <h2 id="registerModalTitle">Register New User</h2>
+            <h2 id="registerModalTitle" data-i18n="register-title">Register New User</h2>
             <form id="registerForm" aria-label="Registration form">
                 <div class="form-group">
-                    <label for="regCollegeId">College ID</label>
+                    <label for="regCollegeId" data-i18n="college-id">College ID</label>
                     <div class="input-container">
                         <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
                         <input type="text" id="regCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="regEmail">Email Address</label>
+                    <label for="regEmail" data-i18n="email">Email Address</label>
                     <div class="input-container">
                         <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
                         <input type="email" id="regEmail" required pattern=".+@sonatech\.ac\.in" placeholder="name@sonatech.ac.in" autocomplete="email">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="regPassword">Password</label>
+                    <label for="regPassword" data-i18n="password">Password</label>
                     <div class="input-container">
                         <i class="fas fa-lock input-icon" aria-hidden="true"></i>
                         <input type="password" id="regPassword" required placeholder="Create a strong password" autocomplete="new-password">
                         <button type="button" class="password-toggle tooltip" id="regPasswordToggle" aria-label="Toggle password visibility">
                             <i class="fas fa-eye" aria-hidden="true"></i>
-                            <span class="tooltiptext">Toggle password visibility</span>
+                            <span class="tooltiptext" data-i18n="toggle-password">Toggle password visibility</span>
                         </button>
                     </div>
                     <div class="password-strength" id="passwordStrength" aria-hidden="true">
                         <div class="password-strength-bar"></div>
                     </div>
-                    <div class="password-strength-text" id="passwordStrengthText" aria-live="polite">Password strength</div>
+                    <div class="password-strength-text" id="passwordStrengthText" aria-live="polite" data-i18n="password-strength">Password strength</div>
                 </div>
                 <div class="form-group">
-                    <label for="regRole">Role</label>
+                    <label for="regRole" data-i18n="role">Role</label>
                     <div class="input-container">
                         <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
                         <select id="regRole" required>
-                            <option value="">Select Your Role</option>
-                            <option value="student">Student</option>
-                            <option value="faculty">Faculty</option>
+                            <option value="" data-i18n="select-role">Select Your Role</option>
+                            <option value="student" data-i18n="student">Student</option>
+                            <option value="faculty" data-i18n="faculty">Faculty</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="regDepartment">Department ID</label>
+                    <label for="regDepartment" data-i18n="department">Department ID</label>
                     <div class="input-container">
                         <i class="fas fa-building input-icon" aria-hidden="true"></i>
                         <input type="number" id="regDepartment" required placeholder="e.g., 101">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="regFullName">Full Name</label>
+                    <label for="regFullName" data-i18n="full-name">Full Name</label>
                     <div class="input-container">
                         <i class="fas fa-user input-icon" aria-hidden="true"></i>
                         <input type="text" id="regFullName" required placeholder="Enter your full name" autocomplete="name">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" aria-live="polite">
-                    <span class="btn-text">Submit for Approval</span>
+                    <span class="btn-text" data-i18n="submit-for-approval">Submit for Approval</span>
                 </button>
             </form>
             
             <div class="divider">
-                <span>OR</span>
+                <span data-i18n="or">OR</span>
             </div>
             
             <button type="button" class="btn btn-google" id="googleRegisterBtn" aria-live="polite">
                 <i class="fab fa-google" aria-hidden="true"></i>
-                <span class="btn-text">Register with Google</span>
+                <span class="btn-text" data-i18n="register-with-google">Register with Google</span>
             </button>
             
             <button type="button" class="btn btn-microsoft" id="microsoftRegisterBtn" aria-live="polite">
                 <i class="fab fa-microsoft" aria-hidden="true"></i>
-                <span class="btn-text">Register with Microsoft</span>
+                <span class="btn-text" data-i18n="register-with-microsoft">Register with Microsoft</span>
             </button>
         </div>
     </div>
@@ -1148,17 +1635,17 @@
     <div class="modal" id="forgotModal" role="dialog" aria-labelledby="forgotModalTitle" aria-modal="true">
         <div class="modal-content">
             <button class="close-btn" id="closeForgot" aria-label="Close forgot password modal">&times;</button>
-            <h2 id="forgotModalTitle">Reset Your Password</h2>
+            <h2 id="forgotModalTitle" data-i18n="reset-password">Reset Your Password</h2>
             <form id="forgotForm" aria-label="Password reset form">
                 <div class="form-group">
-                    <label for="forgotEmail">Email Address</label>
+                    <label for="forgotEmail" data-i18n="email">Email Address</label>
                     <div class="input-container">
                         <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
                         <input type="email" id="forgotEmail" required placeholder="Enter your registered email" autocomplete="email">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" aria-live="polite">
-                    <span class="btn-text">Send Reset Link</span>
+                    <span class="btn-text" data-i18n="send-reset-link">Send Reset Link</span>
                 </button>
             </form>
         </div>
@@ -1168,45 +1655,45 @@
     <div class="modal" id="microsoftSetupModal" role="dialog" aria-labelledby="microsoftSetupModalTitle" aria-modal="true">
         <div class="modal-content">
             <button class="close-btn" id="closeMicrosoftSetup" aria-label="Close Microsoft setup modal">&times;</button>
-            <h2 id="microsoftSetupModalTitle">Complete Your Profile</h2>
-            <p class="subtitle" style="margin-bottom: 1.75rem;">Please provide additional information to complete your account setup</p>
+            <h2 id="microsoftSetupModalTitle" data-i18n="complete-profile">Complete Your Profile</h2>
+            <p class="subtitle" style="margin-bottom: 1.75rem;" data-i18n="profile-info">Please provide additional information to complete your account setup</p>
             <form id="microsoftSetupForm" aria-label="Microsoft account setup form">
                 <div class="form-group">
-                    <label for="msCollegeId">College ID</label>
+                    <label for="msCollegeId" data-i18n="college-id">College ID</label>
                     <div class="input-container">
                         <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
                         <input type="text" id="msCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="msRole">Role</label>
+                    <label for="msRole" data-i18n="role">Role</label>
                     <div class="input-container">
                         <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
                         <select id="msRole" required>
-                            <option value="">Select Your Role</option>
-                            <option value="student">Student</option>
-                            <option value="faculty">Faculty</option>
-                            <option value="hod">Head of Department</option>
-                            <option value="principal">Principal</option>
+                            <option value="" data-i18n="select-role">Select Your Role</option>
+                            <option value="student" data-i18n="student">Student</option>
+                            <option value="faculty" data-i18n="faculty">Faculty</option>
+                            <option value="hod" data-i18n="hod">Head of Department</option>
+                            <option value="principal" data-i18n="principal">Principal</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="msDepartment">Department ID</label>
+                    <label for="msDepartment" data-i18n="department">Department ID</label>
                     <div class="input-container">
                         <i class="fas fa-building input-icon" aria-hidden="true"></i>
                         <input type="number" id="msDepartment" required placeholder="e.g., 101">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="msFullName">Full Name</label>
+                    <label for="msFullName" data-i18n="full-name">Full Name</label>
                     <div class="input-container">
                         <i class="fas fa-user input-icon" aria-hidden="true"></i>
                         <input type="text" id="msFullName" required placeholder="Enter your full name" autocomplete="name">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" aria-live="polite">
-                    <span class="btn-text">Complete Setup</span>
+                    <span class="btn-text" data-i18n="complete-setup">Complete Setup</span>
                 </button>
             </form>
         </div>
@@ -1216,45 +1703,45 @@
     <div class="modal" id="googleSetupModal" role="dialog" aria-labelledby="googleSetupModalTitle" aria-modal="true">
         <div class="modal-content">
             <button class="close-btn" id="closeGoogleSetup" aria-label="Close Google setup modal">&times;</button>
-            <h2 id="googleSetupModalTitle">Complete Your Profile</h2>
-            <p class="subtitle" style="margin-bottom: 1.75rem;">Please provide additional information to complete your account setup</p>
+            <h2 id="googleSetupModalTitle" data-i18n="complete-profile">Complete Your Profile</h2>
+            <p class="subtitle" style="margin-bottom: 1.75rem;" data-i18n="profile-info">Please provide additional information to complete your account setup</p>
             <form id="googleSetupForm" aria-label="Google account setup form">
                 <div class="form-group">
-                    <label for="googleCollegeId">College ID</label>
+                    <label for="googleCollegeId" data-i18n="college-id">College ID</label>
                     <div class="input-container">
                         <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
                         <input type="text" id="googleCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="googleRole">Role</label>
+                    <label for="googleRole" data-i18n="role">Role</label>
                     <div class="input-container">
                         <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
                         <select id="googleRole" required>
-                            <option value="">Select Your Role</option>
-                            <option value="student">Student</option>
-                            <option value="faculty">Faculty</option>
-                            <option value="hod">Head of Department</option>
-                            <option value="principal">Principal</option>
+                            <option value="" data-i18n="select-role">Select Your Role</option>
+                            <option value="student" data-i18n="student">Student</option>
+                            <option value="faculty" data-i18n="faculty">Faculty</option>
+                            <option value="hod" data-i18n="hod">Head of Department</option>
+                            <option value="principal" data-i18n="principal">Principal</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="googleDepartment">Department ID</label>
+                    <label for="googleDepartment" data-i18n="department">Department ID</label>
                     <div class="input-container">
                         <i class="fas fa-building input-icon" aria-hidden="true"></i>
                         <input type="number" id="googleDepartment" required placeholder="e.g., 101">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="googleFullName">Full Name</label>
+                    <label for="googleFullName" data-i18n="full-name">Full Name</label>
                     <div class="input-container">
                         <i class="fas fa-user input-icon" aria-hidden="true"></i>
                         <input type="text" id="googleFullName" required placeholder="Enter your full name" autocomplete="name">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" aria-live="polite">
-                    <span class="btn-text">Complete Setup</span>
+                    <span class="btn-text" data-i18n="complete-setup">Complete Setup</span>
                 </button>
             </form>
         </div>
@@ -1271,14 +1758,14 @@
     <!-- Sync Button (Admin Only) -->
     <button class="sync-button" id="syncButton">
         <i class="fas fa-sync-alt"></i>
-        <span>Sync Microsoft Users</span>
+        <span data-i18n="sync-microsoft-users">Sync Microsoft Users</span>
     </button>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <p>&copy; 2025 Sona College of Technology. All rights reserved.</p>
-            <p>Made with <i class="fas fa-heart footer-heart"></i> by Krishna</p>
+            <p data-i18n="made-with-love">Made with <i class="fas fa-heart footer-heart"></i> by Krishna</p>
         </div>
     </footer>
 
@@ -1300,12 +1787,608 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Configure Microsoft provider
+        // Configure Microsoft provider with tenant-specific endpoint
         const microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
         microsoftProvider.setCustomParameters({
             prompt: 'select_account',
-            tenant: 'common' // Use your tenant ID if needed
+            // Use tenant-specific endpoint instead of /common
+            // Replace 'your-tenant-id' with your actual Azure AD tenant ID
+            tenant: 'c74fd0f3-60b9-4e99-98a8-534d4ec777df' 
         });
+
+        // Language translations
+        const translations = {
+            en: {
+                "login": "Login",
+                "about": "About",
+                "contact": "Contact",
+                "platform-title": "Communication Platform",
+                "platform-subtitle": "Secure Hierarchical Communication System",
+                "college-id": "College ID",
+                "password": "Password",
+                "role": "Role",
+                "select-role": "Select Your Role",
+                "student": "Student",
+                "faculty": "Faculty",
+                "hod": "Head of Department",
+                "principal": "Principal",
+                "remember-me": "Remember Me",
+                "forgot-password": "Forgot Password?",
+                "login-to-platform": "Login to Platform",
+                "or": "OR",
+                "login-with-google": "Login with Google",
+                "login-with-microsoft": "Login with Microsoft",
+                "new-to-platform": "New to Sona Communication?",
+                "create-account": "Create an account",
+                "security-notice": "All communications are end-to-end encrypted",
+                "toggle-password": "Toggle password visibility",
+                "register-title": "Register New User",
+                "submit-for-approval": "Submit for Approval",
+                "register-with-google": "Register with Google",
+                "register-with-microsoft": "Register with Microsoft",
+                "reset-password": "Reset Your Password",
+                "send-reset-link": "Send Reset Link",
+                "complete-profile": "Complete Your Profile",
+                "profile-info": "Please provide additional information to complete your account setup",
+                "complete-setup": "Complete Setup",
+                "department": "Department ID",
+                "full-name": "Full Name",
+                "password-strength": "Password strength",
+                "about-title": "About Sona Communication Platform",
+                "about-description": "The Sona Communication Platform is a secure hierarchical communication system designed specifically for Sona College of Technology. It enables seamless communication between students, faculty, heads of departments, and the principal while maintaining proper organizational structure and security.",
+                "secure-communication": "Secure Communication",
+                "secure-communication-desc": "End-to-end encryption ensures that all communications remain private and secure.",
+                "hierarchical-structure": "Hierarchical Structure",
+                "hierarchical-structure-desc": "Organized communication flow that respects the college's organizational hierarchy.",
+                "cross-platform": "Cross-Platform",
+                "cross-platform-desc": "Accessible from any device with a web browser, ensuring connectivity anytime, anywhere.",
+                "user-friendly": "User-Friendly",
+                "user-friendly-desc": "Intuitive interface designed for users of all technical skill levels.",
+                "contact-title": "Contact Us",
+                "contact-description": "Have questions or feedback? Reach out to our support team and we'll get back to you as soon as possible.",
+                "name": "Name",
+                "email": "Email",
+                "subject": "Subject",
+                "message": "Message",
+                "send-message": "Send Message",
+                "address": "Sona College of Technology, Salem, Tamil Nadu 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Sync Microsoft Users",
+                "made-with-love": "Made with"
+            },
+            hi: {
+                "login": "लॉग इन",
+                "about": "हमारे बारे में",
+                "contact": "संपर्क करें",
+                "platform-title": "संचार प्लेटफॉर्म",
+                "platform-subtitle": "सुरक्षित पदानुक्रमित संचार प्रणाली",
+                "college-id": "कॉलेज आईडी",
+                "password": "पासवर्ड",
+                "role": "भूमिका",
+                "select-role": "अपनी भूमिका चुनें",
+                "student": "छात्र",
+                "faculty": "शिक्षक",
+                "hod": "विभागाध्यक्ष",
+                "principal": "प्राचार्य",
+                "remember-me": "मुझे याद रखें",
+                "forgot-password": "पासवर्ड भूल गए?",
+                "login-to-platform": "प्लेटफॉर्म में लॉग इन करें",
+                "or": "या",
+                "login-with-google": "Google के साथ लॉग इन करें",
+                "login-with-microsoft": "Microsoft के साथ लॉग इन करें",
+                "new-to-platform": "सोना संचार पर नए हैं?",
+                "create-account": "खाता बनाएं",
+                "security-notice": "सभी संचार एंड-टू-एंड एन्क्रिप्टेड हैं",
+                "toggle-password": "पासवर्ड दृश्यता टॉगल करें",
+                "register-title": "नए उपयोगकर्ता को पंजीकृत करें",
+                "submit-for-approval": "अनुमोदन के लिए जमा करें",
+                "register-with-google": "Google के साथ पंजीकरण करें",
+                "register-with-microsoft": "Microsoft के साथ पंजीकरण करें",
+                "reset-password": "अपना पासवर्ड रीसेट करें",
+                "send-reset-link": "रीसेट लिंक भेजें",
+                "complete-profile": "अपनी प्रोफ़ाइल पूरी करें",
+                "profile-info": "कृपया अपने खाता सेटअप को पूरा करने के लिए अतिरिक्त जानकारी प्रदान करें",
+                "complete-setup": "सेटअप पूरा करें",
+                "department": "विभाग आईडी",
+                "full-name": "पूरा नाम",
+                "password-strength": "पासवर्ड की शक्ति",
+                "about-title": "सोना संचार प्लेटफॉर्म के बारे में",
+                "about-description": "सोना संचार प्लेटफॉर्म एक सुरक्षित पदानुक्रमित संचार प्रणाली है जो विशेष रूप से सोना कॉलेज ऑफ टेक्नोलॉजी के लिए डिज़ाइन की गई है। यह छात्रों, शिक्षकों, विभागाध्यक्षों और प्राचार्य के बीच सहज संचार सक्षम करता है, जबकि उचित संगठनात्मक संरचना और सुरक्षा बनाए रखता है।",
+                "secure-communication": "सुरक्षित संचार",
+                "secure-communication-desc": "एंड-टू-एंड एन्क्रिप्शन सुनिश्चित करता है कि सभी संचार निजी और सुरक्षित रहें।",
+                "hierarchical-structure": "पदानुक्रमित संरचना",
+                "hierarchical-structure-desc": "संगठित संचार प्रवाह जो कॉलेज की संगठनात्मक पदानुक्रम का सम्मान करता है।",
+                "cross-platform": "क्रॉस-प्लेटफॉर्म",
+                "cross-platform-desc": "किसी भी डिवाइस से एक्सेस करने योग्य जिसमें वेब ब्राउज़र है, जो किसी भी समय, कहीं भी कनेक्टिविटी सुनिश्चित करता है।",
+                "user-friendly": "उपयोगकर्ता-अनुकूल",
+                "user-friendly-desc": "सभी तकनीकी कौशल स्तरों के उपयोगकर्ताओं के लिए डिज़ाइन किया गया सहज इंटरफ़ेस।",
+                "contact-title": "हमसे संपर्क करें",
+                "contact-description": "कोई प्रश्न या प्रतिक्रिया है? हमारी सहायता टीम से संपर्क करें और हम जल्द से जल्द आपको वापस संपर्क करेंगे।",
+                "name": "नाम",
+                "email": "ईमेल",
+                "subject": "विषय",
+                "message": "संदेश",
+                "send-message": "संदेश भेजें",
+                "address": "सोना कॉलेज ऑफ टेक्नोलॉजी, सेलम, तमिलनाडु 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Microsoft उपयोगकर्ताओं को सिंक करें",
+                "made-with-love": "द्वारा बनाया गया"
+            },
+            ta: {
+                "login": "உள்நுழைக",
+                "about": "எங்களைப் பற்றி",
+                "contact": "தொடர்பு கொள்ள",
+                "platform-title": "தகவல் தளம்",
+                "platform-subtitle": "பாதுகாப்பான படிநிலை தகவல் தொடர்பு அமைப்பு",
+                "college-id": "கல்லூரி ஐடி",
+                "password": "கடவுச்சொல்",
+                "role": "பங்கு",
+                "select-role": "உங்கள் பங்கைத் தேர்ந்தெடுக்கவும்",
+                "student": "மாணவர்",
+                "faculty": "ஆசிரியர்",
+                "hod": "துறைத் தலைவர்",
+                "principal": "முதல்வர்",
+                "remember-me": "என்னை நினைவில் கொள்ளுங்கள்",
+                "forgot-password": "கடவுச்சொல்லை மறந்துவிட்டீர்களா?",
+                "login-to-platform": "தளத்தில் உள்நுழைக",
+                "or": "அல்லது",
+                "login-with-google": "Google உடன் உள்நுழைக",
+                "login-with-microsoft": "Microsoft உடன் உள்நுழைக",
+                "new-to-platform": "சோனா தகவல் தளத்தில் புதியவரா?",
+                "create-account": "கணக்கு உருவாக்கவும்",
+                "security-notice": "அனைத்து தகவல்தொடர்புகளும் முனை-முதல்-முனை குறியாக்கப்பட்டுள்ளன",
+                "toggle-password": "கடவுச்சொல் புலப்பாட்டை மாற்றவும்",
+                "register-title": "புதிய பயனரைப் பதிவு செய்யவும்",
+                "submit-for-approval": "அங்கீகாரத்திற்கு சமர்ப்பிக்கவும்",
+                "register-with-google": "Google உடன் பதிவு செய்யவும்",
+                "register-with-microsoft": "Microsoft உடன் பதிவு செய்யவும்",
+                "reset-password": "உங்கள் கடவுச்சொல்லை மீட்டமைக்கவும்",
+                "send-reset-link": "மீட்டமைப்பு இணைப்பை அனுப்பவும்",
+                "complete-profile": "உங்கள் சுயவிவரத்தை முடிக்கவும்",
+                "profile-info": "உங்கள் கணக்கு அமைவை முடிக்க கூடுதல் தகவலை வழங்கவும்",
+                "complete-setup": "அமைவை முடிக்கவும்",
+                "department": "துறை ஐடி",
+                "full-name": "முழுப் பெயர்",
+                "password-strength": "கடவுச்சொல் வலிமை",
+                "about-title": "சோனா தகவல் தளம் பற்றி",
+                "about-description": "சோனா தகவல் தளம் என்பது சோனா தொழில்நுட்பக் கல்லூரிக்கு குறிப்பாக வடிவமைக்கப்பட்ட ஒரு பாதுகாப்பான படிநிலை தகவல் தொடர்பு அமைப்பாகும். இது மாணவர்கள், ஆசிரியர்கள், துறைத் தலைவர்கள் மற்றும் முதல்வருக்கு இடையே சீரான தகவல் தொடர்பை சாத்தியமாக்குகிறது, அதே நேரத்தில் சரியான நிறுவன அமைப்பு மற்றும் பாதுகாப்பை பராமரிக்கிறது.",
+                "secure-communication": "பாதுகாப்பான தகவல் தொடர்பு",
+                "secure-communication-desc": "முனை-முதல்-முனை குறியாக்கம் அனைத்து தகவல் தொடர்புகளும் தனிப்பட்டதாகவும் பாதுகாப்பாகவும் இருப்பதை உறுதிப்படுத்துகிறது.",
+                "hierarchical-structure": "படிநிலை அமைப்பு",
+                "hierarchical-structure-desc": "கல்லூரியின் நிறுவன படிநிலையை மதிக்கும் ஒழுங்கமைக்கப்பட்ட தகவல் தொடர்பு ஓட்டம்.",
+                "cross-platform": "குறுக்கு-தளம்",
+                "cross-platform-desc": "வலை உலாவி கொண்ட எந்த சாதனையிலிருந்தும் அணுகக்கூடியது, எந்த நேரத்திலும், எங்கிருந்தும் இணைப்பை உறுதி செய்கிறது.",
+                "user-friendly": "பயனர்-நட்பு",
+                "user-friendly-desc": "அனைத்து தொழில்நுட்ப திறன் நிலைகளுக்கும் வடிவமைக்கப்பட்ட எளிய இடைமுகம்.",
+                "contact-title": "எங்களைத் தொடர்பு கொள்ளுங்கள்",
+                "contact-description": "கேள்விகள் அல்லது கருத்துக்கள் உள்ளனவா? எங்கள் ஆதரவு குழுவைத் தொடர்பு கொண்டு, நாங்கள் விரைவில் உங்களுக்குத் திரும்பத் தொடர்பு கொள்வோம்.",
+                "name": "பெயர்",
+                "email": "மின்னஞ்சல்",
+                "subject": "பொருள்",
+                "message": "செய்தி",
+                "send-message": "செய்தியை அனுப்பவும்",
+                "address": "சோனா தொழில்நுட்பக் கல்லூரி, சேலம், தமிழ்நாடு 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Microsoft பயனர்களை ஒத்திசைவு செய்யுங்கள்",
+                "made-with-love": "ஆல் உருவாக்கப்பட்டது"
+            },
+            te: {
+                "login": "లాగిన్",
+                "about": "గురించి",
+                "contact": "సంప్రదించండి",
+                "platform-title": "కమ్యూనికేషన్ ప్లాట్‌ఫారమ్",
+                "platform-subtitle": "సురక్షిత హయరార్కీ కమ్యూనికేషన్ సిస్టమ్",
+                "college-id": "కళాశాల ఐడి",
+                "password": "పాస్‌వర్డ్",
+                "role": "పాత్ర",
+                "select-role": "మీ పాత్రను ఎంచుకోండి",
+                "student": "విద్యార్థి",
+                "faculty": "అధ్యాపకుడు",
+                "hod": "విభాగాధిపతి",
+                "principal": "ప్రిన్సిపాల్",
+                "remember-me": "నన్ను గుర్తుంచుకోండి",
+                "forgot-password": "పాస్‌వర్డ్ మర్చిపోయిందా?",
+                "login-to-platform": "ప్లాట్‌ఫారమ్‌కి లాగిన్ అవ్వండి",
+                "or": "లేదా",
+                "login-with-google": "Googleతో లాగిన్ అవ్వండి",
+                "login-with-microsoft": "Microsoftతో లాగిన్ అవ్వండి",
+                "new-to-platform": "సోనా కమ్యూనికేషన్‌కి కొత్తవారా?",
+                "create-account": "ఖాతా సృష్టించండి",
+                "security-notice": "అన్ని కమ్యూనికేషన్లు ఎండ్-టు-ఎండ్ ఎన్‌క్రిప్ట్ చేయబడ్డాయి",
+                "toggle-password": "పాస్‌వర్డ్ దృశ్యతను టోగుల్ చేయండి",
+                "register-title": "కొత్త వినియోగదారుని నమోదు చేయండి",
+                "submit-for-approval": "ఆమోదం కోసం సమర్పించండి",
+                "register-with-google": "Googleతో నమోదు చేయండి",
+                "register-with-microsoft": "Microsoftతో నమోదు చేయండి",
+                "reset-password": "మీ పాస్‌వర్డ్‌ను రీసెట్ చేయండి",
+                "send-reset-link": "రీసెట్ లింక్‌ను పంపండి",
+                "complete-profile": "మీ ప్రొఫైల్‌ను పూర్తి చేయండి",
+                "profile-info": "మీ ఖాతా సెటప్‌ను పూర్తి చేయడానికి దయచేసి అదనపు సమాచారాన్ని అందించండి",
+                "complete-setup": "సెటప్‌ను పూర్తి చేయండి",
+                "department": "విభాగం ఐడి",
+                "full-name": "పూర్తి పేరు",
+                "password-strength": "పాస్‌వర్డ్ బలం",
+                "about-title": "సోనా కమ్యూనికేషన్ ప్లాట్‌ఫారమ్ గురించి",
+                "about-description": "సోనా కమ్యూనికేషన్ ప్లాట్‌ఫారమ్ అనేది సోనా కాలేజ్ ఆఫ్ టెక్నాలజీ కోసం ప్రత్యేకంగా రూపొందించబడిన సురక్షిత హయరార్కీ కమ్యూనికేషన్ సిస్టమ్. ఇది విద్యార్థులు, అధ్యాపకులు, విభాగాధిపతులు మరియు ప్రిన్సిపాల్ మధ్య సులభమైన కమ్యూనికేషన్‌ను సాధ్యపరుస్తుంది, అదే సమయంలో సరైన సంస్థాగత నిర్మాణం మరియు భద్రతను కలిగి ఉంటుంది.",
+                "secure-communication": "సురక్షిత కమ్యూనికేషన్",
+                "secure-communication-desc": "ఎండ్-టు-ఎండ్ ఎన్‌క్రిప్షన్ అన్ని కమ్యూనికేషన్‌లు ప్రైవేట్‌గా మరియు సురక్షితంగా ఉండటాన్ని నిర్ధారిస్తుంది.",
+                "hierarchical-structure": "హయరార్కీ నిర్మాణం",
+                "hierarchical-structure-desc": "కళాశాల సంస్థాగత హయరార్కీని గౌరవించే నిర్వహించబడిన కమ్యూనికేషన్ ప్రవాహం.",
+                "cross-platform": "క్రాస్-ప్లాట్‌ఫారమ్",
+                "cross-platform-desc": "వెబ్ బ్రౌజర్ ఉన్న ఏదైనా పరికరం నుండి యాక్సెస్ చేయగలిగేలా, ఎప్పటికీ, ఎక్కడైనా కనెక్టివిటీని నిర్ధారిస్తుంది.",
+                "user-friendly": "వినియోగదారు-స్నేహపూర్వకం",
+                "user-friendly-desc": "అన్ని సాంకేతిక నైపుణ్య స్థాయిల వినియోగదారుల కోసం రూపొందించబడిన సహజమైన ఇంటర్‌ఫేస్.",
+                "contact-title": "మమ్మల్ని సంప్రదించండి",
+                "contact-description": "ప్రశ్నలు లేదా అభిప్రాయాలు ఉన్నాయా? మా సపోర్ట్ టీమ్‌ను సంప్రదించండి, మేము త్వరగా మీకు తిరిగి స్పందిస్తాము.",
+                "name": "పేరు",
+                "email": "ఇమెయిల్",
+                "subject": "విషయం",
+                "message": "సందేశం",
+                "send-message": "సందేశాన్ని పంపండి",
+                "address": "సోనా కాలేజ్ ఆఫ్ టెక్నాలజీ, సేలం, తమిళనాడు 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Microsoft వినియోగదారులను సింక్ చేయండి",
+                "made-with-love": "ద్వారా తయారు చేయబడింది"
+            },
+            kn: {
+                "login": "ಲಾಗಿನ್",
+                "about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "contact": "ಸಂಪರ್ಕಿಸಿ",
+                "platform-title": "ಸಂವಹನ ವೇದಿಕೆ",
+                "platform-subtitle": "ಸುರಕ್ಷಿತ ಹಯರಾರ್ಕಿ ಸಂವಹನ ವ್ಯವಸ್ಥೆ",
+                "college-id": "ಕಾಲೇಜು ಐಡಿ",
+                "password": "ಪಾಸ್‌ವರ್ಡ್",
+                "role": "ಪಾತ್ರ",
+                "select-role": "ನಿಮ್ಮ ಪಾತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "student": "ವಿದ್ಯಾರ್ಥಿ",
+                "faculty": "ಅಧ್ಯಾಪಕ",
+                "hod": "ವಿಭಾಗದ ಮುಖ್ಯಸ್ಥ",
+                "principal": "ಪ್ರಾಂಶುಪಾಲ",
+                "remember-me": "ನನ್ನನ್ನು ನೆನಪಿಡಿ",
+                "forgot-password": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?",
+                "login-to-platform": "ಪ್ಲಾಟ್‌ಫಾರ್ಮ್‌ಗೆ ಲಾಗಿನ್ ಆಗಿ",
+                "or": "ಅಥವಾ",
+                "login-with-google": "Google ನೊಂದಿಗೆ ಲಾಗಿನ್ ಆಗಿ",
+                "login-with-microsoft": "Microsoft ನೊಂದಿಗೆ ಲಾಗಿನ್ ಆಗಿ",
+                "new-to-platform": "ಸೋನಾ ಸಂವಹನಕ್ಕೆ ಹೊಸವಾಗಿದ್ದೀರಾ?",
+                "create-account": "ಖಾತೆ ಸೃಷ್ಟಿಸಿ",
+                "security-notice": "ಎಲ್ಲಾ ಸಂವಹನಗಳು ಎಂಡ್-ಟು-ಎಂಡ್ ಎನ್‌ಕ್ರಿಪ್ಟ್ ಮಾಡಲ್ಪಟ್ಟಿವೆ",
+                "toggle-password": "ಪಾಸ್‌ವರ್ಡ್ ಗೋಚರತೆಯನ್ನು ಟಾಗಲ್ ಮಾಡಿ",
+                "register-title": "ಹೊಸ ಬಳಕೆದಾರರನ್ನು ನೋಂದಾಯಿಸಿ",
+                "submit-for-approval": "ಅನುಮೋದನೆಗಾಗಿ ಸಲ್ಲಿಸಿ",
+                "register-with-google": "Google ನೊಂದಿಗೆ ನೋಂದಾಯಿಸಿ",
+                "register-with-microsoft": "Microsoft ನೊಂದಿಗೆ ನೋಂದಾಯಿಸಿ",
+                "reset-password": "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಮರುಹೊಂದಿಸಿ",
+                "send-reset-link": "ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಅನ್ನು ಕಳುಹಿಸಿ",
+                "complete-profile": "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ",
+                "profile-info": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಖಾತೆ ಸೆಟಪ್ ಅನ್ನು ಪೂರ್ಣಗೊಳಿಸಲು ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿಯನ್ನು ಒದಗಿಸಿ",
+                "complete-setup": "ಸೆಟಪ್ ಅನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ",
+                "department": "ವಿಭಾಗ ಐಡಿ",
+                "full-name": "ಪೂರ್ಣ ಹೆಸರು",
+                "password-strength": "ಪಾಸ್‌ವರ್ಡ್ ಬಲ",
+                "about-title": "ಸೋನಾ ಸಂವಹನ ವೇದಿಕೆಯ ಬಗ್ಗೆ",
+                "about-description": "ಸೋನಾ ಸಂವಹನ ವೇದಿಕೆಯು ಸೋನಾ ಕಾಲೇಜ್ ಆಫ್ ಟೆಕ್ನಾಲಜಿಗಾಗಿ ವಿಶೇಷವಾಗಿ ವಿನ್ಯಾಸಗೊಳಿಸಲಾದ ಸುರಕ್ಷಿತ ಹಯರಾರ್ಕಿ ಸಂವಹನ ವ್ಯವಸ್ಥೆಯಾಗಿದೆ. ಇದು ವಿದ್ಯಾರ್ಥಿಗಳು, ಅಧ್ಯಾಪಕರು, ವಿಭಾಗದ ಮುಖ್ಯಸ್ಥರು ಮತ್ತು ಪ್ರಾಂಶುಪಾಲರ ನಡುವೆ ಸುಲಭ ಸಂವಹನವನ್ನು ಸಾಧ್ಯವಾಗಿಸುತ್ತದೆ, ಅದೇ ಸಮಯದಲ್ಲಿ ಸರಿಯಾದ ಸಂಸ್ಥಾತ್ಮಕ ರಚನೆ ಮತ್ತು ಭದ್ರತೆಯನ್ನು ಕಾಪಾಡುತ್ತದೆ.",
+                "secure-communication": "ಸುರಕ್ಷಿತ ಸಂವಹನ",
+                "secure-communication-desc": "ಎಂಡ್-ಟು-ಎಂಡ್ ಎನ್‌ಕ್ರಿಪ್ಷನ್ ಎಲ್ಲಾ ಸಂವಹನಗಳು ಖಾಸಗಿಯಾಗಿ ಮತ್ತು ಸುರಕ್ಷಿತವಾಗಿರುವಂತೆ ಖಚಿತಪಡಿಸುತ್ತದೆ.",
+                "hierarchical-structure": "ಹಯರಾರ್ಕಿಕಲ್ ರಚನೆ",
+                "hierarchical-structure-desc": "ಕಾಲೇಜಿನ ಸಂಸ್ಥಾತ್ಮಕ ಹಯರಾರ್ಕಿಯನ್ನು ಗೌರವಿಸುವ ಸಂಘಟಿತ ಸಂವಹನ ಹರಿವು.",
+                "cross-platform": "ಕ್ರಾಸ್-ಪ್ಲಾಟ್‌ಫಾರ್ಮ್",
+                "cross-platform-desc": "ವೆಬ್ ಬ್ರೌಸರ್ ಹೊಂದಿರುವ ಯಾವುದೇ ಸಾಧನದಿಂದ ಪ್ರವೇಶಿಸಬಹುದಾಗಿದೆ, ಯಾವಾಗಲೂ, ಎಲ್ಲಿಯಾದರೂ ಸಂಪರ್ಕವನ್ನು ಖಚಿತಪಡಿಸುತ್ತದೆ.",
+                "user-friendly": "ಬಳಕೆದಾರ-ಸ್ನೇಹಿ",
+                "user-friendly-desc": "ಎಲ್ಲಾ ತಾಂತ್ರಿಕ ಕೌಶಲ್ಯ ಮಟ್ಟದ ಬಳಕೆದಾರರಿಗಾಗಿ ವಿನ್ಯಾಸಗೊಳಿಸಲಾದ ಸಹಜ ಇಂಟರ್‌ಫೇಸ್.",
+                "contact-title": "ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ",
+                "contact-description": "ಪ್ರಶ್ನೆಗಳು ಅಥವಾ ಪ್ರತಿಕ್ರಿಯೆಗಳಿವೆಯೇ? ನಮ್ಮ ಬೆಂಬಲ ತಂಡವನ್ನು ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ನಾವು ಶೀಘ್ರವಾಗಿ ನಿಮಗೆ ಪ್ರತಿಕ್ರಿಯಿಸುತ್ತೇವೆ.",
+                "name": "ಹೆಸರು",
+                "email": "ಇಮೇಲ್",
+                "subject": "ವಿಷಯ",
+                "message": "ಸಂದೇಶ",
+                "send-message": "ಸಂದೇಶವನ್ನು ಕಳುಹಿಸಿ",
+                "address": "ಸೋನಾ ಕಾಲೇಜ್ ಆಫ್ ಟೆಕ್ನಾಲಜಿ, ಸೇಲಂ, ತಮಿಳುನಾಡು 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Microsoft ಬಳಕೆದಾರರನ್ನು ಸಿಂಕ್ ಮಾಡಿ",
+                "made-with-love": "ಇಂದ ಮಾಡಲಾಗಿದೆ"
+            },
+            ml: {
+                "login": "ലോഗിൻ ചെയ്യുക",
+                "about": "ഞങ്ങളെക്കുറിച്ച്",
+                "contact": "ബന്ധപ്പെടുക",
+                "platform-title": "ആശയവിനിമയ പ്ലാറ്റ്ഫോം",
+                "platform-subtitle": "സുരക്ഷിതമായ ഹയറാർക്കിക്കൽ ആശയവിനിമയ സംവിധാനം",
+                "college-id": "കോളേജ് ഐഡി",
+                "password": "രഹസ്യവാക്ക്",
+                "role": "റോൾ",
+                "select-role": "നിങ്ങളുടെ റോൾ തിരഞ്ഞെടുക്കുക",
+                "student": "വിദ്യാർത്ഥി",
+                "faculty": "അധ്യാപകൻ",
+                "hod": "വിഭാഗം മേധാവി",
+                "principal": "പ്രിൻസിപ്പൽ",
+                "remember-me": "എന്നെ ഓർക്കുക",
+                "forgot-password": "രഹസ്യവാക്ക് മറന്നോ?",
+                "login-to-platform": "പ്ലാറ്റ്ഫോമിലേക്ക് ലോഗിൻ ചെയ്യുക",
+                "or": "അല്ലെങ്കിൽ",
+                "login-with-google": "Google ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക",
+                "login-with-microsoft": "Microsoft ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക",
+                "new-to-platform": "സോന ആശയവിനിമയത്തിൽ പുതുതായി?",
+                "create-account": "അക്കൗണ്ട് സൃഷ്ടിക്കുക",
+                "security-notice": "എല്ലാ ആശയവിനിമയങ്ങളും എൻഡ്-ടു-എൻഡ് എൻക്രിപ്റ്റ് ചെയ്തിരിക്കുന്നു",
+                "toggle-password": "രഹസ്യവാക്ക് ദൃശ്യത ടോഗിൾ ചെയ്യുക",
+                "register-title": "പുതിയ ഉപയോക്താവിനെ രജിസ്റ്റർ ചെയ്യുക",
+                "submit-for-approval": "അംഗീകാരത്തിനായി സമർപ്പിക്കുക",
+                "register-with-google": "Google ഉപയോഗിച്ച് രജിസ്റ്റർ ചെയ്യുക",
+                "register-with-microsoft": "Microsoft ഉപയോഗിച്ച് രജിസ്റ്റർ ചെയ്യുക",
+                "reset-password": "നിങ്ങളുടെ രഹസ്യവാക്ക് പുനഃസജ്ജമാക്കുക",
+                "send-reset-link": "പുനഃസജ്ജമാക്കൽ ലിങ്ക് അയയ്ക്കുക",
+                "complete-profile": "നിങ്ങളുടെ പ്രൊഫൈൽ പൂർത്തിയാക്കുക",
+                "profile-info": "ദയവായി നിങ്ങളുടെ അക്കൗണ്ട് സജ്ജീകരണം പൂർത്തിയാക്കാൻ അധിക വിവരങ്ങൾ നൽകുക",
+                "complete-setup": "സജ്ജീകരണം പൂർത്തിയാക്കുക",
+                "department": "വിഭാഗം ഐഡി",
+                "full-name": "പൂർണ്ണമായ പേര്",
+                "password-strength": "രഹസ്യവാക്ക് ശക്തി",
+                "about-title": "സോന ആശയവിനിമയ പ്ലാറ്റ്ഫോമിനെക്കുറിച്ച്",
+                "about-description": "സോന ആശയവിനിമയ പ്ലാറ്റ്ഫോം എന്നത് സോന കോളേജ് ഓഫ് ടെക്നോളജിക്ക് വേണ്ടി പ്രത്യേകമായി രൂപകൽപ്പന ചെയ്ത ഒരു സുരക്ഷിതമായ ഹയറാർക്കിക്കൽ ആശയവിനിമയ സംവിധാനമാണ്. ഇത് വിദ്യാർത്ഥികൾ, അധ്യാപകർ, വിഭാഗം മേധാവികൾ, പ്രിൻസിപ്പൽ എന്നിവർക്കിടയിൽ സുഗമമായ ആശയവിനിമയം സാധ്യമാക്കുന്നു, അതേസമയം ശരിയായ ഓർഗനൈസേഷണൽ ഘടനയും സുരക്ഷിതത്വവും നിലനിർത്തുന്നു.",
+                "secure-communication": "സുരക്ഷിത ആശയവിനിമയം",
+                "secure-communication-desc": "എൻഡ്-ടു-എൻഡ് എൻക്രിപ്ഷൻ എല്ലാ ആശയവിനിമയങ്ങളും സ്വകാര്യമായും സുരക്ഷിതമായും നിലനിർത്തുന്നുവെന്ന് ഉറപ്പാക്കുന്നു.",
+                "hierarchical-structure": "ഹയറാർക്കിക്കൽ ഘടന",
+                "hierarchical-structure-desc": "കോളേജിന്റെ ഓർഗനൈസേഷണൽ ഹയറാർക്കിയെ ബഹുമാനിക്കുന്ന സംഘടിതമായ ആശയവിനിമയ പ്രവാഹം.",
+                "cross-platform": "ക്രോസ്-പ്ലാറ്റ്ഫോം",
+                "cross-platform-desc": "വെബ് ബ്രൗസർ ഉള്ള ഏത് ഉപകരണത്തിൽ നിന്നും ആക്സസ് ചെയ്യാവുന്നതാണ്, എപ്പോഴും, എവിടെയും കണക്റ്റിവിറ്റി ഉറപ്പാക്കുന്നു.",
+                "user-friendly": "ഉപയോക്തൃ-സൗഹൃദം",
+                "user-friendly-desc": "എല്ലാ സാങ്കേതിക വൈദഗ്ദ്യ നിലകളിലുള്ള ഉപയോക്താക്കൾക്കായി രൂപകൽപ്പന ചെയ്ത ഇന്റ്യൂറ്റീവ് ഇന്റർഫേസ്.",
+                "contact-title": "ഞങ്ങളെ ബന്ധപ്പെടുക",
+                "contact-description": "ചോദ്യങ്ങളോ അഭിപ്രായങ്ങളോ ഉണ്ടോ? ഞങ്ങളുടെ പിന്തുണാ ടീമുമായി ബന്ധപ്പെടുക, ഞങ്ങൾ ഉടൻ തിരിച്ചു ബന്ധപ്പെടും.",
+                "name": "പേര്",
+                "email": "ഇമെയിൽ",
+                "subject": "വിഷയം",
+                "message": "സന്ദേശം",
+                "send-message": "സന്ദേശം അയയ്ക്കുക",
+                "address": "സോന കോളേജ് ഓഫ് ടെക്നോളജി, സേലം, തമിഴ്‌നാട് 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Microsoft ഉപയോക്താക്കളെ സിങ്ക് ചെയ്യുക",
+                "made-with-love": "ഉണ്ടാക്കിയത്"
+            },
+            mr: {
+                "login": "लॉगिन करा",
+                "about": "आमच्याबद्दल",
+                "contact": "संपर्क करा",
+                "platform-title": "संवाद प्लॅटफॉर्म",
+                "platform-subtitle": "सुरक्षित पदानुक्रम संवाद प्रणाली",
+                "college-id": "कॉलेज आयडी",
+                "password": "पासवर्ड",
+                "role": "भूमिका",
+                "select-role": "तुमची भूमिका निवडा",
+                "student": "विद्यार्थी",
+                "faculty": "अध्यापक",
+                "hod": "विभाग प्रमुख",
+                "principal": "प्राचार्य",
+                "remember-me": "मला लक्षात ठेवा",
+                "forgot-password": "पासवर्ड विसरलात का?",
+                "login-to-platform": "प्लॅटफॉर्मवर लॉगिन करा",
+                "or": "किंवा",
+                "login-with-google": "Google सह लॉगिन करा",
+                "login-with-microsoft": "Microsoft सह लॉगिन करा",
+                "new-to-platform": "सोना संवादावर नवीन आहात का?",
+                "create-account": "खाते तयार करा",
+                "security-notice": "सर्व संवाद एंड-टू-एंड एन्क्रिप्टेड आहेत",
+                "toggle-password": "पासवर्ड दृश्यमानता टॉगल करा",
+                "register-title": "नवीन वापरकर्ता नोंदणी करा",
+                "submit-for-approval": "मंजुरीसाठी सादर करा",
+                "register-with-google": "Google सह नोंदणी करा",
+                "register-with-microsoft": "Microsoft सह नोंदणी करा",
+                "reset-password": "तुमचा पासवर्ड रीसेट करा",
+                "send-reset-link": "रीसेट लिंक पाठवा",
+                "complete-profile": "तुमचे प्रोफाइल पूर्ण करा",
+                "profile-info": "कृपया तुमचे खाते सेटअप पूर्ण करण्यासाठी अतिरिक्त माहिती प्रदान करा",
+                "complete-setup": "सेटअप पूर्ण करा",
+                "department": "विभाग आयडी",
+                "full-name": "पूर्ण नाव",
+                "password-strength": "पासवर्ड शक्ती",
+                "about-title": "सोना संवाद प्लॅटफॉर्मविषयी",
+                "about-description": "सोना संवाद प्लॅटफॉर्म हे विशेषतः सोना कॉलेज ऑफ टेक्नॉलॉजीसाठी डिझाइन केलेले एक सुरक्षित पदानुक्रम संवाद प्रणाली आहे. ते विद्यार्थी, अध्यापक, विभाग प्रमुख आणि प्राचार्य यांच्यात सहज संवाद सक्षम करते, त्याचवेळी योग्य संघटनात्मक संरचना आणि सुरक्षितता टिकवून ठेवते.",
+                "secure-communication": "सुरक्षित संवाद",
+                "secure-communication-desc": "एंड-टू-एंड एन्क्रिप्शन हे सुनिश्चित करते की सर्व संवाद खाजगी आणि सुरक्षित राहतील.",
+                "hierarchical-structure": "पदानुक्रम संरचना",
+                "hierarchical-structure-desc": "कॉलेजच्या संघटनात्मक पदानुक्रमाचा आदर करणारा संघटित संवाद प्रवाह.",
+                "cross-platform": "क्रॉस-प्लॅटफॉर्म",
+                "cross-platform-desc": "वेब ब्राउझर असलेल्या कोणत्याही डिव्हाइसवरून प्रवेश केला जाऊ शकतो, कधीही, कुठेही कनेक्टिव्हिटी सुनिश्चित करतो.",
+                "user-friendly": "वापरकर्ता-अनुकूल",
+                "user-friendly-desc": "सर्व तांत्रिक कौशल्य पातळींवरील वापरकर्त्यांसाठी डिझाइन केलेले सहज इंटरफेस.",
+                "contact-title": "आमच्याशी संपर्क साधा",
+                "contact-description": "प्रश्न किंवा अभिप्राय आहेत का? आमच्या सहाय्य टीमशी संपर्क साधा आणि आम्ही लवकर तुमच्याशी परत संपर्क साधू.",
+                "name": "नाव",
+                "email": "ईमेल",
+                "subject": "विषय",
+                "message": "संदेश",
+                "send-message": "संदेश पाठवा",
+                "address": "सोना कॉलेज ऑफ टेक्नॉलॉजी, सेलम, तामिळनाडू 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Microsoft वापरकर्ते सिंक करा",
+                "made-with-love": "द्वारे बनविले"
+            },
+            bn: {
+                "login": "লগইন",
+                "about": "আমাদের সম্পর্কে",
+                "contact": "যোগাযোগ করুন",
+                "platform-title": "যোগাযোগ প্ল্যাটফর্ম",
+                "platform-subtitle": "নিরাপদ হায়ারার্কিকাল কমিউনিকেশন সিস্টেম",
+                "college-id": "কলেজ আইডি",
+                "password": "পাসওয়ার্ড",
+                "role": "ভূমিকা",
+                "select-role": "আপনার ভূমিকা নির্বাচন করুন",
+                "student": "ছাত্র",
+                "faculty": "অনুষদ",
+                "hod": "বিভাগীয় প্রধান",
+                "principal": "অধ্যক্ষ",
+                "remember-me": "আমাকে মনে রাখুন",
+                "forgot-password": "পাসওয়ার্ড ভুলে গেছেন?",
+                "login-to-platform": "প্ল্যাটফর্মে লগইন করুন",
+                "or": "অথবা",
+                "login-with-google": "Google দিয়ে লগইন করুন",
+                "login-with-microsoft": "Microsoft দিয়ে লগইন করুন",
+                "new-to-platform": "সোনা কমিউনিকেশনে নতুন?",
+                "create-account": "অ্যাকাউন্ট তৈরি করুন",
+                "security-notice": "সমস্ত যোগাযোগ এন্ড-টু-এন্ড এনক্রিপ্ট করা হয়েছে",
+                "toggle-password": "পাসওয়ার্ড দৃশ্যমানতা টগল করুন",
+                "register-title": "নতুন ব্যবহারকারী নিবন্ধন করুন",
+                "submit-for-approval": "অনুমোদনের জন্য জমা দিন",
+                "register-with-google": "Google দিয়ে নিবন্ধন করুন",
+                "register-with-microsoft": "Microsoft দিয়ে নিবন্ধন করুন",
+                "reset-password": "আপনার পাসওয়ার্ড রিসেট করুন",
+                "send-reset-link": "রিসেট লিংক পাঠান",
+                "complete-profile": "আপনার প্রোফাইল সম্পূর্ণ করুন",
+                "profile-info": "আপনার অ্যাকাউন্ট সেটআপ সম্পূর্ণ করতে অতিরিক্ত তথ্য প্রদান করুন",
+                "complete-setup": "সেটআপ সম্পূর্ণ করুন",
+                "department": "বিভাগ আইডি",
+                "full-name": "পূর্ণ নাম",
+                "password-strength": "পাসওয়ার্ড শক্তি",
+                "about-title": "সোনা কমিউনিকেশন প্ল্যাটফর্ম সম্পর্কে",
+                "about-description": "সোনা কমিউনিকেশন প্ল্যাটফর্ম হল একটি নিরাপদ হায়ারার্কিকাল কমিউনিকেশন সিস্টেম যা বিশেষভাবে সোনা কলেজ অফ টেকনোলজির জন্য ডিজাইন করা হয়েছে। এটি ছাত্র, অনুষদ, বিভাগীয় প্রধান এবং অধ্যক্ষদের মধ্যে নিরবচ্ছিন্ন যোগাযোগ সক্ষম করে, একই সাথে যথাযথ সাংগঠনিক কাঠামো এবং নিরাপত্তা বজায় রাখে।",
+                "secure-communication": "নিরাপদ যোগাযোগ",
+                "secure-communication-desc": "এন্ড-টু-এন্ড এনক্রিপশন নিশ্চিত করে যে সমস্ত যোগাযোগ ব্যক্তিগত এবং নিরাপদ থাকবে।",
+                "hierarchical-structure": "হায়ারার্কিকাল স্ট্রাকচার",
+                "hierarchical-structure-desc": "কলেজের সাংগঠনিক হায়ারার্কির প্রতি শ্রদ্ধা জানানো সংগঠিত যোগাযোগ প্রবাহ।",
+                "cross-platform": "ক্রস-প্ল্যাটফর্ম",
+                "cross-platform-desc": "ওয়েব ব্রাউজার সহ যেকোনো ডিভাইস থেকে অ্যাক্সেসযোগ্য, যেকোনো সময়, যেকোনো জায়গায় সংযোগ নিশ্চিত করে।",
+                "user-friendly": "ব্যবহারকারী-বান্ধব",
+                "user-friendly-desc": "সমস্ত প্রযুক্তি দক্ষতা স্তরের ব্যবহারকারীদের জন্য ডিজাইন করা সহজ ইন্টারফেস।",
+                "contact-title": "আমাদের সাথে যোগাযোগ করুন",
+                "contact-description": "প্রশ্ন বা প্রতিক্রিয়া আছে? আমাদের সহায়তা টিমের সাথে যোগাযোগ করুন এবং আমরা যত তাড়াতাড়ি সম্ভব আপনার কাছে ফিরে আসব।",
+                "name": "নাম",
+                "email": "ইমেল",
+                "subject": "বিষয়",
+                "message": "বার্তা",
+                "send-message": "বার্তা পাঠান",
+                "address": "সোনা কলেজ অফ টেকনোলজি, সেলাম, তামিলনাড়ু 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Microsoft ব্যবহারকারীদের সিঙ্ক করুন",
+                "made-with-love": "দ্বারা তৈরি"
+            },
+            gu: {
+                "login": "પ્રવેશ કરો",
+                "about": "અમારા વિશે",
+                "contact": "સંપર્ક કરો",
+                "platform-title": "સંદેશાવ્યવહાર પ્લેટફોર્મ",
+                "platform-subtitle": "સુરક્ષિત હાયરાર્કિકલ સંદેશાવ્યવહાર સિસ્ટમ",
+                "college-id": "કૉલેજ આઈડી",
+                "password": "પાસવર્ડ",
+                "role": "ભૂમિકા",
+                "select-role": "તમારી ભૂમિકા પસંદ કરો",
+                "student": "વિદ્યાર્થી",
+                "faculty": "અધ્યાપક",
+                "hod": "વિભાગ વડા",
+                "principal": "પ્રિન્સિપાલ",
+                "remember-me": "મને યાદ રાખો",
+                "forgot-password": "પાસવર્ડ ભૂલી ગયા?",
+                "login-to-platform": "પ્લેટફોર્મ પર પ્રવેશ કરો",
+                "or": "અથવા",
+                "login-with-google": "Google સાથે પ્રવેશ કરો",
+                "login-with-microsoft": "Microsoft સાથે પ્રવેશ કરો",
+                "new-to-platform": "સોના કમ્યુનિકેશન પર નવા છો?",
+                "create-account": "એકાઉન્ટ બનાવો",
+                "security-notice": "બધા સંદેશાવ્યવહારો એન્ડ-ટુ-એન્ડ એન્ક્રિપ્ટ કરેલ છે",
+                "toggle-password": "પાસવર્ડ દૃશ્યતા ટૉગલ કરો",
+                "register-title": "નવા વપરાશકર્તાની નોંધણી કરો",
+                "submit-for-approval": "મંજૂરી માટે જમા કરો",
+                "register-with-google": "Google સાથે નોંધણી કરો",
+                "register-with-microsoft": "Microsoft સાથે નોંધણી કરો",
+                "reset-password": "તમારો પાસવર્ડ રીસેટ કરો",
+                "send-reset-link": "રીસેટ લિંક મોકલો",
+                "complete-profile": "તમારી પ્રોફાઇલ પૂર્ણ કરો",
+                "profile-info": "કૃપા કરીને તમારા એકાઉન્ટ સેટઅપ પૂર્ણ કરવા વધારાની માહિતી પ્રદાન કરો",
+                "complete-setup": "સેટઅપ પૂર્ણ કરો",
+                "department": "વિભાગ આઈડી",
+                "full-name": "પૂરું નામ",
+                "password-strength": "પાસવર્ડ શક્તિ",
+                "about-title": "સોના કમ્યુનિકેશન પ્લેટફોર્મ વિશે",
+                "about-description": "સોના કમ્યુનિકેશન પ્લેટફોર્મ એ એક સુરક્ષિત હાયરાર્કિકલ કમ્યુનિકેશન સિસ્ટમ છે જે વિશેષ રીતે સોના કૉલેજ ઓફ ટેકનોલોજી માટે ડિઝાઇન કરવામાં આવ્યું છે. તે વિદ્યાર્થીઓ, અધ્યાપકો, વિભાગ વડા અને પ્રિન્સિપાલ વચ્ચે સરળ સંદેશાવ્યવહાર સક્ષમ બનાવે છે, જ્યારે યોગ્ય સંગઠનાત્મક માળખું અને સુરક્ષા જાળવે છે.",
+                "secure-communication": "સુરક્ષિત સંદેશાવ્યવહાર",
+                "secure-communication-desc": "એન્ડ-ટુ-એન્ડ એન્ક્રિપ્શન ખાતરી કરે છે કે બધા સંદેશાવ્યવહારો ખાનગી અને સુરક્ષિત રહેશે.",
+                "hierarchical-structure": "હાયરાર્કિકલ સ્ટ્રક્ચર",
+                "hierarchical-structure-desc": "કૉલેજના સંગઠનાત્મક હાયરાર્કિનો આદર કરતું સંગઠિત સંદેશાવ્યવહાર પ્રવાહ.",
+                "cross-platform": "ક્રોસ-પ્લેટફોર્મ",
+                "cross-platform-desc": "વેબ બ્રાઉઝર સાથે કોઈપણ ડિવાઇસ પરથી ઍક્સેસ કરી શકાય છે, ક્યારેય, ક્યાં પણ કનેક્ટિવિટીની ખાતરી આપે છે.",
+                "user-friendly": "વપરાશકર્તા-મૈત્રીપૂર્ણ",
+                "user-friendly-desc": "બધા તકનીકી કૌશલ્ય સ્તરોના વપરાશકર્તાઓ માટે ડિઝાઇન કરેલ સહજ ઇન્ટરફેસ.",
+                "contact-title": "અમારો સંપર્ક કરો",
+                "contact-description": "પ્રશ્નો અથવા પ્રતિસાદ છે? અમારી સહાયતા ટીમનો સંપર્ક કરો અને અમે જલ્દી તમારો જવાબ આપીશું.",
+                "name": "નામ",
+                "email": "ઇમેલ",
+                "subject": "વિષય",
+                "message": "સંદેશ",
+                "send-message": "સંદેશ મોકલો",
+                "address": "સોના કૉલેજ ઓફ ટેકનોલોજી, સેલમ, તમિલનાડુ 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Microsoft વપરાશકર્તાઓને સિંક કરો",
+                "made-with-love": "દ્વારા બનાવેલું"
+            },
+            pa: {
+                "login": "ਲੌਗਇਨ ਕਰੋ",
+                "about": "ਸਾਡੇ ਬਾਰੇ",
+                "contact": "ਸੰਪਰਕ ਕਰੋ",
+                "platform-title": "ਸੰਚਾਰ ਪਲੇਟਫਾਰਮ",
+                "platform-subtitle": "ਸੁਰੱਖਿਅਤ ਪਦਾਨੁਕ੍ਰਮ ਸੰਚਾਰ ਪ੍ਰਣਾਲੀ",
+                "college-id": "ਕਾਲਜ ਆਈਡੀ",
+                "password": "ਪਾਸਵਰਡ",
+                "role": "ਭੂਮਿਕਾ",
+                "select-role": "ਆਪਣੀ ਭੂਮਿਕਾ ਚੁਣੋ",
+                "student": "ਵਿਦਿਆਰਥੀ",
+                "faculty": "ਫੈਕਲਟੀ",
+                "hod": "ਵਿਭਾਗ ਮੁਖੀ",
+                "principal": "ਪ੍ਰਿੰਸੀਪਲ",
+                "remember-me": "ਮੈਨੂੰ ਯਾਦ ਰੱਖੋ",
+                "forgot-password": "ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?",
+                "login-to-platform": "ਪਲੇਟਫਾਰਮ 'ਤੇ ਲੌਗਇਨ ਕਰੋ",
+                "or": "ਜਾਂ",
+                "login-with-google": "Google ਨਾਲ ਲੌਗਇਨ ਕਰੋ",
+                "login-with-microsoft": "Microsoft ਨਾਲ ਲੌਗਇਨ ਕਰੋ",
+                "new-to-platform": "ਸੋਨਾ ਸੰਚਾਰ 'ਤੇ ਨਵੇਂ ਹੋ?",
+                "create-account": "ਖਾਤਾ ਬਣਾਓ",
+                "security-notice": "ਸਾਰੇ ਸੰਚਾਰ ਐਂਡ-ਟੂ-ਐਂਡ ਇਨਕ੍ਰਿਪਟ ਕੀਤੇ ਗਏ ਹਨ",
+                "toggle-password": "ਪਾਸਵਰਡ ਦ੍ਰਿਸ਼ਟਕਤਾ ਟੌਗਲ ਕਰੋ",
+                "register-title": "ਨਵੇਂ ਉਪਭੋਗਤਾ ਰਜਿਸਟਰ ਕਰੋ",
+                "submit-for-approval": "ਮਨਜ਼ੂਰੀ ਲਈ ਜਮ੍ਹਾਂ ਕਰੋ",
+                "register-with-google": "Google ਨਾਲ ਰਜਿਸਟਰ ਕਰੋ",
+                "register-with-microsoft": "Microsoft ਨਾਲ ਰਜਿਸਟਰ ਕਰੋ",
+                "reset-password": "ਆਪਣਾ ਪਾਸਵਰਡ ਰੀਸੈੱਟ ਕਰੋ",
+                "send-reset-link": "ਰੀਸੈੱਟ ਲਿੰਕ ਭੇਜੋ",
+                "complete-profile": "ਆਪਣੀ ਪ੍ਰੋਫਾਈਲ ਪੂਰੀ ਕਰੋ",
+                "profile-info": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਖਾਤੇ ਸੈਟਅੱਪ ਨੂੰ ਪੂਰਾ ਕਰਨ ਲਈ ਵਾਧੂ ਜਾਣਕਾਰੀ ਪ੍ਰਦਾਨ ਕਰੋ",
+                "complete-setup": "ਸੈਟਅੱਪ ਪੂਰਾ ਕਰੋ",
+                "department": "ਵਿਭਾਗ ਆਈਡੀ",
+                "full-name": "ਪੂਰਾ ਨਾਮ",
+                "password-strength": "ਪਾਸਵਰਡ ਤਾਕਤ",
+                "about-title": "ਸੋਨਾ ਸੰਚਾਰ ਪਲੇਟਫਾਰਮ ਬਾਰੇ",
+                "about-description": "ਸੋਨਾ ਸੰਚਾਰ ਪਲੇਟਫਾਰਮ ਇੱਕ ਸੁਰੱਖਿਅਤ ਪਦਾਨੁਕ੍ਰਮ ਸੰਚਾਰ ਪ੍ਰਣਾਲੀ ਹੈ ਜੋ ਖਾਸ ਤੌਰ 'ਤੇ ਸੋਨਾ ਕਾਲਜ ਆਫ ਟੈਕਨਾਲੋਜੀ ਲਈ ਡਿਜ਼ਾਈਨ ਕੀਤੀ ਗਈ ਹੈ। ਇਹ ਵਿਦਿਆਰਥੀਆਂ, ਫੈਕਲਟੀ, ਵਿਭਾਗ ਮੁਖੀਆਂ ਅਤੇ ਪ੍ਰਿੰਸੀਪਲਾਂ ਵਿਚਕਾਰ ਨਿਰਵਿਘਨ ਸੰਚਾਰ ਨੂੰ ਸੰਭਵ ਬਣਾਉਂਦਾ ਹੈ, ਇਸੇ ਸਮੇਂ ਸਹੀ ਸੰਗਠਨਾਤਮਕ ਬਣਤਰ ਅਤੇ ਸੁਰੱਖਿਆ ਨੂੰ ਬਣਾਈ ਰੱਖਦਾ ਹੈ।",
+                "secure-communication": "ਸੁਰੱਖਿਅਤ ਸੰਚਾਰ",
+                "secure-communication-desc": "ਐਂਡ-ਟੂ-ਐਂਡ ਇਨਕ੍ਰਿਪਸ਼ਨ ਇਹ ਯਕੀਨੀ ਬਣਾਉਂਦਾ ਹੈ ਕਿ ਸਾਰੇ ਸੰਚਾਰ ਨਿੱਜੇ ਅਤੇ ਸੁਰੱਖਿਅਤ ਰਹਿਣਗੇ।",
+                "hierarchical-structure": "ਪਦਾਨੁਕ੍ਰਮ ਬਣਤਰ",
+                "hierarchical-structure-desc": "ਕਾਲਜ ਦੇ ਸੰਗਠਨਾਤਮਕ ਪਦਾਨੁਕ੍ਰਮ ਦਾ ਸਨਮਾਨ ਕਰਨ ਵਾਲਾ ਸੰਗਠਿਤ ਸੰਚਾਰ ਪ੍ਰਵਾਹ।",
+                "cross-platform": "ਕਰਾਸ-ਪਲੇਟਫਾਰਮ",
+                "cross-platform-desc": "ਵੈੱਬ ਬ੍ਰਾਊਜ਼ਰ ਵਾਲੀ ਕਿਸੇ ਵੀ ਡਿਵਾਈਸ ਤੋਂ ਪਹੁੰਚਯੋਗ, ਕਿਸੇ ਵੀ ਸਮੇਂ, ਕਿਤੇ ਵੀ ਕਨੈਕਟਿਵਿਟੀ ਦੀ ਪੁਸ਼ਟੀ ਕਰਦਾ ਹੈ।",
+                "user-friendly": "ਉਪਭੋਗਤਾ-ਅਨੁਕੂਲ",
+                "user-friendly-desc": "ਸਾਰੀਆਂ ਤਕਨੀਕੀ ਕੁਸ਼ਲਤਾ ਪੱਧਰਾਂ ਦੇ ਉਪਭੋਗਤਾਵਾਂ ਲਈ ਡਿਜ਼ਾਈਨ ਕੀਤਾ ਗਿਆ ਸਹਿਜ ਇੰਟਰਫੇਸ।",
+                "contact-title": "ਸਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੋ",
+                "contact-description": "ਸਵਾਲ ਜਾਂ ਸੁਝਾਅ ਹਨ? ਸਾਡੀ ਸਹਾਇਤਾ ਟੀਮ ਨਾਲ ਸੰਪਰਕ ਕਰੋ ਅਤੇ ਅਸੀਂ ਜਲਦੀ ਤੋਂ ਜਲਦੀ ਤੁਹਾਡਾ ਜਵਾਬ ਦੇਵਾਂਗੇ।",
+                "name": "ਨਾਮ",
+                "email": "ਈਮੇਲ",
+                "subject": "ਵਿਸ਼ਾ",
+                "message": "ਸੁਨੇਹਾ",
+                "send-message": "ਸੁਨੇਹਾ ਭੇਜੋ",
+                "address": "ਸੋਨਾ ਕਾਲਜ ਆਫ ਟੈਕਨਾਲੋਜੀ, ਸੇਲਮ, ਤਾਮਿਲਨਾਡੂ 636005",
+                "phone": "+91 427 409 9999",
+                "support-email": "support@sonatech.ac.in",
+                "sync-microsoft-users": "Microsoft ਉਪਭੋਗਤਾ ਸਿੰਕ ਕਰੋ",
+                "made-with-love": "ਨਾਲ ਬਣਾਇਆ ਗਿਆ"
+            }
+        };
 
         // DOM Elements
         const elements = {
@@ -1314,6 +2397,7 @@
             forgotForm: document.getElementById('forgotForm'),
             microsoftSetupForm: document.getElementById('microsoftSetupForm'),
             googleSetupForm: document.getElementById('googleSetupForm'),
+            contactForm: document.getElementById('contactForm'),
             registerModal: document.getElementById('registerModal'),
             forgotModal: document.getElementById('forgotModal'),
             microsoftSetupModal: document.getElementById('microsoftSetupModal'),
@@ -1333,8 +2417,17 @@
             googleRegisterBtn: document.getElementById('googleRegisterBtn'),
             debugPanel: document.getElementById('debugPanel'),
             debugContent: document.getElementById('debugContent'),
-            syncButton: document.getElementById('syncButton')
+            syncButton: document.getElementById('syncButton'),
+            themeToggle: document.getElementById('themeToggle'),
+            languageButton: document.getElementById('languageButton'),
+            languageDropdown: document.getElementById('languageDropdown'),
+            currentLanguage: document.getElementById('currentLanguage'),
+            tabButtons: document.querySelectorAll('.tab-button'),
+            tabContents: document.querySelectorAll('.tab-content')
         };
+
+        // Current language
+        let currentLanguage = 'en';
 
         // Debug function
         function debug(message) {
@@ -1352,6 +2445,12 @@
             
             // Setup event listeners
             setupEventListeners();
+            
+            // Initialize theme
+            initializeTheme();
+            
+            // Initialize language
+            initializeLanguage();
             
             // Set up authentication state observer
             auth.onAuthStateChanged(user => {
@@ -1391,6 +2490,77 @@
                 }
             });
         });
+
+        // Initialize theme
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        // Update theme icon
+        function updateThemeIcon(theme) {
+            const icon = elements.themeToggle.querySelector('i');
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        // Initialize language
+        function initializeLanguage() {
+            const savedLanguage = localStorage.getItem('language') || 'en';
+            setLanguage(savedLanguage);
+        }
+
+        // Set language
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            
+            // Update current language display
+            elements.currentLanguage.textContent = document.querySelector(`.language-option[data-lang="${lang}"] span:last-child`).textContent;
+            
+            // Update active language option
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-lang') === lang) {
+                    option.classList.add('active');
+                }
+            });
+            
+            // Update all translatable elements
+            updateTranslations();
+        }
+
+        // Update translations
+        function updateTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+            
+            // Update placeholders
+            document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(element => {
+                const key = element.getAttribute('placeholder');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.placeholder = translations[currentLanguage][key];
+                }
+            });
+        }
 
         // Handle admin user creation
         function handleAdminUser(user) {
@@ -1531,6 +2701,7 @@
             elements.forgotForm.addEventListener('submit', handleForgotPassword);
             elements.microsoftSetupForm.addEventListener('submit', handleMicrosoftSetup);
             elements.googleSetupForm.addEventListener('submit', handleGoogleSetup);
+            elements.contactForm.addEventListener('submit', handleContactForm);
 
             // Authentication buttons
             elements.microsoftLoginBtn.addEventListener('click', () => handleMicrosoftAuth(true));
@@ -1540,6 +2711,45 @@
             
             // Sync button
             elements.syncButton.addEventListener('click', syncAllMicrosoftUsers);
+            
+            // Theme toggle
+            elements.themeToggle.addEventListener('click', toggleTheme);
+            
+            // Language selector
+            elements.languageButton.addEventListener('click', () => {
+                elements.languageDropdown.classList.toggle('show');
+            });
+            
+            // Language options
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const lang = option.getAttribute('data-lang');
+                    setLanguage(lang);
+                    elements.languageDropdown.classList.remove('show');
+                });
+            });
+            
+            // Tab navigation
+            elements.tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    
+                    // Update active tab button
+                    elements.tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Update active tab content
+                    elements.tabContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Close language dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!elements.languageButton.contains(e.target) && !elements.languageDropdown.contains(e.target)) {
+                    elements.languageDropdown.classList.remove('show');
+                }
+            });
         }
 
         // Toggle password visibility
@@ -1584,16 +2794,16 @@
             if (password.length > 0) {
                 if (strength < 2) {
                     elements.passwordStrength.classList.add('weak');
-                    text = 'Weak password';
+                    text = translations[currentLanguage]['weak-password'] || 'Weak password';
                 } else if (strength < 4) {
                     elements.passwordStrength.classList.add('medium');
-                    text = 'Medium strength password';
+                    text = translations[currentLanguage]['medium-password'] || 'Medium strength password';
                 } else {
                     elements.passwordStrength.classList.add('strong');
-                    text = 'Strong password';
+                    text = translations[currentLanguage]['strong-password'] || 'Strong password';
                 }
             } else {
-                text = 'Password strength';
+                text = translations[currentLanguage]['password-strength'] || 'Password strength';
             }
             
             elements.passwordStrengthText.textContent = text;
@@ -1874,7 +3084,11 @@
                 // Save user to Firestore
                 db.collection('users').doc(user.uid).set(userData)
                     .then(() => {
-                        showNotification('Account setup completed successfully!', 'success');
+                        showNotification(
+                            translations[currentLanguage]['account-setup-completed'] || 
+                            'Account setup completed successfully!', 
+                            'success'
+                        );
                         closeModal(elements.microsoftSetupModal);
                         elements.microsoftSetupForm.reset();
                         
@@ -1884,13 +3098,21 @@
                     .catch((error) => {
                         console.error('Error saving user data:', error);
                         debug('Error saving user data: ' + error.message);
-                        showNotification('Error saving user data. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['error-saving-user-data'] || 
+                            'Error saving user data. Please try again.', 
+                            'error'
+                        );
                     })
                     .finally(() => {
                         submitBtn.classList.remove('btn-loading');
                     });
             } else {
-                showNotification('Authentication error. Please try again.', 'error');
+                showNotification(
+                    translations[currentLanguage]['authentication-error'] || 
+                    'Authentication error. Please try again.', 
+                    'error'
+                );
                 submitBtn.classList.remove('btn-loading');
             }
         }
@@ -1979,7 +3201,11 @@
                 // Save user to Firestore
                 db.collection('users').doc(user.uid).set(userData)
                     .then(() => {
-                        showNotification('Account setup completed successfully!', 'success');
+                        showNotification(
+                            translations[currentLanguage]['account-setup-completed'] || 
+                            'Account setup completed successfully!', 
+                            'success'
+                        );
                         closeModal(elements.googleSetupModal);
                         elements.googleSetupForm.reset();
                         
@@ -1989,13 +3215,21 @@
                     .catch((error) => {
                         console.error('Error saving user data:', error);
                         debug('Error saving user data: ' + error.message);
-                        showNotification('Error saving user data. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['error-saving-user-data'] || 
+                            'Error saving user data. Please try again.', 
+                            'error'
+                        );
                     })
                     .finally(() => {
                         submitBtn.classList.remove('btn-loading');
                     });
             } else {
-                showNotification('Authentication error. Please try again.', 'error');
+                showNotification(
+                    translations[currentLanguage]['authentication-error'] || 
+                    'Authentication error. Please try again.', 
+                    'error'
+                );
                 submitBtn.classList.remove('btn-loading');
             }
         }
@@ -2018,7 +3252,11 @@
                 debug('Attempting principal login');
                 auth.signInWithEmailAndPassword('principal.test@sona.ac.in', password)
                     .then(() => {
-                        showNotification(`Welcome back, Principal!`, 'success');
+                        showNotification(
+                            translations[currentLanguage]['welcome-back-principal'] || 
+                            `Welcome back, Principal!`, 
+                            'success'
+                        );
                         
                         // Remember user if checkbox is checked
                         if (document.getElementById('rememberMe').checked) {
@@ -2032,7 +3270,11 @@
                         console.error('Login error:', error);
                         debug('Principal login error: ' + error.message);
                         submitBtn.classList.remove('btn-loading');
-                        showNotification('Invalid credentials. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['invalid-credentials'] || 
+                            'Invalid credentials. Please try again.', 
+                            'error'
+                        );
                     });
                 return;
             }
@@ -2041,7 +3283,11 @@
                 debug('Attempting HOD CSE login');
                 auth.signInWithEmailAndPassword('hod.cse@sona.ac.in', password)
                     .then(() => {
-                        showNotification(`Welcome back, HOD CSE!`, 'success');
+                        showNotification(
+                            translations[currentLanguage]['welcome-back-hod-cse'] || 
+                            `Welcome back, HOD CSE!`, 
+                            'success'
+                        );
                         
                         // Remember user if checkbox is checked
                         if (document.getElementById('rememberMe').checked) {
@@ -2055,7 +3301,11 @@
                         console.error('Login error:', error);
                         debug('HOD CSE login error: ' + error.message);
                         submitBtn.classList.remove('btn-loading');
-                        showNotification('Invalid credentials. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['invalid-credentials'] || 
+                            'Invalid credentials. Please try again.', 
+                            'error'
+                        );
                     });
                 return;
             }
@@ -2064,7 +3314,11 @@
                 debug('Attempting HOD ECE login');
                 auth.signInWithEmailAndPassword('hod.ece@sona.ac.in', password)
                     .then(() => {
-                        showNotification(`Welcome back, HOD ECE!`, 'success');
+                        showNotification(
+                            translations[currentLanguage]['welcome-back-hod-ece'] || 
+                            `Welcome back, HOD ECE!`, 
+                            'success'
+                        );
                         
                         // Remember user if checkbox is checked
                         if (document.getElementById('rememberMe').checked) {
@@ -2078,7 +3332,11 @@
                         console.error('Login error:', error);
                         debug('HOD ECE login error: ' + error.message);
                         submitBtn.classList.remove('btn-loading');
-                        showNotification('Invalid credentials. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['invalid-credentials'] || 
+                            'Invalid credentials. Please try again.', 
+                            'error'
+                        );
                     });
                 return;
             }
@@ -2095,7 +3353,11 @@
                         // No user found
                         debug('No user found in Firestore');
                         submitBtn.classList.remove('btn-loading');
-                        showNotification('Invalid credentials. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['invalid-credentials'] || 
+                            'Invalid credentials. Please try again.', 
+                            'error'
+                        );
                         return;
                     }
                     
@@ -2113,7 +3375,11 @@
                 .then((userCredential) => {
                     // Login successful
                     debug('Login successful');
-                    showNotification(`Welcome back, ${collegeId}!`, 'success');
+                    showNotification(
+                        translations[currentLanguage]['welcome-back'] || 
+                        `Welcome back, ${collegeId}!`, 
+                        'success'
+                    );
                     
                     // Remember user if checkbox is checked
                     if (document.getElementById('rememberMe').checked) {
@@ -2131,9 +3397,17 @@
                     submitBtn.classList.remove('btn-loading');
                     
                     if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                        showNotification('Invalid credentials. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['invalid-credentials'] || 
+                            'Invalid credentials. Please try again.', 
+                            'error'
+                        );
                     } else {
-                        showNotification('Login failed. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['login-failed'] || 
+                            'Login failed. Please try again.', 
+                            'error'
+                        );
                     }
                 });
         }
@@ -2174,11 +3448,15 @@
                     return db.collection('users').doc(user.uid).set(userData);
                 })
                 .then(() => {
-                    showNotification('Registration submitted for approval. You will receive an email once approved.', 'success');
+                    showNotification(
+                        translations[currentLanguage]['registration-submitted'] || 
+                        'Registration submitted for approval. You will receive an email once approved.', 
+                        'success'
+                    );
                     closeModal(elements.registerModal);
                     elements.registerForm.reset();
                     elements.passwordStrength.className = 'password-strength';
-                    elements.passwordStrengthText.textContent = 'Password strength';
+                    elements.passwordStrengthText.textContent = translations[currentLanguage]['password-strength'] || 'Password strength';
                     
                     // Sign out the user until they're approved
                     auth.signOut();
@@ -2187,11 +3465,23 @@
                     console.error('Registration error:', error);
                     
                     if (error.code === 'auth/email-already-in-use') {
-                        showNotification('Email already in use. Please use a different email.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['email-already-in-use'] || 
+                            'Email already in use. Please use a different email.', 
+                            'error'
+                        );
                     } else if (error.code === 'auth/weak-password') {
-                        showNotification('Password is too weak. Please use a stronger password.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['weak-password-error'] || 
+                            'Password is too weak. Please use a stronger password.', 
+                            'error'
+                        );
                     } else {
-                        showNotification('Registration failed. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['registration-failed'] || 
+                            'Registration failed. Please try again.', 
+                            'error'
+                        );
                     }
                 })
                 .finally(() => {
@@ -2212,7 +3502,11 @@
             // Send password reset email
             auth.sendPasswordResetEmail(email)
                 .then(() => {
-                    showNotification('Password reset link sent to your email.', 'info');
+                    showNotification(
+                        translations[currentLanguage]['reset-link-sent'] || 
+                        'Password reset link sent to your email.', 
+                        'info'
+                    );
                     closeModal(elements.forgotModal);
                     elements.forgotForm.reset();
                 })
@@ -2220,14 +3514,65 @@
                     console.error('Password reset error:', error);
                     
                     if (error.code === 'auth/user-not-found') {
-                        showNotification('No user found with this email address.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['no-user-found'] || 
+                            'No user found with this email address.', 
+                            'error'
+                        );
                     } else {
-                        showNotification('Failed to send reset link. Please try again.', 'error');
+                        showNotification(
+                            translations[currentLanguage]['reset-link-failed'] || 
+                            'Failed to send reset link. Please try again.', 
+                            'error'
+                        );
                     }
                 })
                 .finally(() => {
                     submitBtn.classList.remove('btn-loading');
                 });
+        }
+
+        // Handle contact form submission
+        function handleContactForm(e) {
+            e.preventDefault();
+            const submitBtn = elements.contactForm.querySelector('.btn');
+            
+            // Show loading state
+            submitBtn.classList.add('btn-loading');
+            
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+            
+            // Save contact message to Firestore
+            db.collection('contactMessages').add({
+                name,
+                email,
+                subject,
+                message,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                status: 'unread'
+            })
+            .then(() => {
+                showNotification(
+                    translations[currentLanguage]['message-sent'] || 
+                    'Your message has been sent successfully. We will get back to you soon.', 
+                    'success'
+                );
+                elements.contactForm.reset();
+            })
+            .catch((error) => {
+                console.error('Error sending contact message:', error);
+                showNotification(
+                    translations[currentLanguage]['message-failed'] || 
+                    'Failed to send your message. Please try again.', 
+                    'error'
+                );
+            })
+            .finally(() => {
+                submitBtn.classList.remove('btn-loading');
+            });
         }
 
         // Check for remembered user
@@ -2285,7 +3630,11 @@
         // Sync all Microsoft users (admin only)
         function syncAllMicrosoftUsers() {
             if (!auth.currentUser) {
-                showNotification('Please log in first', 'error');
+                showNotification(
+                    translations[currentLanguage]['please-login-first'] || 
+                    'Please log in first', 
+                    'error'
+                );
                 return;
             }
             
@@ -2293,15 +3642,27 @@
             db.collection('users').doc(auth.currentUser.uid).get()
                 .then(doc => {
                     if (!doc.exists || doc.data().role !== 'principal') {
-                        showNotification('Only principals can sync users', 'error');
+                        showNotification(
+                            translations[currentLanguage]['only-principals-can-sync'] || 
+                            'Only principals can sync users', 
+                            'error'
+                        );
                         return;
                     }
                     
-                    showNotification('Starting Microsoft user sync...', 'info');
+                    showNotification(
+                        translations[currentLanguage]['starting-sync'] || 
+                        'Starting Microsoft user sync...', 
+                        'info'
+                    );
                     
                     // Simulate API call delay
                     setTimeout(() => {
-                        showNotification('Microsoft user sync completed successfully', 'success');
+                        showNotification(
+                            translations[currentLanguage]['sync-completed'] || 
+                            'Microsoft user sync completed successfully', 
+                            'success'
+                        );
                         
                         // In a real implementation, you would:
                         // 1. Use Microsoft Graph API with admin credentials to fetch all users
