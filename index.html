@@ -358,27 +358,27 @@
         }
 
         .btn-microsoft {
-            background: var(--info);
-            color: var(--white);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            background: #0078d4;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 120, 212, 0.3);
         }
 
         .btn-microsoft:hover {
-            background: #2563eb;
+            background: #106ebe;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 6px 20px rgba(0, 120, 212, 0.4);
         }
 
         .btn-google {
-            background: #ea4335;
-            color: var(--white);
-            box-shadow: 0 4px 15px rgba(234, 67, 53, 0.3);
+            background: #db4437;
+            color: white;
+            box-shadow: 0 4px 15px rgba(219, 68, 55, 0.3);
         }
 
         .btn-google:hover {
-            background: #d33b2c;
+            background: #c23321;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(234, 67, 53, 0.4);
+            box-shadow: 0 6px 20px rgba(219, 68, 55, 0.4);
         }
 
         .btn-loading .btn-text {
@@ -397,7 +397,7 @@
             bottom: 0;
             margin: auto;
             border: 2px solid transparent;
-            border-top-color: var(--white);
+            border-top-color: var(--text-primary);
             border-radius: 50%;
             animation: button-loading-spinner 1s ease infinite;
         }
@@ -452,19 +452,6 @@
             overflow: hidden;
         }
 
-        .role-badge::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: -1;
-        }
-
         .role-badge:hover {
             background: rgba(255, 255, 255, 0.1);
             border-color: var(--primary-yellow);
@@ -476,27 +463,6 @@
             color: var(--primary-blue);
             border-color: var(--primary-yellow);
             box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3);
-        }
-
-        .role-badge.active::before {
-            opacity: 1;
-        }
-
-        /* Role-specific styling */
-        .role-student.active {
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-        }
-
-        .role-faculty.active {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-
-        .role-hod.active {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        }
-
-        .role-principal.active {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
         }
 
         /* Register link */
@@ -533,6 +499,73 @@
             justify-content: center;
             gap: 0.5rem;
             border-left: 4px solid var(--primary-yellow);
+        }
+
+        /* Demo credentials */
+        .demo-credentials {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .demo-credentials h3 {
+            color: #4ade80;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .demo-account {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .demo-account:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .demo-account-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .demo-account-role {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .demo-account-email {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .demo-account-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            background: #4ade80;
+            color: var(--primary-blue);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .demo-account-btn:hover {
+            background: #22c55e;
+            transform: scale(1.05);
         }
 
         /* Modal styles */
@@ -644,7 +677,7 @@
             right: 1.25rem;
             padding: 1rem 1.5rem;
             border-radius: var(--border-radius);
-            color: var(--white);
+            color: var(--text-primary);
             font-weight: 500;
             box-shadow: var(--card-shadow);
             z-index: 1100;
@@ -667,35 +700,6 @@
 
         .notification.info {
             background: var(--info);
-        }
-
-        /* Tooltip */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background-color: var(--secondary-blue);
-            color: var(--white);
-            text-align: center;
-            border-radius: 6px;
-            padding: 0.5rem;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -100px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.75rem;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
         }
 
         /* Footer */
@@ -727,108 +731,6 @@
             50% { transform: scale(1); }
             75% { transform: scale(1.1); }
             100% { transform: scale(1); }
-        }
-
-        /* Admin accounts section */
-        .admin-accounts {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--glass-border);
-        }
-
-        .admin-accounts h3 {
-            color: var(--primary-yellow);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            text-align: center;
-        }
-
-        .admin-account {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-
-        .admin-account:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .admin-account-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .admin-account-role {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .admin-account-email {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .admin-account-dept {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .admin-account-btn {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.75rem;
-            background: var(--info);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .admin-account-btn:hover {
-            background: #2563eb;
-        }
-
-        /* Debug panel */
-        .debug-panel {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 12px;
-            max-width: 300px;
-            z-index: 10000;
-            display: none;
-        }
-
-        .debug-panel.show {
-            display: block;
-        }
-
-        /* Security notice for test accounts */
-        .test-accounts-notice {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            background: rgba(239, 68, 68, 0.1);
-            border-radius: var(--border-radius);
-            font-size: 0.75rem;
-            color: var(--text-primary);
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            border-left: 4px solid var(--error);
         }
 
         /* Responsive design */
@@ -896,77 +798,6 @@
             
             .btn {
                 padding: 0.75rem 1rem;
-            }
-        }
-
-        @media (max-width: 320px) {
-            html {
-                font-size: 12px;
-            }
-            
-            .header {
-                padding: 0.5rem;
-            }
-            
-            .logo {
-                height: 35px;
-            }
-            
-            .logo-text {
-                font-size: 0.9rem;
-            }
-            
-            .login-container {
-                padding: 1rem;
-            }
-            
-            .modal-content {
-                padding: 1rem;
-            }
-            
-            .role-badges {
-                gap: 0.5rem;
-            }
-            
-            .role-badge {
-                padding: 0.25rem 0.75rem;
-                font-size: 0.7rem;
-            }
-        }
-
-        /* High contrast mode support */
-        @media (prefers-contrast: high) {
-            :root {
-                --primary-blue: #000080;
-                --secondary-blue: #0066CC;
-                --primary-yellow: #FF8C00;
-                --secondary-yellow: #FFF8DC;
-                --glass-bg: rgba(255, 255, 255, 0.1);
-                --glass-border: rgba(255, 255, 255, 0.3);
-                --text-secondary: #E0E0E0;
-                --text-muted: #B0B0B0;
-            }
-        }
-
-        /* Reduced motion support */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        /* Print styles */
-        @media print {
-            body {
-                background: none;
-                padding: 0;
-            }
-            
-            .login-container {
-                box-shadow: none;
-                max-width: 100%;
             }
         }
 
@@ -1039,9 +870,8 @@
                     <div class="input-container">
                         <i class="fas fa-lock input-icon" aria-hidden="true"></i>
                         <input type="password" id="password" required aria-required="true" placeholder="Enter your password" autocomplete="current-password">
-                        <button type="button" class="password-toggle tooltip" id="passwordToggle" aria-label="Toggle password visibility">
+                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
                             <i class="fas fa-eye" aria-hidden="true"></i>
-                            <span class="tooltiptext">Toggle password visibility</span>
                         </button>
                     </div>
                 </div>
@@ -1091,49 +921,48 @@
                 <span>OR</span>
             </div>
             
-            <button type="button" class="btn btn-google" id="googleLoginBtn" aria-live="polite">
-                <i class="fab fa-google" aria-hidden="true"></i>
-                <span class="btn-text">Login with Google</span>
-            </button>
-            
             <button type="button" class="btn btn-microsoft" id="microsoftLoginBtn" aria-live="polite">
                 <i class="fab fa-microsoft" aria-hidden="true"></i>
                 <span class="btn-text">Login with Microsoft</span>
             </button>
             
+            <button type="button" class="btn btn-google" id="googleLoginBtn" aria-live="polite">
+                <i class="fab fa-google" aria-hidden="true"></i>
+                <span class="btn-text">Login with Google</span>
+            </button>
+            
             <p class="register-link">New to Sona Communication? <a href="#" id="registerLink">Create an account</a></p>
             
-            <!-- Administrative Accounts Section -->
-            <div class="admin-accounts">
-                <h3>Administrative Accounts</h3>
-                <div class="admin-account">
-                    <div class="admin-account-info">
-                        <div class="admin-account-role">Principal Account</div>
-                        <div class="admin-account-email">principal.test@sona.ac.in</div>
-                        <div class="admin-account-dept">Department: ADMINISTRATION</div>
+            <!-- Demo Credentials Section -->
+            <div class="demo-credentials">
+                <h3><i class="fas fa-flask" aria-hidden="true"></i> Demo Accounts</h3>
+                <div class="demo-account">
+                    <div class="demo-account-info">
+                        <div class="demo-account-role">Principal</div>
+                        <div class="demo-account-email">demo.principal@sona.edu</div>
                     </div>
-                    <button class="admin-account-btn" onclick="fillAdminAccount('principal.test@sona.ac.in', 'SonaPrincipal@2025', 'principal')">Fill</button>
+                    <button class="demo-account-btn" onclick="fillDemoAccount('PRIN001', 'Demo@123', 'principal')">Try Demo</button>
                 </div>
-                <div class="admin-account">
-                    <div class="admin-account-info">
-                        <div class="admin-account-role">HOD CSE Account</div>
-                        <div class="admin-account-email">hod.cse@sona.ac.in</div>
-                        <div class="admin-account-dept">Department: Computer Science Engineering</div>
+                <div class="demo-account">
+                    <div class="demo-account-info">
+                        <div class="demo-account-role">HOD CSE</div>
+                        <div class="demo-account-email">demo.hod@sona.edu</div>
                     </div>
-                    <button class="admin-account-btn" onclick="fillAdminAccount('hod.cse@sona.ac.in', 'HodCSE@2025', 'hod')">Fill</button>
+                    <button class="demo-account-btn" onclick="fillDemoAccount('HOD001', 'Demo@123', 'hod')">Try Demo</button>
                 </div>
-                <div class="admin-account">
-                    <div class="admin-account-info">
-                        <div class="admin-account-role">HOD ECE Account</div>
-                        <div class="admin-account-email">hod.ece@sona.ac.in</div>
-                        <div class="admin-account-dept">Department: Electronics & Communication Engineering</div>
+                <div class="demo-account">
+                    <div class="demo-account-info">
+                        <div class="demo-account-role">Faculty</div>
+                        <div class="demo-account-email">demo.faculty@sona.edu</div>
                     </div>
-                    <button class="admin-account-btn" onclick="fillAdminAccount('hod.ece@sona.ac.in', 'HodECE@2025', 'hod')">Fill</button>
+                    <button class="demo-account-btn" onclick="fillDemoAccount('FAC001', 'Demo@123', 'faculty')">Try Demo</button>
                 </div>
-                
-                <div class="test-accounts-notice">
-                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-                    <span>For testing purposes only. In production, use secure authentication methods.</span>
+                <div class="demo-account">
+                    <div class="demo-account-info">
+                        <div class="demo-account-role">Student</div>
+                        <div class="demo-account-email">demo.student@sona.edu</div>
+                    </div>
+                    <button class="demo-account-btn" onclick="fillDemoAccount('STU001', 'Demo@123', 'student')">Try Demo</button>
                 </div>
             </div>
             
@@ -1169,9 +998,8 @@
                     <div class="input-container">
                         <i class="fas fa-lock input-icon" aria-hidden="true"></i>
                         <input type="password" id="regPassword" required placeholder="Create a strong password" autocomplete="new-password">
-                        <button type="button" class="password-toggle tooltip" id="regPasswordToggle" aria-label="Toggle password visibility">
+                        <button type="button" class="password-toggle" id="regPasswordToggle" aria-label="Toggle password visibility">
                             <i class="fas fa-eye" aria-hidden="true"></i>
-                            <span class="tooltiptext">Toggle password visibility</span>
                         </button>
                     </div>
                     <div class="password-strength" id="passwordStrength" aria-hidden="true">
@@ -1213,14 +1041,14 @@
                 <span>OR</span>
             </div>
             
-            <button type="button" class="btn btn-google" id="googleRegisterBtn" aria-live="polite">
-                <i class="fab fa-google" aria-hidden="true"></i>
-                <span class="btn-text">Register with Google</span>
-            </button>
-            
             <button type="button" class="btn btn-microsoft" id="microsoftRegisterBtn" aria-live="polite">
                 <i class="fab fa-microsoft" aria-hidden="true"></i>
                 <span class="btn-text">Register with Microsoft</span>
+            </button>
+            
+            <button type="button" class="btn btn-google" id="googleRegisterBtn" aria-live="polite">
+                <i class="fab fa-google" aria-hidden="true"></i>
+                <span class="btn-text">Register with Google</span>
             </button>
         </div>
     </div>
@@ -1245,25 +1073,25 @@
         </div>
     </div>
 
-    <!-- Microsoft Account Setup Modal -->
-    <div class="modal" id="microsoftSetupModal" role="dialog" aria-labelledby="microsoftSetupModalTitle" aria-modal="true">
+    <!-- Google/Microsoft Account Setup Modal -->
+    <div class="modal" id="socialSetupModal" role="dialog" aria-labelledby="socialSetupModalTitle" aria-modal="true">
         <div class="modal-content">
-            <button class="close-btn" id="closeMicrosoftSetup" aria-label="Close Microsoft setup modal">&times;</button>
-            <h2 id="microsoftSetupModalTitle">Complete Your Profile</h2>
+            <button class="close-btn" id="closeSocialSetup" aria-label="Close setup modal">&times;</button>
+            <h2 id="socialSetupModalTitle">Complete Your Profile</h2>
             <p class="subtitle" style="margin-bottom: 1.5rem;">Please provide additional information to complete your account setup</p>
-            <form id="microsoftSetupForm" aria-label="Microsoft account setup form">
+            <form id="socialSetupForm" aria-label="Social account setup form">
                 <div class="form-group">
-                    <label for="msCollegeId">College ID</label>
+                    <label for="socialCollegeId">College ID</label>
                     <div class="input-container">
                         <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
-                        <input type="text" id="msCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
+                        <input type="text" id="socialCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="msRole">Role</label>
+                    <label for="socialRole">Role</label>
                     <div class="input-container">
                         <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
-                        <select id="msRole" required>
+                        <select id="socialRole" required>
                             <option value="">Select Your Role</option>
                             <option value="student">Student</option>
                             <option value="faculty">Faculty</option>
@@ -1273,65 +1101,17 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="msDepartment">Department ID</label>
+                    <label for="socialDepartment">Department ID</label>
                     <div class="input-container">
                         <i class="fas fa-building input-icon" aria-hidden="true"></i>
-                        <input type="number" id="msDepartment" required placeholder="e.g., 101">
+                        <input type="number" id="socialDepartment" required placeholder="e.g., 101">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="msFullName">Full Name</label>
+                    <label for="socialFullName">Full Name</label>
                     <div class="input-container">
                         <i class="fas fa-user input-icon" aria-hidden="true"></i>
-                        <input type="text" id="msFullName" required placeholder="Enter your full name" autocomplete="name">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary" aria-live="polite">
-                    <span class="btn-text">Complete Setup</span>
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Google Account Setup Modal -->
-    <div class="modal" id="googleSetupModal" role="dialog" aria-labelledby="googleSetupModalTitle" aria-modal="true">
-        <div class="modal-content">
-            <button class="close-btn" id="closeGoogleSetup" aria-label="Close Google setup modal">&times;</button>
-            <h2 id="googleSetupModalTitle">Complete Your Profile</h2>
-            <p class="subtitle" style="margin-bottom: 1.5rem;">Please provide additional information to complete your account setup</p>
-            <form id="googleSetupForm" aria-label="Google account setup form">
-                <div class="form-group">
-                    <label for="googleCollegeId">College ID</label>
-                    <div class="input-container">
-                        <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
-                        <input type="text" id="googleCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="googleRole">Role</label>
-                    <div class="input-container">
-                        <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
-                        <select id="googleRole" required>
-                            <option value="">Select Your Role</option>
-                            <option value="student">Student</option>
-                            <option value="faculty">Faculty</option>
-                            <option value="hod">Head of Department</option>
-                            <option value="principal">Principal</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="googleDepartment">Department ID</label>
-                    <div class="input-container">
-                        <i class="fas fa-building input-icon" aria-hidden="true"></i>
-                        <input type="number" id="googleDepartment" required placeholder="e.g., 101">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="googleFullName">Full Name</label>
-                    <div class="input-container">
-                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
-                        <input type="text" id="googleFullName" required placeholder="Enter your full name" autocomplete="name">
+                        <input type="text" id="socialFullName" required placeholder="Enter your full name" autocomplete="name">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" aria-live="polite">
@@ -1343,12 +1123,6 @@
 
     <div class="notification" id="notification" role="alert" aria-live="assertive"></div>
 
-    <!-- Debug Panel -->
-    <div class="debug-panel" id="debugPanel">
-        <div>Debug Info:</div>
-        <div id="debugContent"></div>
-    </div>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -1358,6 +1132,62 @@
     </footer>
 
     <script>
+        // Enhanced security configurations
+        const SECURITY_CONFIG = {
+            // Password requirements
+            minPasswordLength: 8,
+            requireUppercase: true,
+            requireLowercase: true,
+            requireNumbers: true,
+            requireSpecialChars: true,
+            
+            // Rate limiting
+            maxLoginAttempts: 5,
+            lockoutDuration: 15 * 60 * 1000, // 15 minutes
+            
+            // Session security
+            sessionTimeout: 30 * 60 * 1000, // 30 minutes
+            
+            // Two-factor authentication
+            enable2FA: false
+        };
+
+        // Secure user database (in production, this would be server-side)
+        const secureUsers = {
+            'PRIN001': { 
+                password: CryptoJS.SHA256('Demo@123').toString(), 
+                role: 'principal', 
+                name: 'Dr. Principal Demo', 
+                department: 'Administration',
+                email: 'principal@sonatech.ac.in',
+                salt: 'random_salt_1'
+            },
+            'HOD001': { 
+                password: CryptoJS.SHA256('Demo@123').toString(), 
+                role: 'hod', 
+                name: 'Dr. HOD Demo', 
+                department: 'Computer Science',
+                email: 'hod.cse@sonatech.ac.in',
+                salt: 'random_salt_2'
+            },
+            'FAC001': { 
+                password: CryptoJS.SHA256('Demo@123').toString(), 
+                role: 'faculty', 
+                name: 'Prof. Faculty Demo', 
+                department: 'Computer Science',
+                email: 'faculty@sonatech.ac.in',
+                salt: 'random_salt_3'
+            },
+            'STU001': { 
+                password: CryptoJS.SHA256('Demo@123').toString(), 
+                role: 'student', 
+                name: 'Student Demo', 
+                department: 'Computer Science',
+                email: 'student@sonatech.ac.in',
+                salt: 'random_salt_4'
+            }
+        };
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCWcis4jU3gVTWZyiIn5PF90R6nopEpAF0",
@@ -1373,17 +1203,152 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        // Session management
+        const sessionManager = {
+            startSession: function(userData) {
+                const sessionData = {
+                    user: userData,
+                    startTime: Date.now(),
+                    lastActivity: Date.now()
+                };
+                sessionStorage.setItem('userSession', JSON.stringify(sessionData));
+                this.startSessionTimeout();
+            },
+            
+            updateActivity: function() {
+                const session = JSON.parse(sessionStorage.getItem('userSession'));
+                if (session) {
+                    session.lastActivity = Date.now();
+                    sessionStorage.setItem('userSession', JSON.stringify(session));
+                }
+            },
+            
+            isSessionValid: function() {
+                const session = JSON.parse(sessionStorage.getItem('userSession'));
+                if (!session) return false;
+                
+                const now = Date.now();
+                const timeDiff = now - session.lastActivity;
+                return timeDiff < SECURITY_CONFIG.sessionTimeout;
+            },
+            
+            clearSession: function() {
+                sessionStorage.removeItem('userSession');
+                localStorage.removeItem('loginAttempts');
+            },
+            
+            startSessionTimeout: function() {
+                setTimeout(() => {
+                    if (!this.isSessionValid()) {
+                        this.clearSession();
+                        showNotification('Session expired. Please login again.', 'warning');
+                        // Redirect to login page
+                        window.location.reload();
+                    }
+                }, SECURITY_CONFIG.sessionTimeout);
+            }
+        };
+
+        // Rate limiting for login attempts
+        const rateLimiter = {
+            getAttempts: function() {
+                const attempts = localStorage.getItem('loginAttempts');
+                return attempts ? JSON.parse(attempts) : { count: 0, lastAttempt: 0 };
+            },
+            
+            addAttempt: function() {
+                const attempts = this.getAttempts();
+                attempts.count++;
+                attempts.lastAttempt = Date.now();
+                localStorage.setItem('loginAttempts', JSON.stringify(attempts));
+                return attempts;
+            },
+            
+            isLocked: function() {
+                const attempts = this.getAttempts();
+                if (attempts.count >= SECURITY_CONFIG.maxLoginAttempts) {
+                    const timeDiff = Date.now() - attempts.lastAttempt;
+                    return timeDiff < SECURITY_CONFIG.lockoutDuration;
+                }
+                return false;
+            },
+            
+            reset: function() {
+                localStorage.removeItem('loginAttempts');
+            },
+            
+            getRemainingLockTime: function() {
+                const attempts = this.getAttempts();
+                if (attempts.count >= SECURITY_CONFIG.maxLoginAttempts) {
+                    const timeDiff = Date.now() - attempts.lastAttempt;
+                    const remaining = SECURITY_CONFIG.lockoutDuration - timeDiff;
+                    return Math.max(0, Math.ceil(remaining / 1000 / 60)); // minutes
+                }
+                return 0;
+            }
+        };
+
+        // Password validation
+        function validatePassword(password) {
+            const errors = [];
+            
+            if (password.length < SECURITY_CONFIG.minPasswordLength) {
+                errors.push(`Password must be at least ${SECURITY_CONFIG.minPasswordLength} characters`);
+            }
+            
+            if (SECURITY_CONFIG.requireUppercase && !/[A-Z]/.test(password)) {
+                errors.push('Password must contain at least one uppercase letter');
+            }
+            
+            if (SECURITY_CONFIG.requireLowercase && !/[a-z]/.test(password)) {
+                errors.push('Password must contain at least one lowercase letter');
+            }
+            
+            if (SECURITY_CONFIG.requireNumbers && !/\d/.test(password)) {
+                errors.push('Password must contain at least one number');
+            }
+            
+            if (SECURITY_CONFIG.requireSpecialChars && !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+                errors.push('Password must contain at least one special character');
+            }
+            
+            return {
+                isValid: errors.length === 0,
+                errors: errors,
+                strength: calculatePasswordStrength(password)
+            };
+        }
+
+        function calculatePasswordStrength(password) {
+            let score = 0;
+            let strength = 'weak';
+            
+            // Length bonus
+            if (password.length >= 8) score += 1;
+            if (password.length >= 12) score += 1;
+            
+            // Character variety
+            if (/[a-z]/.test(password)) score += 1;
+            if (/[A-Z]/.test(password)) score += 1;
+            if (/\d/.test(password)) score += 1;
+            if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score += 1;
+            
+            // Determine strength
+            if (score >= 5) strength = 'strong';
+            else if (score >= 3) strength = 'medium';
+            
+            return strength;
+        }
+
         // DOM Elements
         const elements = {
             loginForm: document.getElementById('loginForm'),
             registerForm: document.getElementById('registerForm'),
             forgotForm: document.getElementById('forgotForm'),
-            microsoftSetupForm: document.getElementById('microsoftSetupForm'),
-            googleSetupForm: document.getElementById('googleSetupForm'),
+            socialSetupForm: document.getElementById('socialSetupForm'),
             registerModal: document.getElementById('registerModal'),
             forgotModal: document.getElementById('forgotModal'),
-            microsoftSetupModal: document.getElementById('microsoftSetupModal'),
-            googleSetupModal: document.getElementById('googleSetupModal'),
+            socialSetupModal: document.getElementById('socialSetupModal'),
             passwordToggle: document.getElementById('passwordToggle'),
             regPasswordToggle: document.getElementById('regPasswordToggle'),
             passwordField: document.getElementById('password'),
@@ -1396,118 +1361,132 @@
             microsoftLoginBtn: document.getElementById('microsoftLoginBtn'),
             microsoftRegisterBtn: document.getElementById('microsoftRegisterBtn'),
             googleLoginBtn: document.getElementById('googleLoginBtn'),
-            googleRegisterBtn: document.getElementById('googleRegisterBtn'),
-            debugPanel: document.getElementById('debugPanel'),
-            debugContent: document.getElementById('debugContent')
+            googleRegisterBtn: document.getElementById('googleRegisterBtn')
         };
-
-        // Debug function
-        function debug(message) {
-            console.log(message);
-            if (elements.debugPanel) {
-                elements.debugPanel.classList.add('show');
-                elements.debugContent.innerHTML += message + '<br>';
-            }
-        }
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
-            // Check for remembered user
-            checkRememberedUser();
-            
-            // Setup event listeners
             setupEventListeners();
-            
-            // Set up authentication state observer
-            auth.onAuthStateChanged(user => {
-                debug('Auth state changed: ' + (user ? 'User logged in' : 'No user'));
-                
-                if (user) {
-                    // User is signed in
-                    const uid = user.uid;
-                    debug('User UID: ' + uid);
-                    
-                    // Get user data from Firestore
-                    db.collection('users').doc(uid).get()
-                        .then(doc => {
-                            if (doc.exists) {
-                                const userData = doc.data();
-                                debug('User data found: ' + JSON.stringify(userData));
-                                
-                                // Store user data in localStorage
-                                localStorage.setItem('user', JSON.stringify({
-                                    uid: uid,
-                                    ...userData
-                                }));
-                                
-                                // Redirect to role-based page
-                                redirectBasedOnRole(userData.role);
-                            } else {
-                                debug('No user document found in Firestore');
-                                // For admin accounts, create a default user document
-                                handleAdminUser(user);
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error getting user data:", error);
-                            debug('Error getting user data: ' + error.message);
-                            showNotification('Error loading user data', 'error');
-                        });
-                }
-            });
+            setupSessionMonitoring();
+            checkAuthState();
         });
 
-        // Handle admin user creation
-        function handleAdminUser(user) {
-            const email = user.email;
-            let role = '';
-            let department = '';
+        // Session monitoring
+        function setupSessionMonitoring() {
+            // Update activity on user interaction
+            document.addEventListener('click', () => sessionManager.updateActivity());
+            document.addEventListener('keypress', () => sessionManager.updateActivity());
+            document.addEventListener('scroll', () => sessionManager.updateActivity());
+        }
+
+        // Check authentication state
+        function checkAuthState() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    handleAuthenticatedUser(user);
+                }
+            });
+        }
+
+        // Handle authenticated user
+        function handleAuthenticatedUser(user) {
+            // Get additional user data from Firestore
+            db.collection('users').doc(user.uid).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        sessionManager.startSession(userData);
+                        redirectToRoleBasedPage(userData);
+                    } else {
+                        // New social auth user, show setup modal
+                        openModal(elements.socialSetupModal);
+                        document.getElementById('socialFullName').value = user.displayName || '';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error getting user data:", error);
+                    showNotification('Error loading user data', 'error');
+                });
+        }
+
+        // Redirect to role-based pages
+        function redirectToRoleBasedPage(userData) {
+            const rolePages = {
+                'student': 'student-dashboard.html',
+                'faculty': 'faculty-dashboard.html', 
+                'hod': 'hod-dashboard.html',
+                'principal': 'principal-dashboard.html'
+            };
             
-            if (email === 'principal.test@sona.ac.in') {
-                role = 'principal';
-                department = 'ADMINISTRATION';
-            } else if (email === 'hod.cse@sona.ac.in') {
-                role = 'hod';
-                department = 'Computer Science Engineering';
-            } else if (email === 'hod.ece@sona.ac.in') {
-                role = 'hod';
-                department = 'Electronics & Communication Engineering';
-            }
+            const targetPage = rolePages[userData.role];
             
-            if (role) {
-                const userData = {
-                    collegeId: email.split('@')[0],
-                    role: role,
-                    department: department,
-                    name: email.split('@')[0],
-                    email: email,
-                    authMethod: 'email',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    approved: true
-                };
+            if (targetPage) {
+                showNotification(`Welcome, ${userData.name}! Redirecting to ${userData.role} dashboard...`, 'success');
                 
-                debug('Creating admin user document: ' + JSON.stringify(userData));
+                // Store user data for the target page
+                sessionStorage.setItem('currentUser', JSON.stringify(userData));
                 
-                db.collection('users').doc(user.uid).set(userData)
-                    .then(() => {
-                        debug('Admin user document created successfully');
-                        localStorage.setItem('user', JSON.stringify({
-                            uid: user.uid,
-                            ...userData
-                        }));
-                        redirectBasedOnRole(role);
-                    })
-                    .catch(error => {
-                        console.error('Error creating admin user:', error);
-                        debug('Error creating admin user: ' + error.message);
-                        showNotification('Error setting up admin account', 'error');
-                    });
+                // Simulate page redirect (in production, use actual routing)
+                setTimeout(() => {
+                    // window.location.href = targetPage;
+                    
+                    // For demo purposes, show a simulation
+                    showPageRedirectSimulation(userData, targetPage);
+                }, 1500);
+            } else {
+                showNotification('Unknown role. Contact administrator.', 'error');
             }
         }
 
-        // Fill admin account details
-        function fillAdminAccount(email, password, role) {
-            document.getElementById('collegeId').value = email.split('@')[0];
+        // Page redirect simulation (for demo)
+        function showPageRedirectSimulation(userData, targetPage) {
+            document.body.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #0a192f 0%, #172a45 100%); color: white; font-family: 'Inter', sans-serif;">
+                    <div style="text-align: center; padding: 3rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div style="margin-bottom: 2rem;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 1rem; background: linear-gradient(135deg, #f1c40f, #ffd700); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                                <i class="fas fa-${getRoleIcon(userData.role)}"></i>
+                            </div>
+                            <h1 style="font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(90deg, #f1c40f, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                ${userData.role.charAt(0).toUpperCase() + userData.role.slice(1)} Dashboard
+                            </h1>
+                            <p style="color: #a8b2d1; margin-bottom: 2rem;">Welcome, ${userData.name}</p>
+                        </div>
+                        
+                        <div style="background: rgba(76, 175, 80, 0.1); padding: 1.5rem; border-radius: 8px; border-left: 4px solid #4ade80; margin-bottom: 2rem;">
+                            <h3 style="color: #4ade80; margin-bottom: 1rem;">
+                                <i class="fas fa-info-circle"></i> Page Redirect Simulation
+                            </h3>
+                            <p style="color: #a8b2d1; line-height: 1.5;">
+                                In a production environment, you would be redirected to:<br>
+                                <strong style="color: #f1c40f;">${targetPage}</strong><br><br>
+                                This page would contain role-specific features like messaging, announcements, 
+                                hierarchical communication tools, and department-specific functionality.
+                            </p>
+                        </div>
+                        
+                        <button onclick="window.location.reload()" style="background: linear-gradient(135deg, #f1c40f 0%, #ffd700 100%); color: #0a192f; border: none; padding: 0.875rem 1.5rem; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="fas fa-arrow-left"></i> Back to Login
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get role icon
+        function getRoleIcon(role) {
+            const icons = {
+                'student': 'graduation-cap',
+                'faculty': 'chalkboard-teacher',
+                'hod': 'user-tie',
+                'principal': 'user-shield'
+            };
+            return icons[role] || 'user';
+        }
+
+        // Fill demo account details
+        function fillDemoAccount(collegeId, password, role) {
+            document.getElementById('collegeId').value = collegeId;
             document.getElementById('password').value = password;
             document.getElementById('role').value = role;
             
@@ -1522,14 +1501,14 @@
                 }
             });
             
-            showNotification('Admin account details filled. Please click Login.', 'info');
+            showNotification('Demo account details filled. Click Login to continue.', 'info');
         }
 
         // Setup event listeners
         function setupEventListeners() {
             // Password visibility toggles
-            elements.passwordToggle.addEventListener('click', () => togglePasswordVisibility(elements.passwordField, elements.passwordToggle));
-            elements.regPasswordToggle.addEventListener('click', () => togglePasswordVisibility(elements.regPasswordField, elements.regPasswordToggle));
+            elements.passwordToggle?.addEventListener('click', () => togglePasswordVisibility(elements.passwordField, elements.passwordToggle));
+            elements.regPasswordToggle?.addEventListener('click', () => togglePasswordVisibility(elements.regPasswordField, elements.regPasswordToggle));
 
             // Role badge selection
             elements.roleBadges.forEach(badge => {
@@ -1537,8 +1516,7 @@
             });
 
             // Role select dropdown change
-            elements.roleSelect.addEventListener('change', () => {
-                // Update active badge based on dropdown selection
+            elements.roleSelect?.addEventListener('change', () => {
                 const selectedRole = elements.roleSelect.value;
                 elements.roleBadges.forEach(badge => {
                     if (badge.getAttribute('data-role') === selectedRole) {
@@ -1552,38 +1530,34 @@
             });
 
             // Password strength indicator
-            elements.regPasswordField.addEventListener('input', updatePasswordStrength);
+            elements.regPasswordField?.addEventListener('input', updatePasswordStrength);
 
             // Modal handlers
-            document.getElementById('registerLink').addEventListener('click', (e) => {
+            document.getElementById('registerLink')?.addEventListener('click', (e) => {
                 e.preventDefault();
                 openModal(elements.registerModal);
             });
 
-            document.getElementById('closeRegister').addEventListener('click', () => {
+            document.getElementById('closeRegister')?.addEventListener('click', () => {
                 closeModal(elements.registerModal);
             });
 
-            document.getElementById('forgotPassword').addEventListener('click', (e) => {
+            document.getElementById('forgotPassword')?.addEventListener('click', (e) => {
                 e.preventDefault();
                 openModal(elements.forgotModal);
             });
 
-            document.getElementById('closeForgot').addEventListener('click', () => {
+            document.getElementById('closeForgot')?.addEventListener('click', () => {
                 closeModal(elements.forgotModal);
             });
 
-            document.getElementById('closeMicrosoftSetup').addEventListener('click', () => {
-                closeModal(elements.microsoftSetupModal);
-            });
-
-            document.getElementById('closeGoogleSetup').addEventListener('click', () => {
-                closeModal(elements.googleSetupModal);
+            document.getElementById('closeSocialSetup')?.addEventListener('click', () => {
+                closeModal(elements.socialSetupModal);
             });
 
             // Close modals when clicking outside
-            [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal, elements.googleSetupModal].forEach(modal => {
-                modal.addEventListener('click', (e) => {
+            [elements.registerModal, elements.forgotModal, elements.socialSetupModal].forEach(modal => {
+                modal?.addEventListener('click', (e) => {
                     if (e.target === modal) {
                         closeModal(modal);
                     }
@@ -1591,589 +1565,6 @@
             });
 
             // Form submissions
-            elements.loginForm.addEventListener('submit', handleLogin);
-            elements.registerForm.addEventListener('submit', handleRegister);
-            elements.forgotForm.addEventListener('submit', handleForgotPassword);
-            elements.microsoftSetupForm.addEventListener('submit', handleMicrosoftSetup);
-            elements.googleSetupForm.addEventListener('submit', handleGoogleSetup);
-
-            // Authentication buttons
-            elements.microsoftLoginBtn.addEventListener('click', () => handleMicrosoftAuth(true));
-            elements.microsoftRegisterBtn.addEventListener('click', () => handleMicrosoftAuth(false));
-            elements.googleLoginBtn.addEventListener('click', () => handleGoogleAuth(true));
-            elements.googleRegisterBtn.addEventListener('click', () => handleGoogleAuth(false));
-        }
-
-        // Toggle password visibility
-        function togglePasswordVisibility(passwordField, toggleButton) {
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            toggleButton.innerHTML = type === 'password' ? 
-                '<i class="fas fa-eye" aria-hidden="true"></i>' : 
-                '<i class="fas fa-eye-slash" aria-hidden="true"></i>';
-        }
-
-        // Select role badge
-        function selectRoleBadge(badge) {
-            elements.roleBadges.forEach(b => {
-                b.classList.remove('active');
-                b.setAttribute('aria-pressed', 'false');
-            });
-            badge.classList.add('active');
-            badge.setAttribute('aria-pressed', 'true');
-            elements.roleSelect.value = badge.getAttribute('data-role');
-            
-            // Add visual feedback
-            badge.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                badge.style.transform = '';
-            }, 100);
-        }
-
-        // Update password strength
-        function updatePasswordStrength() {
-            const password = elements.regPasswordField.value;
-            let strength = 0;
-            let text = '';
-            
-            if (password.length >= 8) strength++;
-            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
-            if (password.match(/\d/)) strength++;
-            if (password.match(/[^a-zA-Z\d]/)) strength++;
-            
-            elements.passwordStrength.className = 'password-strength';
-            
-            if (password.length > 0) {
-                if (strength < 2) {
-                    elements.passwordStrength.classList.add('weak');
-                    text = 'Weak password';
-                } else if (strength < 4) {
-                    elements.passwordStrength.classList.add('medium');
-                    text = 'Medium strength password';
-                } else {
-                    elements.passwordStrength.classList.add('strong');
-                    text = 'Strong password';
-                }
-            } else {
-                text = 'Password strength';
-            }
-            
-            elements.passwordStrengthText.textContent = text;
-        }
-
-        // Show notification
-        function showNotification(message, type = 'info') {
-            elements.notification.textContent = message;
-            elements.notification.className = `notification ${type}`;
-            elements.notification.classList.add('show');
-            
-            setTimeout(() => {
-                elements.notification.classList.remove('show');
-            }, 4000);
-        }
-
-        // Modal functions
-        function openModal(modal) {
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            
-            // Focus on first input
-            const firstInput = modal.querySelector('input');
-            if (firstInput) {
-                setTimeout(() => firstInput.focus(), 100);
-            }
-        }
-
-        function closeModal(modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }
-
-        // Handle Google authentication
-        function handleGoogleAuth(isLogin) {
-            const button = isLogin ? elements.googleLoginBtn : elements.googleRegisterBtn;
-            button.classList.add('btn-loading');
-            
-            const provider = new firebase.auth.GoogleAuthProvider();
-            
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    const user = result.user;
-                    debug('Google auth successful: ' + user.email);
-                    
-                    // Check if user exists in Firestore
-                    return db.collection('users').doc(user.uid).get()
-                        .then(doc => {
-                            if (doc.exists) {
-                                // User exists, redirect based on role
-                                const userData = doc.data();
-                                debug('User exists in Firestore, redirecting to: ' + userData.role);
-                                redirectBasedOnRole(userData.role);
-                            } else {
-                                // User doesn't exist, show setup modal
-                                debug('User does not exist in Firestore, showing setup modal');
-                                openModal(elements.googleSetupModal);
-                                document.getElementById('googleFullName').value = user.displayName || '';
-                                document.getElementById('googleEmail').value = user.email || '';
-                            }
-                        });
-                })
-                .catch((error) => {
-                    console.error('Google auth error:', error);
-                    debug('Google auth error: ' + error.message);
-                    showNotification('Google authentication failed. Please try again.', 'error');
-                })
-                .finally(() => {
-                    button.classList.remove('btn-loading');
-                });
-        }
-
-        // Handle Google setup form
-        function handleGoogleSetup(e) {
-            e.preventDefault();
-            const submitBtn = elements.googleSetupForm.querySelector('.btn');
-            
-            // Show loading state
-            submitBtn.classList.add('btn-loading');
-            
-            const collegeId = document.getElementById('googleCollegeId').value;
-            const role = document.getElementById('googleRole').value;
-            const department = document.getElementById('googleDepartment').value;
-            const fullName = document.getElementById('googleFullName').value;
-            
-            // Get current user
-            const user = auth.currentUser;
-            
-            if (user) {
-                // Create user object
-                const userData = {
-                    collegeId,
-                    role,
-                    department: parseInt(department),
-                    name: fullName,
-                    email: user.email,
-                    authMethod: 'google',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                debug('Creating Google user document: ' + JSON.stringify(userData));
-                
-                // Save user to Firestore
-                db.collection('users').doc(user.uid).set(userData)
-                    .then(() => {
-                        showNotification('Account setup completed successfully!', 'success');
-                        closeModal(elements.googleSetupModal);
-                        elements.googleSetupForm.reset();
-                        
-                        // Redirect based on role
-                        redirectBasedOnRole(role);
-                    })
-                    .catch((error) => {
-                        console.error('Error saving user data:', error);
-                        debug('Error saving user data: ' + error.message);
-                        showNotification('Error saving user data. Please try again.', 'error');
-                    })
-                    .finally(() => {
-                        submitBtn.classList.remove('btn-loading');
-                    });
-            } else {
-                showNotification('Authentication error. Please try again.', 'error');
-                submitBtn.classList.remove('btn-loading');
-            }
-        }
-
-        // Handle Microsoft authentication
-        function handleMicrosoftAuth(isLogin) {
-            const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
-            button.classList.add('btn-loading');
-            
-            const provider = new firebase.auth.OAuthProvider('microsoft.com');
-            
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    const user = result.user;
-                    debug('Microsoft auth successful: ' + user.email);
-                    
-                    // Check if user exists in Firestore
-                    return db.collection('users').doc(user.uid).get()
-                        .then(doc => {
-                            if (doc.exists) {
-                                // User exists, redirect based on role
-                                const userData = doc.data();
-                                debug('User exists in Firestore, redirecting to: ' + userData.role);
-                                redirectBasedOnRole(userData.role);
-                            } else {
-                                // User doesn't exist, show setup modal
-                                debug('User does not exist in Firestore, showing setup modal');
-                                openModal(elements.microsoftSetupModal);
-                                document.getElementById('msFullName').value = user.displayName || '';
-                                document.getElementById('msEmail').value = user.email || '';
-                            }
-                        });
-                })
-                .catch((error) => {
-                    console.error('Microsoft auth error:', error);
-                    debug('Microsoft auth error: ' + error.message);
-                    showNotification('Microsoft authentication failed. Please try again.', 'error');
-                })
-                .finally(() => {
-                    button.classList.remove('btn-loading');
-                });
-        }
-
-        // Handle Microsoft setup form
-        function handleMicrosoftSetup(e) {
-            e.preventDefault();
-            const submitBtn = elements.microsoftSetupForm.querySelector('.btn');
-            
-            // Show loading state
-            submitBtn.classList.add('btn-loading');
-            
-            const collegeId = document.getElementById('msCollegeId').value;
-            const role = document.getElementById('msRole').value;
-            const department = document.getElementById('msDepartment').value;
-            const fullName = document.getElementById('msFullName').value;
-            
-            // Get current user
-            const user = auth.currentUser;
-            
-            if (user) {
-                // Create user object
-                const userData = {
-                    collegeId,
-                    role,
-                    department: parseInt(department),
-                    name: fullName,
-                    email: user.email,
-                    authMethod: 'microsoft',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                debug('Creating Microsoft user document: ' + JSON.stringify(userData));
-                
-                // Save user to Firestore
-                db.collection('users').doc(user.uid).set(userData)
-                    .then(() => {
-                        showNotification('Account setup completed successfully!', 'success');
-                        closeModal(elements.microsoftSetupModal);
-                        elements.microsoftSetupForm.reset();
-                        
-                        // Redirect based on role
-                        redirectBasedOnRole(role);
-                    })
-                    .catch((error) => {
-                        console.error('Error saving user data:', error);
-                        debug('Error saving user data: ' + error.message);
-                        showNotification('Error saving user data. Please try again.', 'error');
-                    })
-                    .finally(() => {
-                        submitBtn.classList.remove('btn-loading');
-                    });
-            } else {
-                showNotification('Authentication error. Please try again.', 'error');
-                submitBtn.classList.remove('btn-loading');
-            }
-        }
-
-        // Handle login form submission
-        function handleLogin(e) {
-            e.preventDefault();
-            const collegeId = document.getElementById('collegeId').value;
-            const password = document.getElementById('password').value;
-            const role = document.getElementById('role').value;
-            const submitBtn = elements.loginForm.querySelector('.btn');
-
-            debug('Login attempt: ' + collegeId + ', role: ' + role);
-
-            // Show loading state
-            submitBtn.classList.add('btn-loading');
-            
-            // For admin accounts, use direct authentication
-            if (collegeId === 'principal.test' && role === 'principal') {
-                debug('Attempting principal login');
-                auth.signInWithEmailAndPassword('principal.test@sona.ac.in', password)
-                    .then(() => {
-                        showNotification(`Welcome back, Principal!`, 'success');
-                        
-                        // Remember user if checkbox is checked
-                        if (document.getElementById('rememberMe').checked) {
-                            localStorage.setItem('rememberedUser', JSON.stringify({
-                                collegeId,
-                                role
-                            }));
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Login error:', error);
-                        debug('Principal login error: ' + error.message);
-                        submitBtn.classList.remove('btn-loading');
-                        showNotification('Invalid credentials. Please try again.', 'error');
-                    });
-                return;
-            }
-            
-            if (collegeId === 'hod.cse' && role === 'hod') {
-                debug('Attempting HOD CSE login');
-                auth.signInWithEmailAndPassword('hod.cse@sona.ac.in', password)
-                    .then(() => {
-                        showNotification(`Welcome back, HOD CSE!`, 'success');
-                        
-                        // Remember user if checkbox is checked
-                        if (document.getElementById('rememberMe').checked) {
-                            localStorage.setItem('rememberedUser', JSON.stringify({
-                                collegeId,
-                                role
-                            }));
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Login error:', error);
-                        debug('HOD CSE login error: ' + error.message);
-                        submitBtn.classList.remove('btn-loading');
-                        showNotification('Invalid credentials. Please try again.', 'error');
-                    });
-                return;
-            }
-            
-            if (collegeId === 'hod.ece' && role === 'hod') {
-                debug('Attempting HOD ECE login');
-                auth.signInWithEmailAndPassword('hod.ece@sona.ac.in', password)
-                    .then(() => {
-                        showNotification(`Welcome back, HOD ECE!`, 'success');
-                        
-                        // Remember user if checkbox is checked
-                        if (document.getElementById('rememberMe').checked) {
-                            localStorage.setItem('rememberedUser', JSON.stringify({
-                                collegeId,
-                                role
-                            }));
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Login error:', error);
-                        debug('HOD ECE login error: ' + error.message);
-                        submitBtn.classList.remove('btn-loading');
-                        showNotification('Invalid credentials. Please try again.', 'error');
-                    });
-                return;
-            }
-            
-            // Query Firestore for user with this collegeId
-            debug('Querying Firestore for user: ' + collegeId + ', role: ' + role);
-            db.collection('users')
-                .where('collegeId', '==', collegeId)
-                .where('role', '==', role)
-                .limit(1)
-                .get()
-                .then(querySnapshot => {
-                    if (querySnapshot.empty) {
-                        // No user found
-                        debug('No user found in Firestore');
-                        submitBtn.classList.remove('btn-loading');
-                        showNotification('Invalid credentials. Please try again.', 'error');
-                        return;
-                    }
-                    
-                    const userDoc = querySnapshot.docs[0];
-                    const userData = userDoc.data();
-                    
-                    debug('User found in Firestore: ' + JSON.stringify(userData));
-                    
-                    // Get email from user data
-                    const email = userData.email;
-                    
-                    // Sign in with email and password
-                    return auth.signInWithEmailAndPassword(email, password);
-                })
-                .then((userCredential) => {
-                    // Login successful
-                    debug('Login successful');
-                    showNotification(`Welcome back, ${collegeId}!`, 'success');
-                    
-                    // Remember user if checkbox is checked
-                    if (document.getElementById('rememberMe').checked) {
-                        localStorage.setItem('rememberedUser', JSON.stringify({
-                            collegeId,
-                            role
-                        }));
-                    }
-                    
-                    // Redirect will be handled by auth state observer
-                })
-                .catch((error) => {
-                    console.error('Login error:', error);
-                    debug('Login error: ' + error.message);
-                    submitBtn.classList.remove('btn-loading');
-                    
-                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                        showNotification('Invalid credentials. Please try again.', 'error');
-                    } else {
-                        showNotification('Login failed. Please try again.', 'error');
-                    }
-                });
-        }
-
-        // Handle registration form submission
-        function handleRegister(e) {
-            e.preventDefault();
-            const submitBtn = elements.registerForm.querySelector('.btn');
-            
-            // Show loading state
-            submitBtn.classList.add('btn-loading');
-            
-            const collegeId = document.getElementById('regCollegeId').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const role = document.getElementById('regRole').value;
-            const department = parseInt(document.getElementById('regDepartment').value);
-            const fullName = document.getElementById('regFullName').value;
-            
-            // Create user with email and password
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    
-                    // Create user object
-                    const userData = {
-                        collegeId,
-                        role,
-                        department,
-                        name: fullName,
-                        email,
-                        authMethod: 'email',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        approved: false // Default to not approved
-                    };
-                    
-                    // Save user to Firestore
-                    return db.collection('users').doc(user.uid).set(userData);
-                })
-                .then(() => {
-                    showNotification('Registration submitted for approval. You will receive an email once approved.', 'success');
-                    closeModal(elements.registerModal);
-                    elements.registerForm.reset();
-                    elements.passwordStrength.className = 'password-strength';
-                    elements.passwordStrengthText.textContent = 'Password strength';
-                    
-                    // Sign out the user until they're approved
-                    auth.signOut();
-                })
-                .catch((error) => {
-                    console.error('Registration error:', error);
-                    
-                    if (error.code === 'auth/email-already-in-use') {
-                        showNotification('Email already in use. Please use a different email.', 'error');
-                    } else if (error.code === 'auth/weak-password') {
-                        showNotification('Password is too weak. Please use a stronger password.', 'error');
-                    } else {
-                        showNotification('Registration failed. Please try again.', 'error');
-                    }
-                })
-                .finally(() => {
-                    submitBtn.classList.remove('btn-loading');
-                });
-        }
-
-        // Handle forgot password form submission
-        function handleForgotPassword(e) {
-            e.preventDefault();
-            const submitBtn = elements.forgotForm.querySelector('.btn');
-            
-            // Show loading state
-            submitBtn.classList.add('btn-loading');
-            
-            const email = document.getElementById('forgotEmail').value;
-            
-            // Send password reset email
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    showNotification('Password reset link sent to your email.', 'info');
-                    closeModal(elements.forgotModal);
-                    elements.forgotForm.reset();
-                })
-                .catch((error) => {
-                    console.error('Password reset error:', error);
-                    
-                    if (error.code === 'auth/user-not-found') {
-                        showNotification('No user found with this email address.', 'error');
-                    } else {
-                        showNotification('Failed to send reset link. Please try again.', 'error');
-                    }
-                })
-                .finally(() => {
-                    submitBtn.classList.remove('btn-loading');
-                });
-        }
-
-        // Check for remembered user
-        function checkRememberedUser() {
-            const rememberedUser = localStorage.getItem('rememberedUser');
-            if (rememberedUser) {
-                const user = JSON.parse(rememberedUser);
-                document.getElementById('collegeId').value = user.collegeId;
-                document.getElementById('role').value = user.role;
-                document.getElementById('rememberMe').checked = true;
-                
-                // Activate the corresponding role badge
-                elements.roleBadges.forEach(badge => {
-                    if (badge.getAttribute('data-role') === user.role) {
-                        badge.classList.add('active');
-                        badge.setAttribute('aria-pressed', 'true');
-                    }
-                });
-            }
-        }
-
-        // Redirect based on user role
-        function redirectBasedOnRole(role) {
-            debug('Redirecting based on role: ' + role);
-            
-            // Add a slight delay to allow notification to be seen
-            setTimeout(() => {
-                let targetUrl = '';
-                
-                switch(role) {
-                    case 'student':
-                        targetUrl = 'student.html';
-                        break;
-                    case 'faculty':
-                        targetUrl = 'faculty.html';
-                        break;
-                    case 'hod':
-                        targetUrl = 'hod.html';
-                        break;
-                    case 'principal':
-                        targetUrl = 'principal.html';
-                        break;
-                    default:
-                        targetUrl = 'dashboard.html';
-                }
-                
-                debug('Redirecting to: ' + targetUrl);
-                
-                // Redirect directly without checking if the page exists
-                // This is for demo purposes - in production, you would want to ensure the pages exist
-                window.location.href = targetUrl;
-            }, 1000);
-        }
-
-        // Handle keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            // Close modals with Escape key
-            if (e.key === 'Escape') {
-                [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal, elements.googleSetupModal].forEach(modal => {
-                    if (modal.style.display === 'flex') {
-                        closeModal(modal);
-                    }
-                });
-            }
-            
-            // Toggle debug panel with Ctrl+D
-            if (e.ctrlKey && e.key === 'd') {
-                e.preventDefault();
-                elements.debugPanel.classList.toggle('show');
-            }
-        });
-    </script>
-</body>
-</html>
+            elements.loginForm?.addEventListener('submit', handleLogin);
+            elements.registerForm?.addEventListener('submit', handleRegister);
+            elements.forgotForm?.addEventListener('submit', handleForg
