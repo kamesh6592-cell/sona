@@ -815,6 +815,32 @@
             display: block;
         }
 
+        /* Authentication setup guide */
+        .auth-setup-guide {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            border-left: 4px solid var(--info);
+        }
+
+        .auth-setup-guide h4 {
+            color: var(--info);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .auth-setup-guide ol {
+            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .auth-setup-guide li {
+            margin-bottom: 0.25rem;
+        }
+
         /* Security notice for test accounts */
         .test-accounts-notice {
             margin-top: 1rem;
@@ -1102,6 +1128,17 @@
             </button>
             
             <p class="register-link">New to Sona Communication? <a href="#" id="registerLink">Create an account</a></p>
+            
+            <!-- Authentication Setup Guide -->
+            <div class="auth-setup-guide">
+                <h4>Authentication Setup Guide</h4>
+                <p>If authentication is not working, please ensure:</p>
+                <ol>
+                    <li>Google and Microsoft providers are enabled in Firebase Console</li>
+                    <li>Authorized domains are correctly configured</li>
+                    <li>OAuth consent screen is properly set up</li>
+                </ol>
+            </div>
             
             <!-- Administrative Accounts Section -->
             <div class="admin-accounts">
@@ -1696,6 +1733,12 @@
             
             const provider = new firebase.auth.GoogleAuthProvider();
             
+            // Add scopes
+            provider.addScope('profile');
+            provider.addScope('email');
+            
+            debug('Starting Google authentication...');
+            
             auth.signInWithPopup(provider)
                 .then((result) => {
                     const user = result.user;
@@ -1789,20 +1832,12 @@
             
             const provider = new firebase.auth.OAuthProvider('microsoft.com');
             
-            // Set custom parameters for Microsoft authentication
-            provider.setCustomParameters({
-                // Use the organizations endpoint
-                tenant: 'organizations',
-                // Set the redirect URI
-                redirect_uri: 'https://login.microsoftonline.com/organizations/oauth2/authorize'
-            });
-            
-            // Set additional scopes if needed
+            // Add scopes
             provider.addScope('openid');
             provider.addScope('profile');
             provider.addScope('email');
             
-            debug('Microsoft auth with custom redirect URI: https://login.microsoftonline.com/organizations/oauth2/authorize');
+            debug('Starting Microsoft authentication...');
             
             auth.signInWithPopup(provider)
                 .then((result) => {
