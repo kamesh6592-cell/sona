@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+    
     <style>
         :root {
             /* Premium Dark Blue & Yellow Theme */
@@ -251,6 +258,53 @@
         .profile-role {
             font-size: var(--font-size-xs);
             color: var(--text-secondary);
+        }
+        
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--secondary-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 200px;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            margin-top: 0.5rem;
+        }
+        
+        .profile-dropdown.show {
+            display: flex;
+        }
+        
+        .profile-dropdown-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .profile-dropdown-item:hover {
+            background: var(--glass-bg);
+            color: var(--primary-yellow);
+        }
+        
+        .profile-dropdown-item:first-child {
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+        
+        .profile-dropdown-item:last-child {
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+        
+        .profile-dropdown-item i {
+            width: 20px;
+            text-align: center;
         }
         
         /* App Container */
@@ -1116,6 +1170,21 @@
             cursor: pointer;
         }
         
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-yellow);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
         /* Responsive Design */
         @media (max-width: 1200px) {
             .dashboard-grid {
@@ -1357,7 +1426,7 @@
             </button>
             <div class="header-action tooltip" data-tooltip="Notifications">
                 <i class="fas fa-bell"></i>
-                <span class="notification-badge">5</span>
+                <span class="notification-badge" id="notificationCount">0</span>
             </div>
             <div class="header-action tooltip" data-tooltip="Calendar">
                 <i class="fas fa-calendar-alt"></i>
@@ -1365,13 +1434,27 @@
             <div class="header-action tooltip" data-tooltip="Settings">
                 <i class="fas fa-cog"></i>
             </div>
-            <div class="profile-menu">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-avatar">
+            <div class="profile-menu" id="profileMenu">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-avatar" id="profileAvatar">
                 <div class="profile-info">
-                    <div class="profile-name">KANISH SJ</div>
-                    <div class="profile-role">Student</div>
+                    <div class="profile-name" id="profileName">Loading...</div>
+                    <div class="profile-role" id="profileRole">Student</div>
                 </div>
                 <i class="fas fa-chevron-down"></i>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <a href="#" class="profile-dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span>My Profile</span>
+                    </a>
+                    <a href="#" class="profile-dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="#" class="profile-dropdown-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
             </div>
         </div>
     </header>
@@ -1383,72 +1466,19 @@
                 <h3 class="sidebar-title">Contacts</h3>
                 <div class="contact-search">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search contacts...">
+                    <input type="text" placeholder="Search contacts..." id="contactSearch">
                 </div>
             </div>
             
-            <div class="contact-list">
+            <div class="contact-list" id="contactList">
                 <div class="contact-category">Classes</div>
-                <div class="contact-item active">
-                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Class" class="contact-avatar">
-                    <div class="contact-info">
-                        <div class="contact-name">CS101 - Intro to Programming</div>
-                        <div class="contact-status">
-                            <span class="status-dot status-online"></span>
-                            <span>24 online</span>
-                        </div>
-                    </div>
-                    <div class="contact-time">2:45 PM</div>
-                    <span class="contact-badge">3</span>
-                </div>
-                
-                <div class="contact-item">
-                    <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Class" class="contact-avatar">
-                    <div class="contact-info">
-                        <div class="contact-name">MATH201 - Calculus II</div>
-                        <div class="contact-status">
-                            <span class="status-dot status-away"></span>
-                            <span>18 online</span>
-                        </div>
-                    </div>
-                    <div class="contact-time">Yesterday</div>
-                </div>
+                <!-- Classes will be dynamically loaded here -->
                 
                 <div class="contact-category">Faculty</div>
-                <div class="contact-item">
-                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Faculty" class="contact-avatar">
-                    <div class="contact-info">
-                        <div class="contact-name">Dr. Sarah Williams</div>
-                        <div class="contact-status">
-                            <span class="status-dot status-online"></span>
-                            <span>Available</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="contact-item">
-                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Faculty" class="contact-avatar">
-                    <div class="contact-info">
-                        <div class="contact-name">Prof. Michael Chen</div>
-                        <div class="contact-status">
-                            <span class="status-dot status-away"></span>
-                            <span>In a meeting</span>
-                        </div>
-                    </div>
-                </div>
+                <!-- Faculty will be dynamically loaded here -->
                 
                 <div class="contact-category">Study Groups</div>
-                <div class="contact-item">
-                    <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Group" class="contact-avatar">
-                    <div class="contact-info">
-                        <div class="contact-name">Physics Study Group</div>
-                        <div class="contact-status">
-                            <span class="status-dot status-online"></span>
-                            <span>5 online</span>
-                        </div>
-                    </div>
-                    <div class="contact-time">1:30 PM</div>
-                </div>
+                <!-- Study groups will be dynamically loaded here -->
             </div>
         </aside>
         
@@ -1460,7 +1490,7 @@
                         <i class="fas fa-tachometer-alt"></i>
                         Student Dashboard
                     </h1>
-                    <p class="content-subtitle">Welcome back, Alex! Here's your academic overview.</p>
+                    <p class="content-subtitle" id="welcomeMessage">Welcome back! Here's your academic overview.</p>
                 </div>
                 <div class="content-actions">
                     <button class="btn btn-secondary">
@@ -1489,19 +1519,19 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="stat-value">3.8</div>
+                        <div class="stat-value" id="gpaValue">-</div>
                         <div class="stat-label">Current GPA</div>
-                        <div class="stat-change positive">
+                        <div class="stat-change positive" id="gpaChange">
                             <i class="fas fa-arrow-up"></i>
-                            <span>0.2 from last semester</span>
+                            <span>-</span>
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Semester Progress</span>
-                                <span>68%</span>
+                                <span id="semesterProgress">-</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 68%"></div>
+                                <div class="progress-fill" id="semesterProgressBar" style="width: 0%"></div>
                             </div>
                         </div>
                     </div>
@@ -1521,7 +1551,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="stat-value">5</div>
+                        <div class="stat-value" id="coursesCount">-</div>
                         <div class="stat-label">Courses this semester</div>
                         <div class="chart-container">
                             <canvas id="coursesChart"></canvas>
@@ -1543,31 +1573,8 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="task-list">
-                            <div class="task-item">
-                                <div class="task-checkbox"></div>
-                                <div class="task-content">
-                                    <div class="task-title">CS101 - Programming Project</div>
-                                    <div class="task-meta">Due in 2 days</div>
-                                </div>
-                                <div class="task-priority priority-high">High</div>
-                            </div>
-                            <div class="task-item">
-                                <div class="task-checkbox"></div>
-                                <div class="task-content">
-                                    <div class="task-title">MATH201 - Problem Set 5</div>
-                                    <div class="task-meta">Due in 5 days</div>
-                                </div>
-                                <div class="task-priority priority-medium">Medium</div>
-                            </div>
-                            <div class="task-item">
-                                <div class="task-checkbox checked"></div>
-                                <div class="task-content">
-                                    <div class="task-title">ENG102 - Essay Draft</div>
-                                    <div class="task-meta">Completed</div>
-                                </div>
-                                <div class="task-priority priority-low">Low</div>
-                            </div>
+                        <div class="task-list" id="assignmentsList">
+                            <!-- Assignments will be dynamically loaded here -->
                         </div>
                     </div>
                 </div>
@@ -1586,11 +1593,11 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="stat-value">24h</div>
+                        <div class="stat-value" id="studyTimeValue">-</div>
                         <div class="stat-label">This week</div>
-                        <div class="stat-change positive">
+                        <div class="stat-change positive" id="studyTimeChange">
                             <i class="fas fa-arrow-up"></i>
-                            <span>3h from last week</span>
+                            <span>-</span>
                         </div>
                         <div class="chart-container">
                             <canvas id="studyTimeChart"></canvas>
@@ -1612,24 +1619,24 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="stat-value">42</div>
+                        <div class="stat-value" id="resourcesCount">-</div>
                         <div class="stat-label">Resources available</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Course Materials</span>
-                                <span>78%</span>
+                                <span id="courseMaterialsProgress">-</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 78%"></div>
+                                <div class="progress-fill" id="courseMaterialsProgressBar" style="width: 0%"></div>
                             </div>
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Practice Tests</span>
-                                <span>45%</span>
+                                <span id="practiceTestsProgress">-</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 45%"></div>
+                                <div class="progress-fill" id="practiceTestsProgressBar" style="width: 0%"></div>
                             </div>
                         </div>
                     </div>
@@ -1649,7 +1656,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="stat-value">12</div>
+                        <div class="stat-value" id="skillsCount">-</div>
                         <div class="stat-label">Skills in progress</div>
                         <div class="chart-container">
                             <canvas id="skillsChart"></canvas>
@@ -1669,131 +1676,15 @@
             <div class="panel-content">
                 <!-- Files Tab -->
                 <div class="tab-content" id="files-tab">
-                    <div class="file-card">
-                        <div class="file-icon pdf">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div class="file-info">
-                            <div class="file-name">Lecture_Notes_Week5.pdf</div>
-                            <div class="file-meta">
-                                <span>2.4 MB</span>
-                                <span>Today</span>
-                            </div>
-                        </div>
-                        <div class="file-actions">
-                            <div class="file-action tooltip" data-tooltip="Download">
-                                <i class="fas fa-download"></i>
-                            </div>
-                            <div class="file-action tooltip" data-tooltip="Share">
-                                <i class="fas fa-share-alt"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="file-card">
-                        <div class="file-icon doc">
-                            <i class="fas fa-file-word"></i>
-                        </div>
-                        <div class="file-info">
-                            <div class="file-name">Assignment_2_Template.docx</div>
-                            <div class="file-meta">
-                                <span>1.1 MB</span>
-                                <span>Yesterday</span>
-                            </div>
-                        </div>
-                        <div class="file-actions">
-                            <div class="file-action tooltip" data-tooltip="Download">
-                                <i class="fas fa-download"></i>
-                            </div>
-                            <div class="file-action tooltip" data-tooltip="Share">
-                                <i class="fas fa-share-alt"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="file-card">
-                        <div class="file-icon img">
-                            <i class="fas fa-file-image"></i>
-                        </div>
-                        <div class="file-info">
-                            <div class="file-name">Class_Diagram.png</div>
-                            <div class="file-meta">
-                                <span>856 KB</span>
-                                <span>Oct 12</span>
-                            </div>
-                        </div>
-                        <div class="file-actions">
-                            <div class="file-action tooltip" data-tooltip="Download">
-                                <i class="fas fa-download"></i>
-                            </div>
-                            <div class="file-action tooltip" data-tooltip="Share">
-                                <i class="fas fa-share-alt"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="file-card">
-                        <div class="file-icon pdf">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div class="file-info">
-                            <div class="file-name">Study_Guide_Midterm.pdf</div>
-                            <div class="file-meta">
-                                <span>3.7 MB</span>
-                                <span>Oct 10</span>
-                            </div>
-                        </div>
-                        <div class="file-actions">
-                            <div class="file-action tooltip" data-tooltip="Download">
-                                <i class="fas fa-download"></i>
-                            </div>
-                            <div class="file-action tooltip" data-tooltip="Share">
-                                <i class="fas fa-share-alt"></i>
-                            </div>
-                        </div>
+                    <div id="filesList">
+                        <!-- Files will be dynamically loaded here -->
                     </div>
                 </div>
                 
                 <!-- Announcements Tab -->
                 <div class="tab-content" id="announcements-tab" style="display: none;">
-                    <div class="announcement-card urgent">
-                        <div class="announcement-header">
-                            <div class="announcement-title">Midterm Exam Schedule</div>
-                            <div class="announcement-date">Oct 15, 2023</div>
-                        </div>
-                        <div class="announcement-text">
-                            The midterm exam for CS101 will be held on October 25th from 2:00 PM to 4:00 PM in Room 205. Please arrive 15 minutes early.
-                        </div>
-                        <div class="announcement-actions">
-                            <button class="announcement-btn">Read More</button>
-                            <button class="announcement-btn">Set Reminder</button>
-                        </div>
-                    </div>
-                    
-                    <div class="announcement-card">
-                        <div class="announcement-header">
-                            <div class="announcement-title">New Study Resources</div>
-                            <div class="announcement-date">Oct 10, 2023</div>
-                        </div>
-                        <div class="announcement-text">
-                            Additional practice problems and video tutorials have been added to the course materials section.
-                        </div>
-                        <div class="announcement-actions">
-                            <button class="announcement-btn">View Resources</button>
-                        </div>
-                    </div>
-                    
-                    <div class="announcement-card">
-                        <div class="announcement-header">
-                            <div class="announcement-title">Office Hours Update</div>
-                            <div class="announcement-date">Oct 5, 2023</div>
-                        </div>
-                        <div class="announcement-text">
-                            Dr. Williams' office hours have been changed to Tuesdays and Thursdays from 3:00 PM to 5:00 PM.
-                        </div>
-                        <div class="announcement-actions">
-                            <button class="announcement-btn">Add to Calendar</button>
-                        </div>
+                    <div id="announcementsList">
+                        <!-- Announcements will be dynamically loaded here -->
                     </div>
                 </div>
             </div>
@@ -1836,16 +1727,794 @@
     </footer>
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const rightPanel = document.getElementById('rightPanel');
-        
-        mobileMenuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            rightPanel.classList.remove('open');
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAUmR-p_bJ970GK9CevtzgfAm99nvLvSaE",
+            authDomain: "sona-da878.firebaseapp.com",
+            databaseURL: "https://sona-da878-default-rtdb.firebaseio.com",
+            projectId: "sona-da878",
+            storageBucket: "sona-da878.firebasestorage.app",
+            messagingSenderId: "963825066019",
+            appId: "1:963825066019:web:c1a095c0972a8874195196",
+            measurementId: "G-ED8CHJSJGH"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // DOM Elements
+        const elements = {
+            profileName: document.getElementById('profileName'),
+            profileRole: document.getElementById('profileRole'),
+            profileAvatar: document.getElementById('profileAvatar'),
+            welcomeMessage: document.getElementById('welcomeMessage'),
+            gpaValue: document.getElementById('gpaValue'),
+            gpaChange: document.getElementById('gpaChange'),
+            semesterProgress: document.getElementById('semesterProgress'),
+            semesterProgressBar: document.getElementById('semesterProgressBar'),
+            coursesCount: document.getElementById('coursesCount'),
+            studyTimeValue: document.getElementById('studyTimeValue'),
+            studyTimeChange: document.getElementById('studyTimeChange'),
+            resourcesCount: document.getElementById('resourcesCount'),
+            courseMaterialsProgress: document.getElementById('courseMaterialsProgress'),
+            courseMaterialsProgressBar: document.getElementById('courseMaterialsProgressBar'),
+            practiceTestsProgress: document.getElementById('practiceTestsProgress'),
+            practiceTestsProgressBar: document.getElementById('practiceTestsProgressBar'),
+            skillsCount: document.getElementById('skillsCount'),
+            notificationCount: document.getElementById('notificationCount'),
+            assignmentsList: document.getElementById('assignmentsList'),
+            filesList: document.getElementById('filesList'),
+            announcementsList: document.getElementById('announcementsList'),
+            contactList: document.getElementById('contactList'),
+            profileMenu: document.getElementById('profileMenu'),
+            profileDropdown: document.getElementById('profileDropdown'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+            sidebar: document.getElementById('sidebar'),
+            rightPanel: document.getElementById('rightPanel'),
+            contactSearch: document.getElementById('contactSearch'),
+            aiAssistant: document.getElementById('aiAssistant'),
+            aiChatWindow: document.getElementById('aiChatWindow'),
+            aiChatClose: document.getElementById('aiChatClose'),
+            aiChatInput: document.getElementById('aiChatInput'),
+            aiChatSend: document.getElementById('aiChatSend'),
+            aiChatMessages: document.querySelector('.ai-chat-messages')
+        };
+
+        // Check if user is logged in
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in
+                loadUserData(user.uid);
+                loadDashboardData(user.uid);
+            } else {
+                // User is signed out, redirect to login page
+                window.location.href = 'index.html';
+            }
         });
-        
+
+        // Load user data
+        function loadUserData(userId) {
+            db.collection('users').doc(userId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        
+                        // Update profile information
+                        elements.profileName.textContent = userData.name || 'Student';
+                        elements.profileRole.textContent = userData.role || 'Student';
+                        elements.welcomeMessage.textContent = `Welcome back, ${userData.name || 'Student'}! Here's your academic overview.`;
+                        
+                        // Update profile avatar if available
+                        if (userData.photoURL) {
+                            elements.profileAvatar.src = userData.photoURL;
+                        } else {
+                            // Use a default avatar based on the user's name
+                            const initials = (userData.name || 'Student').split(' ').map(n => n[0]).join('').toUpperCase();
+                            elements.profileAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || 'Student')}&background=f1c40f&color=0a192f&size=36&format=png`;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user data:', error);
+                });
+        }
+
+        // Load dashboard data
+        function loadDashboardData(userId) {
+            // Load academic overview
+            loadAcademicOverview(userId);
+            
+            // Load courses
+            loadCourses(userId);
+            
+            // Load assignments
+            loadAssignments(userId);
+            
+            // Load study time
+            loadStudyTime(userId);
+            
+            // Load resources
+            loadResources(userId);
+            
+            // Load skills
+            loadSkills(userId);
+            
+            // Load contacts
+            loadContacts(userId);
+            
+            // Load files
+            loadFiles(userId);
+            
+            // Load announcements
+            loadAnnouncements(userId);
+            
+            // Load notifications
+            loadNotifications(userId);
+        }
+
+        // Load academic overview
+        function loadAcademicOverview(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            const gpa = '3.8';
+            const gpaChange = '0.2';
+            const semesterProgress = '68%';
+            
+            elements.gpaValue.textContent = gpa;
+            elements.gpaChange.querySelector('span').textContent = `${gpaChange} from last semester`;
+            elements.semesterProgress.textContent = semesterProgress;
+            elements.semesterProgressBar.style.width = semesterProgress;
+        }
+
+        // Load courses
+        function loadCourses(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            const courses = 5;
+            
+            elements.coursesCount.textContent = courses;
+            
+            // Initialize courses chart
+            const coursesCtx = document.getElementById('coursesChart').getContext('2d');
+            const coursesChart = new Chart(coursesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Not Started'],
+                    datasets: [{
+                        data: [2, 3, 1],
+                        backgroundColor: [
+                            'rgba(74, 222, 128, 0.8)',
+                            'rgba(241, 196, 15, 0.8)',
+                            'rgba(100, 116, 139, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(74, 222, 128, 1)',
+                            'rgba(241, 196, 15, 1)',
+                            'rgba(100, 116, 139, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#a8b2d1',
+                                font: {
+                                    size: 11
+                                },
+                                padding: 10
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load assignments
+        function loadAssignments(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            const assignments = [
+                { id: 1, title: 'CS101 - Programming Project', dueDate: 'Due in 2 days', priority: 'high', completed: false },
+                { id: 2, title: 'MATH201 - Problem Set 5', dueDate: 'Due in 5 days', priority: 'medium', completed: false },
+                { id: 3, title: 'ENG102 - Essay Draft', dueDate: 'Completed', priority: 'low', completed: true }
+            ];
+            
+            elements.assignmentsList.innerHTML = '';
+            
+            assignments.forEach(assignment => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                
+                const checkbox = document.createElement('div');
+                checkbox.className = `task-checkbox ${assignment.completed ? 'checked' : ''}`;
+                
+                const content = document.createElement('div');
+                content.className = 'task-content';
+                
+                const title = document.createElement('div');
+                title.className = 'task-title';
+                title.textContent = assignment.title;
+                
+                const meta = document.createElement('div');
+                meta.className = 'task-meta';
+                meta.textContent = assignment.dueDate;
+                
+                const priority = document.createElement('div');
+                priority.className = `task-priority priority-${assignment.priority}`;
+                priority.textContent = assignment.priority.charAt(0).toUpperCase() + assignment.priority.slice(1);
+                
+                content.appendChild(title);
+                content.appendChild(meta);
+                
+                taskItem.appendChild(checkbox);
+                taskItem.appendChild(content);
+                taskItem.appendChild(priority);
+                
+                elements.assignmentsList.appendChild(taskItem);
+                
+                // Add event listener to checkbox
+                checkbox.addEventListener('click', () => {
+                    checkbox.classList.toggle('checked');
+                    // In a real app, this would update the assignment status in Firestore
+                });
+            });
+        }
+
+        // Load study time
+        function loadStudyTime(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            const studyTime = '24h';
+            const studyTimeChange = '3h';
+            
+            elements.studyTimeValue.textContent = studyTime;
+            elements.studyTimeChange.querySelector('span').textContent = `${studyTimeChange} from last week`;
+            
+            // Initialize study time chart
+            const studyTimeCtx = document.getElementById('studyTimeChart').getContext('2d');
+            const studyTimeChart = new Chart(studyTimeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Hours',
+                        data: [3, 4, 2, 5, 3, 4, 3],
+                        backgroundColor: 'rgba(241, 196, 15, 0.6)',
+                        borderColor: 'rgba(241, 196, 15, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a8b2d1',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#a8b2d1',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load resources
+        function loadResources(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            const resources = 42;
+            const courseMaterialsProgress = '78%';
+            const practiceTestsProgress = '45%';
+            
+            elements.resourcesCount.textContent = resources;
+            elements.courseMaterialsProgress.textContent = courseMaterialsProgress;
+            elements.courseMaterialsProgressBar.style.width = courseMaterialsProgress;
+            elements.practiceTestsProgress.textContent = practiceTestsProgress;
+            elements.practiceTestsProgressBar.style.width = practiceTestsProgress;
+        }
+
+        // Load skills
+        function loadSkills(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            const skills = 12;
+            
+            elements.skillsCount.textContent = skills;
+            
+            // Initialize skills chart
+            const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+            const skillsChart = new Chart(skillsCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Programming', 'Math', 'Writing', 'Research', 'Presentation', 'Teamwork'],
+                    datasets: [{
+                        label: 'Current Level',
+                        data: [85, 70, 65, 75, 60, 80],
+                        backgroundColor: 'rgba(241, 196, 15, 0.2)',
+                        borderColor: 'rgba(241, 196, 15, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(241, 196, 15, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            pointLabels: {
+                                color: '#a8b2d1',
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            ticks: {
+                                display: false,
+                                backdropColor: 'transparent'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load contacts
+        function loadContacts(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            
+            // Clear existing contacts
+            const existingCategories = elements.contactList.querySelectorAll('.contact-category');
+            existingCategories.forEach(category => {
+                const nextSibling = category.nextElementSibling;
+                while (nextSibling && !nextSibling.classList.contains('contact-category')) {
+                    const toRemove = nextSibling;
+                    category.parentNode.removeChild(toRemove);
+                }
+            });
+            
+            // Add classes
+            const classesCategory = document.createElement('div');
+            classesCategory.className = 'contact-category';
+            classesCategory.textContent = 'Classes';
+            elements.contactList.appendChild(classesCategory);
+            
+            const classes = [
+                { id: 1, name: 'CS101 - Intro to Programming', online: 24, time: '2:45 PM', unread: 3, active: true },
+                { id: 2, name: 'MATH201 - Calculus II', online: 18, time: 'Yesterday', unread: 0, active: false }
+            ];
+            
+            classes.forEach(classItem => {
+                const contactItem = document.createElement('div');
+                contactItem.className = `contact-item ${classItem.active ? 'active' : ''}`;
+                
+                const avatar = document.createElement('img');
+                avatar.src = `https://randomuser.me/api/portraits/${classItem.id % 2 === 0 ? 'men' : 'women'}/${classItem.id * 10}.jpg`;
+                avatar.alt = 'Class';
+                avatar.className = 'contact-avatar';
+                
+                const info = document.createElement('div');
+                info.className = 'contact-info';
+                
+                const name = document.createElement('div');
+                name.className = 'contact-name';
+                name.textContent = classItem.name;
+                
+                const status = document.createElement('div');
+                status.className = 'contact-status';
+                
+                const statusDot = document.createElement('span');
+                statusDot.className = 'status-dot status-online';
+                
+                const statusText = document.createElement('span');
+                statusText.textContent = `${classItem.online} online`;
+                
+                status.appendChild(statusDot);
+                status.appendChild(statusText);
+                
+                info.appendChild(name);
+                info.appendChild(status);
+                
+                const time = document.createElement('div');
+                time.className = 'contact-time';
+                time.textContent = classItem.time;
+                
+                contactItem.appendChild(avatar);
+                contactItem.appendChild(info);
+                contactItem.appendChild(time);
+                
+                if (classItem.unread > 0) {
+                    const badge = document.createElement('span');
+                    badge.className = 'contact-badge';
+                    badge.textContent = classItem.unread;
+                    contactItem.appendChild(badge);
+                }
+                
+                elements.contactList.appendChild(contactItem);
+                
+                // Add event listener
+                contactItem.addEventListener('click', () => {
+                    document.querySelectorAll('.contact-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    contactItem.classList.add('active');
+                });
+            });
+            
+            // Add faculty
+            const facultyCategory = document.createElement('div');
+            facultyCategory.className = 'contact-category';
+            facultyCategory.textContent = 'Faculty';
+            elements.contactList.appendChild(facultyCategory);
+            
+            const faculty = [
+                { id: 3, name: 'Dr. Sarah Williams', status: 'Available', online: true },
+                { id: 4, name: 'Prof. Michael Chen', status: 'In a meeting', online: false }
+            ];
+            
+            faculty.forEach(facultyMember => {
+                const contactItem = document.createElement('div');
+                contactItem.className = 'contact-item';
+                
+                const avatar = document.createElement('img');
+                avatar.src = `https://randomuser.me/api/portraits/${facultyMember.id % 2 === 0 ? 'men' : 'women'}/${facultyMember.id * 10}.jpg`;
+                avatar.alt = 'Faculty';
+                avatar.className = 'contact-avatar';
+                
+                const info = document.createElement('div');
+                info.className = 'contact-info';
+                
+                const name = document.createElement('div');
+                name.className = 'contact-name';
+                name.textContent = facultyMember.name;
+                
+                const status = document.createElement('div');
+                status.className = 'contact-status';
+                
+                const statusDot = document.createElement('span');
+                statusDot.className = `status-dot status-${facultyMember.online ? 'online' : 'away'}`;
+                
+                const statusText = document.createElement('span');
+                statusText.textContent = facultyMember.status;
+                
+                status.appendChild(statusDot);
+                status.appendChild(statusText);
+                
+                info.appendChild(name);
+                info.appendChild(status);
+                
+                contactItem.appendChild(avatar);
+                contactItem.appendChild(info);
+                
+                elements.contactList.appendChild(contactItem);
+                
+                // Add event listener
+                contactItem.addEventListener('click', () => {
+                    document.querySelectorAll('.contact-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    contactItem.classList.add('active');
+                });
+            });
+            
+            // Add study groups
+            const studyGroupsCategory = document.createElement('div');
+            studyGroupsCategory.className = 'contact-category';
+            studyGroupsCategory.textContent = 'Study Groups';
+            elements.contactList.appendChild(studyGroupsCategory);
+            
+            const studyGroups = [
+                { id: 5, name: 'Physics Study Group', online: 5, time: '1:30 PM' }
+            ];
+            
+            studyGroups.forEach(group => {
+                const contactItem = document.createElement('div');
+                contactItem.className = 'contact-item';
+                
+                const avatar = document.createElement('img');
+                avatar.src = `https://randomuser.me/api/portraits/${group.id % 2 === 0 ? 'men' : 'women'}/${group.id * 10}.jpg`;
+                avatar.alt = 'Group';
+                avatar.className = 'contact-avatar';
+                
+                const info = document.createElement('div');
+                info.className = 'contact-info';
+                
+                const name = document.createElement('div');
+                name.className = 'contact-name';
+                name.textContent = group.name;
+                
+                const status = document.createElement('div');
+                status.className = 'contact-status';
+                
+                const statusDot = document.createElement('span');
+                statusDot.className = 'status-dot status-online';
+                
+                const statusText = document.createElement('span');
+                statusText.textContent = `${group.online} online`;
+                
+                status.appendChild(statusDot);
+                status.appendChild(statusText);
+                
+                info.appendChild(name);
+                info.appendChild(status);
+                
+                const time = document.createElement('div');
+                time.className = 'contact-time';
+                time.textContent = group.time;
+                
+                contactItem.appendChild(avatar);
+                contactItem.appendChild(info);
+                contactItem.appendChild(time);
+                
+                elements.contactList.appendChild(contactItem);
+                
+                // Add event listener
+                contactItem.addEventListener('click', () => {
+                    document.querySelectorAll('.contact-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    contactItem.classList.add('active');
+                });
+            });
+        }
+
+        // Load files
+        function loadFiles(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            const files = [
+                { id: 1, name: 'Lecture_Notes_Week5.pdf', size: '2.4 MB', date: 'Today', type: 'pdf' },
+                { id: 2, name: 'Assignment_2_Template.docx', size: '1.1 MB', date: 'Yesterday', type: 'doc' },
+                { id: 3, name: 'Class_Diagram.png', size: '856 KB', date: 'Oct 12', type: 'img' },
+                { id: 4, name: 'Study_Guide_Midterm.pdf', size: '3.7 MB', date: 'Oct 10', type: 'pdf' }
+            ];
+            
+            elements.filesList.innerHTML = '';
+            
+            files.forEach(file => {
+                const fileCard = document.createElement('div');
+                fileCard.className = 'file-card';
+                
+                const icon = document.createElement('div');
+                icon.className = `file-icon ${file.type}`;
+                
+                const iconInner = document.createElement('i');
+                if (file.type === 'pdf') {
+                    iconInner.className = 'fas fa-file-pdf';
+                } else if (file.type === 'doc') {
+                    iconInner.className = 'fas fa-file-word';
+                } else if (file.type === 'img') {
+                    iconInner.className = 'fas fa-file-image';
+                }
+                
+                icon.appendChild(iconInner);
+                
+                const info = document.createElement('div');
+                info.className = 'file-info';
+                
+                const name = document.createElement('div');
+                name.className = 'file-name';
+                name.textContent = file.name;
+                
+                const meta = document.createElement('div');
+                meta.className = 'file-meta';
+                
+                const size = document.createElement('span');
+                size.textContent = file.size;
+                
+                const date = document.createElement('span');
+                date.textContent = file.date;
+                
+                meta.appendChild(size);
+                meta.appendChild(date);
+                
+                info.appendChild(name);
+                info.appendChild(meta);
+                
+                const actions = document.createElement('div');
+                actions.className = 'file-actions';
+                
+                const download = document.createElement('div');
+                download.className = 'file-action tooltip';
+                download.setAttribute('data-tooltip', 'Download');
+                
+                const downloadIcon = document.createElement('i');
+                downloadIcon.className = 'fas fa-download';
+                
+                download.appendChild(downloadIcon);
+                
+                const share = document.createElement('div');
+                share.className = 'file-action tooltip';
+                share.setAttribute('data-tooltip', 'Share');
+                
+                const shareIcon = document.createElement('i');
+                shareIcon.className = 'fas fa-share-alt';
+                
+                share.appendChild(shareIcon);
+                
+                actions.appendChild(download);
+                actions.appendChild(share);
+                
+                fileCard.appendChild(icon);
+                fileCard.appendChild(info);
+                fileCard.appendChild(actions);
+                
+                elements.filesList.appendChild(fileCard);
+                
+                // Add event listeners
+                download.addEventListener('click', () => {
+                    // Simulate download
+                    downloadIcon.classList.remove('fa-download');
+                    downloadIcon.classList.add('fa-spinner', 'fa-spin');
+                    
+                    setTimeout(() => {
+                        downloadIcon.classList.remove('fa-spinner', 'fa-spin');
+                        downloadIcon.classList.add('fa-check');
+                        
+                        setTimeout(() => {
+                            downloadIcon.classList.remove('fa-check');
+                            downloadIcon.classList.add('fa-download');
+                        }, 2000);
+                    }, 1500);
+                });
+            });
+        }
+
+        // Load announcements
+        function loadAnnouncements(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            const announcements = [
+                { 
+                    id: 1, 
+                    title: 'Midterm Exam Schedule', 
+                    date: 'Oct 15, 2023', 
+                    text: 'The midterm exam for CS101 will be held on October 25th from 2:00 PM to 4:00 PM in Room 205. Please arrive 15 minutes early.',
+                    urgent: true,
+                    actions: ['Read More', 'Set Reminder']
+                },
+                { 
+                    id: 2, 
+                    title: 'New Study Resources', 
+                    date: 'Oct 10, 2023', 
+                    text: 'Additional practice problems and video tutorials have been added to the course materials section.',
+                    urgent: false,
+                    actions: ['View Resources']
+                },
+                { 
+                    id: 3, 
+                    title: 'Office Hours Update', 
+                    date: 'Oct 5, 2023', 
+                    text: 'Dr. Williams\' office hours have been changed to Tuesdays and Thursdays from 3:00 PM to 5:00 PM.',
+                    urgent: false,
+                    actions: ['Add to Calendar']
+                }
+            ];
+            
+            elements.announcementsList.innerHTML = '';
+            
+            announcements.forEach(announcement => {
+                const announcementCard = document.createElement('div');
+                announcementCard.className = `announcement-card ${announcement.urgent ? 'urgent' : ''}`;
+                
+                const header = document.createElement('div');
+                header.className = 'announcement-header';
+                
+                const title = document.createElement('div');
+                title.className = 'announcement-title';
+                title.textContent = announcement.title;
+                
+                const date = document.createElement('div');
+                date.className = 'announcement-date';
+                date.textContent = announcement.date;
+                
+                header.appendChild(title);
+                header.appendChild(date);
+                
+                const text = document.createElement('div');
+                text.className = 'announcement-text';
+                text.textContent = announcement.text;
+                
+                const actions = document.createElement('div');
+                actions.className = 'announcement-actions';
+                
+                announcement.actions.forEach(actionText => {
+                    const button = document.createElement('button');
+                    button.className = 'announcement-btn';
+                    button.textContent = actionText;
+                    actions.appendChild(button);
+                });
+                
+                announcementCard.appendChild(header);
+                announcementCard.appendChild(text);
+                announcementCard.appendChild(actions);
+                
+                elements.announcementsList.appendChild(announcementCard);
+            });
+        }
+
+        // Load notifications
+        function loadNotifications(userId) {
+            // For demo purposes, we'll use static data
+            // In a real app, this would come from Firestore
+            const notificationCount = 5;
+            
+            elements.notificationCount.textContent = notificationCount;
+        }
+
+        // Mobile menu toggle
+        elements.mobileMenuToggle.addEventListener('click', () => {
+            elements.sidebar.classList.toggle('open');
+            elements.rightPanel.classList.remove('open');
+        });
+
+        // Profile menu
+        elements.profileMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            elements.profileDropdown.classList.toggle('show');
+        });
+
+        // Close profile dropdown when clicking outside
+        document.addEventListener('click', () => {
+            elements.profileDropdown.classList.remove('show');
+        });
+
+        // Logout
+        elements.logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            auth.signOut()
+                .then(() => {
+                    // Sign-out successful, redirect to login page
+                    window.location.href = 'index.html';
+                })
+                .catch((error) => {
+                    console.error('Error signing out:', error);
+                });
+        });
+
         // Panel tabs
         const panelTabs = document.querySelectorAll('.panel-tab');
         const filesTab = document.getElementById('files-tab');
@@ -1865,220 +2534,76 @@
                 }
             });
         });
-        
-        // Contact selection
-        const contactItems = document.querySelectorAll('.contact-item');
-        contactItems.forEach(item => {
-            item.addEventListener('click', () => {
-                contactItems.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                
-                // Close mobile menu if open
-                if (window.innerWidth <= 1024) {
-                    sidebar.classList.remove('open');
+
+        // Contact search
+        elements.contactSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const contactItems = elements.contactList.querySelectorAll('.contact-item');
+            
+            contactItems.forEach(item => {
+                const name = item.querySelector('.contact-name').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
                 }
             });
         });
-        
+
         // Task checkboxes
-        const taskCheckboxes = document.querySelectorAll('.task-checkbox');
-        taskCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('click', () => {
-                checkbox.classList.toggle('checked');
-            });
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('task-checkbox')) {
+                e.target.classList.toggle('checked');
+            }
         });
-        
+
         // AI Assistant
-        const aiAssistant = document.getElementById('aiAssistant');
-        const aiChatWindow = document.getElementById('aiChatWindow');
-        const aiChatClose = document.getElementById('aiChatClose');
-        const aiChatInput = document.getElementById('aiChatInput');
-        const aiChatSend = document.getElementById('aiChatSend');
-        const aiChatMessages = document.querySelector('.ai-chat-messages');
-        
-        aiAssistant.addEventListener('click', () => {
-            aiChatWindow.style.display = 'flex';
+        elements.aiAssistant.addEventListener('click', () => {
+            elements.aiChatWindow.style.display = 'flex';
         });
-        
-        aiChatClose.addEventListener('click', () => {
-            aiChatWindow.style.display = 'none';
+
+        elements.aiChatClose.addEventListener('click', () => {
+            elements.aiChatWindow.style.display = 'none';
         });
-        
+
         function sendAiMessage() {
-            const message = aiChatInput.value.trim();
+            const message = elements.aiChatInput.value.trim();
             if (message) {
                 // Add user message
                 const userMessage = document.createElement('div');
                 userMessage.className = 'ai-message user';
                 userMessage.innerHTML = `<div class="ai-message-bubble">${message}</div>`;
-                aiChatMessages.appendChild(userMessage);
+                elements.aiChatMessages.appendChild(userMessage);
                 
                 // Clear input
-                aiChatInput.value = '';
+                elements.aiChatInput.value = '';
                 
                 // Simulate bot response
                 setTimeout(() => {
                     const botMessage = document.createElement('div');
                     botMessage.className = 'ai-message bot';
                     botMessage.innerHTML = `<div class="ai-message-bubble">I'm processing your question about "${message}". Let me find the best resources for you.</div>`;
-                    aiChatMessages.appendChild(botMessage);
-                    aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+                    elements.aiChatMessages.appendChild(botMessage);
+                    elements.aiChatMessages.scrollTop = elements.aiChatMessages.scrollHeight;
                 }, 1000);
                 
-                aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+                elements.aiChatMessages.scrollTop = elements.aiChatMessages.scrollHeight;
             }
         }
-        
-        aiChatSend.addEventListener('click', sendAiMessage);
-        aiChatInput.addEventListener('keypress', (e) => {
+
+        elements.aiChatSend.addEventListener('click', sendAiMessage);
+        elements.aiChatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendAiMessage();
             }
         });
-        
-        // Initialize Charts
-        // Courses Chart
-        const coursesCtx = document.getElementById('coursesChart').getContext('2d');
-        const coursesChart = new Chart(coursesCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Completed', 'In Progress', 'Not Started'],
-                datasets: [{
-                    data: [2, 3, 1],
-                    backgroundColor: [
-                        'rgba(74, 222, 128, 0.8)',
-                        'rgba(241, 196, 15, 0.8)',
-                        'rgba(100, 116, 139, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(74, 222, 128, 1)',
-                        'rgba(241, 196, 15, 1)',
-                        'rgba(100, 116, 139, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: '#a8b2d1',
-                            font: {
-                                size: 11
-                            },
-                            padding: 10
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Study Time Chart
-        const studyTimeCtx = document.getElementById('studyTimeChart').getContext('2d');
-        const studyTimeChart = new Chart(studyTimeCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Hours',
-                    data: [3, 4, 2, 5, 3, 4, 3],
-                    backgroundColor: 'rgba(241, 196, 15, 0.6)',
-                    borderColor: 'rgba(241, 196, 15, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#a8b2d1',
-                            font: {
-                                size: 10
-                            }
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: '#a8b2d1',
-                            font: {
-                                size: 10
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-        
-        // Skills Chart
-        const skillsCtx = document.getElementById('skillsChart').getContext('2d');
-        const skillsChart = new Chart(skillsCtx, {
-            type: 'radar',
-            data: {
-                labels: ['Programming', 'Math', 'Writing', 'Research', 'Presentation', 'Teamwork'],
-                datasets: [{
-                    label: 'Current Level',
-                    data: [85, 70, 65, 75, 60, 80],
-                    backgroundColor: 'rgba(241, 196, 15, 0.2)',
-                    borderColor: 'rgba(241, 196, 15, 1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: 'rgba(241, 196, 15, 1)'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        angleLines: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        pointLabels: {
-                            color: '#a8b2d1',
-                            font: {
-                                size: 10
-                            }
-                        },
-                        ticks: {
-                            display: false,
-                            backdropColor: 'transparent'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-        
+
         // Simulate real-time updates
         setInterval(() => {
             // Update notification badge randomly
-            const notificationBadge = document.querySelector('.notification-badge');
-            const currentCount = parseInt(notificationBadge.textContent);
+            const currentCount = parseInt(elements.notificationCount.textContent);
             const change = Math.random() > 0.7 ? 1 : 0;
-            notificationBadge.textContent = currentCount + change;
+            elements.notificationCount.textContent = currentCount + change;
             
             // Update online status randomly
             const statusDots = document.querySelectorAll('.status-dot');
@@ -2097,29 +2622,7 @@
                 }
             });
         }, 5000);
-        
-        // File download simulation
-        const downloadButtons = document.querySelectorAll('.file-action');
-        downloadButtons.forEach(button => {
-            if (button.querySelector('.fa-download')) {
-                button.addEventListener('click', () => {
-                    const icon = button.querySelector('i');
-                    icon.classList.remove('fa-download');
-                    icon.classList.add('fa-spinner', 'fa-spin');
-                    
-                    setTimeout(() => {
-                        icon.classList.remove('fa-spinner', 'fa-spin');
-                        icon.classList.add('fa-check');
-                        
-                        setTimeout(() => {
-                            icon.classList.remove('fa-check');
-                            icon.classList.add('fa-download');
-                        }, 2000);
-                    }, 1500);
-                });
-            }
-        });
-        
+
         // Animate progress bars on load
         window.addEventListener('load', () => {
             const progressFills = document.querySelectorAll('.progress-fill');
