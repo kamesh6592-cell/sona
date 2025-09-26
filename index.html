@@ -369,6 +369,18 @@
             box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
         }
 
+        .btn-google {
+            background: #ea4335;
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(234, 67, 53, 0.3);
+        }
+
+        .btn-google:hover {
+            background: #d33b2c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(234, 67, 53, 0.4);
+        }
+
         .btn-loading .btn-text {
             visibility: hidden;
             opacity: 0;
@@ -803,6 +815,22 @@
             display: block;
         }
 
+        /* Security notice for test accounts */
+        .test-accounts-notice {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-left: 4px solid var(--error);
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             html {
@@ -1063,6 +1091,11 @@
                 <span>OR</span>
             </div>
             
+            <button type="button" class="btn btn-google" id="googleLoginBtn" aria-live="polite">
+                <i class="fab fa-google" aria-hidden="true"></i>
+                <span class="btn-text">Login with Google</span>
+            </button>
+            
             <button type="button" class="btn btn-microsoft" id="microsoftLoginBtn" aria-live="polite">
                 <i class="fab fa-microsoft" aria-hidden="true"></i>
                 <span class="btn-text">Login with Microsoft</span>
@@ -1096,6 +1129,11 @@
                         <div class="admin-account-dept">Department: Electronics & Communication Engineering</div>
                     </div>
                     <button class="admin-account-btn" onclick="fillAdminAccount('hod.ece@sona.ac.in', 'HodECE@2025', 'hod')">Fill</button>
+                </div>
+                
+                <div class="test-accounts-notice">
+                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    <span>For testing purposes only. In production, use secure authentication methods.</span>
                 </div>
             </div>
             
@@ -1175,6 +1213,11 @@
                 <span>OR</span>
             </div>
             
+            <button type="button" class="btn btn-google" id="googleRegisterBtn" aria-live="polite">
+                <i class="fab fa-google" aria-hidden="true"></i>
+                <span class="btn-text">Register with Google</span>
+            </button>
+            
             <button type="button" class="btn btn-microsoft" id="microsoftRegisterBtn" aria-live="polite">
                 <i class="fab fa-microsoft" aria-hidden="true"></i>
                 <span class="btn-text">Register with Microsoft</span>
@@ -1250,6 +1293,54 @@
         </div>
     </div>
 
+    <!-- Google Account Setup Modal -->
+    <div class="modal" id="googleSetupModal" role="dialog" aria-labelledby="googleSetupModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <button class="close-btn" id="closeGoogleSetup" aria-label="Close Google setup modal">&times;</button>
+            <h2 id="googleSetupModalTitle">Complete Your Profile</h2>
+            <p class="subtitle" style="margin-bottom: 1.5rem;">Please provide additional information to complete your account setup</p>
+            <form id="googleSetupForm" aria-label="Google account setup form">
+                <div class="form-group">
+                    <label for="googleCollegeId">College ID</label>
+                    <div class="input-container">
+                        <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
+                        <input type="text" id="googleCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="googleRole">Role</label>
+                    <div class="input-container">
+                        <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
+                        <select id="googleRole" required>
+                            <option value="">Select Your Role</option>
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="hod">Head of Department</option>
+                            <option value="principal">Principal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="googleDepartment">Department ID</label>
+                    <div class="input-container">
+                        <i class="fas fa-building input-icon" aria-hidden="true"></i>
+                        <input type="number" id="googleDepartment" required placeholder="e.g., 101">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="googleFullName">Full Name</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
+                        <input type="text" id="googleFullName" required placeholder="Enter your full name" autocomplete="name">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" aria-live="polite">
+                    <span class="btn-text">Complete Setup</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <div class="notification" id="notification" role="alert" aria-live="assertive"></div>
 
     <!-- Debug Panel -->
@@ -1288,9 +1379,11 @@
             registerForm: document.getElementById('registerForm'),
             forgotForm: document.getElementById('forgotForm'),
             microsoftSetupForm: document.getElementById('microsoftSetupForm'),
+            googleSetupForm: document.getElementById('googleSetupForm'),
             registerModal: document.getElementById('registerModal'),
             forgotModal: document.getElementById('forgotModal'),
             microsoftSetupModal: document.getElementById('microsoftSetupModal'),
+            googleSetupModal: document.getElementById('googleSetupModal'),
             passwordToggle: document.getElementById('passwordToggle'),
             regPasswordToggle: document.getElementById('regPasswordToggle'),
             passwordField: document.getElementById('password'),
@@ -1302,6 +1395,8 @@
             notification: document.getElementById('notification'),
             microsoftLoginBtn: document.getElementById('microsoftLoginBtn'),
             microsoftRegisterBtn: document.getElementById('microsoftRegisterBtn'),
+            googleLoginBtn: document.getElementById('googleLoginBtn'),
+            googleRegisterBtn: document.getElementById('googleRegisterBtn'),
             debugPanel: document.getElementById('debugPanel'),
             debugContent: document.getElementById('debugContent')
         };
@@ -1482,8 +1577,12 @@
                 closeModal(elements.microsoftSetupModal);
             });
 
+            document.getElementById('closeGoogleSetup').addEventListener('click', () => {
+                closeModal(elements.googleSetupModal);
+            });
+
             // Close modals when clicking outside
-            [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal].forEach(modal => {
+            [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal, elements.googleSetupModal].forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
                         closeModal(modal);
@@ -1496,10 +1595,13 @@
             elements.registerForm.addEventListener('submit', handleRegister);
             elements.forgotForm.addEventListener('submit', handleForgotPassword);
             elements.microsoftSetupForm.addEventListener('submit', handleMicrosoftSetup);
+            elements.googleSetupForm.addEventListener('submit', handleGoogleSetup);
 
-            // Microsoft authentication buttons
+            // Authentication buttons
             elements.microsoftLoginBtn.addEventListener('click', () => handleMicrosoftAuth(true));
             elements.microsoftRegisterBtn.addEventListener('click', () => handleMicrosoftAuth(false));
+            elements.googleLoginBtn.addEventListener('click', () => handleGoogleAuth(true));
+            elements.googleRegisterBtn.addEventListener('click', () => handleGoogleAuth(false));
         }
 
         // Toggle password visibility
@@ -1585,6 +1687,99 @@
         function closeModal(modal) {
             modal.style.display = 'none';
             document.body.style.overflow = '';
+        }
+
+        // Handle Google authentication
+        function handleGoogleAuth(isLogin) {
+            const button = isLogin ? elements.googleLoginBtn : elements.googleRegisterBtn;
+            button.classList.add('btn-loading');
+            
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    debug('Google auth successful: ' + user.email);
+                    
+                    // Check if user exists in Firestore
+                    return db.collection('users').doc(user.uid).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                // User exists, redirect based on role
+                                const userData = doc.data();
+                                debug('User exists in Firestore, redirecting to: ' + userData.role);
+                                redirectBasedOnRole(userData.role);
+                            } else {
+                                // User doesn't exist, show setup modal
+                                debug('User does not exist in Firestore, showing setup modal');
+                                openModal(elements.googleSetupModal);
+                                document.getElementById('googleFullName').value = user.displayName || '';
+                                document.getElementById('googleEmail').value = user.email || '';
+                            }
+                        });
+                })
+                .catch((error) => {
+                    console.error('Google auth error:', error);
+                    debug('Google auth error: ' + error.message);
+                    showNotification('Google authentication failed. Please try again.', 'error');
+                })
+                .finally(() => {
+                    button.classList.remove('btn-loading');
+                });
+        }
+
+        // Handle Google setup form
+        function handleGoogleSetup(e) {
+            e.preventDefault();
+            const submitBtn = elements.googleSetupForm.querySelector('.btn');
+            
+            // Show loading state
+            submitBtn.classList.add('btn-loading');
+            
+            const collegeId = document.getElementById('googleCollegeId').value;
+            const role = document.getElementById('googleRole').value;
+            const department = document.getElementById('googleDepartment').value;
+            const fullName = document.getElementById('googleFullName').value;
+            
+            // Get current user
+            const user = auth.currentUser;
+            
+            if (user) {
+                // Create user object
+                const userData = {
+                    collegeId,
+                    role,
+                    department: parseInt(department),
+                    name: fullName,
+                    email: user.email,
+                    authMethod: 'google',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                debug('Creating Google user document: ' + JSON.stringify(userData));
+                
+                // Save user to Firestore
+                db.collection('users').doc(user.uid).set(userData)
+                    .then(() => {
+                        showNotification('Account setup completed successfully!', 'success');
+                        closeModal(elements.googleSetupModal);
+                        elements.googleSetupForm.reset();
+                        
+                        // Redirect based on role
+                        redirectBasedOnRole(role);
+                    })
+                    .catch((error) => {
+                        console.error('Error saving user data:', error);
+                        debug('Error saving user data: ' + error.message);
+                        showNotification('Error saving user data. Please try again.', 'error');
+                    })
+                    .finally(() => {
+                        submitBtn.classList.remove('btn-loading');
+                    });
+            } else {
+                showNotification('Authentication error. Please try again.', 'error');
+                submitBtn.classList.remove('btn-loading');
+            }
         }
 
         // Handle Microsoft authentication
@@ -1956,20 +2151,9 @@
                 
                 debug('Redirecting to: ' + targetUrl);
                 
-                // Check if the target page exists
-                fetch(targetUrl, { method: 'HEAD' })
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.href = targetUrl;
-                        } else {
-                            debug('Target page does not exist: ' + targetUrl);
-                            showNotification('The target page does not exist. Please contact the administrator.', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        debug('Error checking target page: ' + error.message);
-                        showNotification('Error redirecting to the target page.', 'error');
-                    });
+                // Redirect directly without checking if the page exists
+                // This is for demo purposes - in production, you would want to ensure the pages exist
+                window.location.href = targetUrl;
             }, 1000);
         }
 
@@ -1977,7 +2161,7 @@
         document.addEventListener('keydown', (e) => {
             // Close modals with Escape key
             if (e.key === 'Escape') {
-                [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal].forEach(modal => {
+                [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal, elements.googleSetupModal].forEach(modal => {
                     if (modal.style.display === 'flex') {
                         closeModal(modal);
                     }
