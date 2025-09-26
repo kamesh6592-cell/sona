@@ -1,0 +1,3699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HOD Dashboard for Sona College of Technology Communication App">
+    <title>Sona College of Technology - HOD Dashboard</title>
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/tonsky/FiraCode@4/distr/fira_code.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+        :root {
+            /* Premium Dark Blue & Yellow Theme */
+            --primary-dark: #0A192F;
+            --secondary-dark: #172A45;
+            --accent-blue: #1E3A8A;
+            --accent-light-blue: #3B82F6;
+            --primary-yellow: #F59E0B;
+            --secondary-yellow: #FEF3C7;
+            --accent-yellow: #FCD34D;
+            --white: #FFFFFF;
+            --light-gray: #F8FAFC;
+            --medium-gray: #CBD5E1;
+            --dark-gray: #64748B;
+            --darker-gray: #334155;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --info: #3B82F6;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-dark);
+            color: var(--white);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .dashboard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-nav {
+            background: var(--secondary-dark);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+
+        .logo-small {
+            width: 40px;
+            margin-right: 1rem;
+            border-radius: 4px;
+        }
+
+        .nav-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-light-blue), var(--primary-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            flex: 1;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-search {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-search input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            color: var(--white);
+            width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-search input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-light-blue);
+            width: 250px;
+        }
+
+        .nav-search i {
+            position: absolute;
+            left: 0.75rem;
+            color: var(--medium-gray);
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .notification-badge:hover {
+            transform: scale(1.1);
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--error);
+            color: var(--white);
+            font-size: 0.75rem;
+            font-weight: 500;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .role-indicator {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--primary-yellow);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-light-blue), var(--primary-yellow));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--secondary-dark);
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            width: 200px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            color: var(--medium-gray);
+        }
+
+        .main-layout {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--secondary-dark);
+            overflow-y: auto;
+            padding: 1.5rem 1rem;
+            transition: width 0.3s ease, transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--medium-gray);
+            transition: color 0.15s ease, transform 0.2s ease;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-btn:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .menu-section {
+            margin-bottom: 1rem;
+        }
+
+        .menu-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--medium-gray);
+            margin-bottom: 0.5rem;
+            padding: 0 0.75rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary-yellow);
+            transform: translateX(-100%);
+            transition: transform 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item.active {
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .menu-item.active::before {
+            transform: translateX(0);
+        }
+
+        .menu-icon {
+            width: 24px;
+            margin-right: 1rem;
+            color: var(--medium-gray);
+            transition: color 0.2s ease;
+        }
+
+        .menu-item.active .menu-icon {
+            color: var(--primary-yellow);
+        }
+
+        .menu-text {
+            font-size: 1rem;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-item.active {
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--darker-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--white);
+            margin-right: 1rem;
+            position: relative;
+        }
+
+        .contact-avatar.online::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success);
+            border: 2px solid var(--secondary-dark);
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--white);
+        }
+
+        .contact-status {
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+
+        .status-online {
+            background: var(--success);
+        }
+
+        .status-offline {
+            background: var(--dark-gray);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--primary-dark);
+        }
+
+        .content-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-yellow);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .content-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--secondary-dark);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .card-icon.blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-light-blue);
+        }
+
+        .card-icon.yellow {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--primary-yellow);
+        }
+
+        .card-icon.green {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            color: var(--medium-gray);
+            font-size: 0.875rem;
+        }
+
+        .card-action {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-light-blue);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .card-action:hover {
+            color: var(--primary-yellow);
+        }
+
+        .chart-container {
+            background: var(--secondary-dark);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            height: 400px;
+            margin-bottom: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .chart-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-option {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chart-option.active {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--primary-yellow);
+        }
+
+        .chart-option:not(.active) {
+            color: var(--medium-gray);
+        }
+
+        .chart-option:not(.active):hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .table-container {
+            background: var(--secondary-dark);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            color: var(--white);
+            width: 250px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-light-blue);
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            color: var(--white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-light-blue);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 0.75rem;
+            color: var(--medium-gray);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table td {
+            padding: 0.75rem;
+            color: var(--white);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.approved {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--primary-yellow);
+        }
+
+        .status-badge.rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .action-icon.view {
+            color: var(--accent-light-blue);
+        }
+
+        .action-icon.edit {
+            color: var(--primary-yellow);
+        }
+
+        .action-icon.delete {
+            color: var(--error);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .page-btn.active {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .page-btn:not(.active) {
+            color: var(--medium-gray);
+        }
+
+        .page-btn:not(.active):hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .chat-container {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-header {
+            padding: 1rem 1.5rem;
+            background: var(--secondary-dark);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chat-status {
+            font-size: 0.875rem;
+            color: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--medium-gray);
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background-image: url('https://z-cdn-media.chatglm.cn/files/e7d0f723-f080-4237-9b0d-44601e484cdb_pasted_image_1758874469084.jpg?auth_key=1790410541-aa3c91bca30d4f71b2cb96684831c7b7-0-260d43c3cae7a1ec6cad5bf7213b0812');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .chat-messages::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 25, 47, 0.85);
+            z-index: 1;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+
+        .message-sender {
+            font-size: 0.875rem;
+            color: var(--medium-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .message-bubble {
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .message.sent .message-bubble {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received .message-bubble {
+            background: var(--secondary-dark);
+            color: var(--white);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+            margin-top: 0.25rem;
+        }
+
+        .encryption-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .message-input {
+            padding: 1rem 1.5rem;
+            background: var(--secondary-dark);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-light-blue);
+        }
+
+        #messageInput {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            color: var(--white);
+        }
+
+        #messageInput:focus {
+            outline: none;
+        }
+
+        #messageInput::placeholder {
+            color: var(--medium-gray);
+        }
+
+        .attach-btn, .send-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--medium-gray);
+            transition: color 0.15s ease;
+        }
+
+        .attach-btn:hover, .send-btn:hover {
+            color: var(--white);
+        }
+
+        .send-btn {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            background: var(--accent-yellow);
+            transform: scale(1.05);
+        }
+
+        .right-panel {
+            width: 320px;
+            background: var(--secondary-dark);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .panel-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-action {
+            font-size: 0.875rem;
+            color: var(--accent-light-blue);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .section-action:hover {
+            color: var(--primary-yellow);
+        }
+
+        .announcement-list, .file-list, .metrics-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .announcement-item, .file-item, .metric-item {
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .announcement-item:hover, .file-item:hover, .metric-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-icon {
+            color: var(--accent-light-blue);
+        }
+
+        .file-name {
+            flex: 1;
+            font-size: 0.875rem;
+            color: var(--white);
+        }
+
+        .download-btn {
+            background: none;
+            border: none;
+            color: var(--medium-gray);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .download-btn:hover {
+            color: var(--white);
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--medium-gray);
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--secondary-dark);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--medium-gray);
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--white);
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-light-blue);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .notification-toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--secondary-dark);
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 300px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .notification-icon.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .notification-icon.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--primary-yellow);
+        }
+
+        .notification-icon.info {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-light-blue);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-message {
+            font-size: 0.875rem;
+            color: var(--medium-gray);
+        }
+
+        .notification-close {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--medium-gray);
+        }
+
+        .notification-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                position: absolute;
+                left: 0;
+                height: 100%;
+                z-index: 10;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .right-panel {
+                position: absolute;
+                right: 0;
+                height: 100%;
+                z-index: 10;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            }
+
+            .right-panel.open {
+                transform: translateX(0);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-search input {
+                width: 120px;
+            }
+
+            .nav-search input:focus {
+                width: 150px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .data-table {
+                min-width: 600px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="top-nav">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" alt="Sona Logo" class="logo-small">
+            <span class="nav-title">HOD Dashboard</span>
+            <div class="nav-actions">
+                <div class="nav-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="notification-badge" id="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge-count">3</span>
+                </div>
+                <div class="user-menu">
+                    <div class="user-avatar">JD</div>
+                    <div class="dropdown-menu" id="userDropdown">
+                        <div class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </div>
+                        <div class="dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </div>
+                        <div class="dropdown-item">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help</span>
+                        </div>
+                        <div class="dropdown-item" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="role-indicator">
+                    <i class="fas fa-user-tie"></i>
+                    HOD
+                </span>
+            </div>
+        </nav>
+        <div class="main-layout">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-title">Navigation</span>
+                    <button class="toggle-btn" id="toggleSidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <div class="sidebar-menu">
+                    <div class="menu-section">
+                        <div class="menu-section-title">Main</div>
+                        <div class="menu-item active" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt menu-icon"></i>
+                            <span class="menu-text">Dashboard</span>
+                        </div>
+                        <div class="menu-item" data-page="faculty">
+                            <i class="fas fa-users menu-icon"></i>
+                            <span class="menu-text">Faculty Management</span>
+                        </div>
+                        <div class="menu-item" data-page="academic">
+                            <i class="fas fa-graduation-cap menu-icon"></i>
+                            <span class="menu-text">Academic Planning</span>
+                        </div>
+                        <div class="menu-item" data-page="resources">
+                            <i class="fas fa-box menu-icon"></i>
+                            <span class="menu-text">Resource Management</span>
+                        </div>
+                        <div class="menu-item" data-page="budget">
+                            <i class="fas fa-chart-pie menu-icon"></i>
+                            <span class="menu-text">Budget & Finance</span>
+                        </div>
+                    </div>
+                    <div class="menu-section">
+                        <div class="menu-section-title">Communication</div>
+                        <div class="menu-item" data-page="messages">
+                            <i class="fas fa-comments menu-icon"></i>
+                            <span class="menu-text">Messages</span>
+                        </div>
+                        <div class="menu-item" data-page="meetings">
+                            <i class="fas fa-calendar-alt menu-icon"></i>
+                            <span class="menu-text">Meetings</span>
+                        </div>
+                        <div class="menu-item" data-page="announcements">
+                            <i class="fas fa-bullhorn menu-icon"></i>
+                            <span class="menu-text">Announcements</span>
+                        </div>
+                    </div>
+                    <div class="menu-section">
+                        <div class="menu-section-title">Reports</div>
+                        <div class="menu-item" data-page="reports">
+                            <i class="fas fa-file-alt menu-icon"></i>
+                            <span class="menu-text">Department Reports</span>
+                        </div>
+                        <div class="menu-item" data-page="analytics">
+                            <i class="fas fa-chart-line menu-icon"></i>
+                            <span class="menu-text">Analytics</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-list">
+                    <div class="menu-section-title">Quick Contacts</div>
+                    <div class="contact-item active" data-contact="department">
+                        <div class="contact-avatar online">DG</div>
+                        <div class="contact-info">
+                            <span class="contact-name">Department Group</span>
+                            <span class="contact-status">Active</span>
+                        </div>
+                        <div class="status-dot status-online"></div>
+                    </div>
+                    <div class="contact-item" data-contact="principal">
+                        <div class="contact-avatar online">PR</div>
+                        <div class="contact-info">
+                            <span class="contact-name">Principal</span>
+                            <span class="contact-status">Online</span>
+                        </div>
+                        <div class="status-dot status-online"></div>
+                    </div>
+                    <div class="contact-item" data-contact="admin">
+                        <div class="contact-avatar">AD</div>
+                        <div class="contact-info">
+                            <span class="contact-name">Admin Office</span>
+                            <span class="contact-status">Offline</span>
+                        </div>
+                        <div class="status-dot status-offline"></div>
+                    </div>
+                </div>
+            </aside>
+            <main class="main-content">
+                <div class="content-header">
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="refreshBtn">
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh
+                        </button>
+                        <button class="btn btn-primary" id="newBtn">
+                            <i class="fas fa-plus"></i>
+                            New
+                        </button>
+                    </div>
+                </div>
+                <div class="content-body" id="contentBody">
+                    <!-- Dashboard Content -->
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Faculty Members</h3>
+                                <div class="card-icon blue">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="card-value">24</div>
+                            <div class="card-description">Active faculty members in the department</div>
+                            <div class="card-action">
+                                <span>View Details</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Students</h3>
+                                <div class="card-icon yellow">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                            </div>
+                            <div class="card-value">486</div>
+                            <div class="card-description">Total students across all programs</div>
+                            <div class="card-action">
+                                <span>View Details</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Courses</h3>
+                                <div class="card-icon green">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                            </div>
+                            <div class="card-value">32</div>
+                            <div class="card-description">Active courses this semester</div>
+                            <div class="card-action">
+                                <span>View Details</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Budget Utilization</h3>
+                                <div class="card-icon blue">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                            </div>
+                            <div class="card-value">68%</div>
+                            <div class="card-description">Of the annual budget utilized</div>
+                            <div class="card-action">
+                                <span>View Details</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Department Performance</h3>
+                            <div class="chart-options">
+                                <div class="chart-option active">Semester</div>
+                                <div class="chart-option">Year</div>
+                            </div>
+                        </div>
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                    
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Recent Approvals</h3>
+                            <div class="search-filter">
+                                <input type="text" class="search-input" placeholder="Search...">
+                                <select class="filter-select">
+                                    <option>All Status</option>
+                                    <option>Pending</option>
+                                    <option>Approved</option>
+                                    <option>Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Requested By</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#REQ-001</td>
+                                    <td>Conference Attendance</td>
+                                    <td>Dr. Smith</td>
+                                    <td>2023-09-15</td>
+                                    <td><span class="status-badge pending">Pending</span></td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <div class="action-icon view">
+                                                <i class="fas fa-eye"></i>
+                                            </div>
+                                            <div class="action-icon edit">
+                                                <i class="fas fa-edit"></i>
+                                            </div>
+                                            <div class="action-icon delete">
+                                                <i class="fas fa-trash"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#REQ-002</td>
+                                    <td>Equipment Purchase</td>
+                                    <td>Prof. Johnson</td>
+                                    <td>2023-09-14</td>
+                                    <td><span class="status-badge approved">Approved</span></td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <div class="action-icon view">
+                                                <i class="fas fa-eye"></i>
+                                            </div>
+                                            <div class="action-icon edit">
+                                                <i class="fas fa-edit"></i>
+                                            </div>
+                                            <div class="action-icon delete">
+                                                <i class="fas fa-trash"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#REQ-003</td>
+                                    <td>Research Grant</td>
+                                    <td>Dr. Williams</td>
+                                    <td>2023-09-12</td>
+                                    <td><span class="status-badge rejected">Rejected</span></td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <div class="action-icon view">
+                                                <i class="fas fa-eye"></i>
+                                            </div>
+                                            <div class="action-icon edit">
+                                                <i class="fas fa-edit"></i>
+                                            </div>
+                                            <div class="action-icon delete">
+                                                <i class="fas fa-trash"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                            <div class="page-btn">
+                                <i class="fas fa-chevron-left"></i>
+                            </div>
+                            <div class="page-btn active">1</div>
+                            <div class="page-btn">2</div>
+                            <div class="page-btn">3</div>
+                            <div class="page-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Container (Hidden by default) -->
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-header">
+                        <div class="chat-title">
+                            <div class="contact-avatar online">DG</div>
+                            <div>
+                                <div>Department Group</div>
+                                <div class="chat-status">
+                                    <div class="status-indicator"></div>
+                                    Online
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-actions">
+                            <div class="action-btn" title="Video Call">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="action-btn" title="Voice Call">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="action-btn" title="Search">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="action-btn" title="More Options">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="messages">
+                        <!-- Messages will be loaded here -->
+                    </div>
+                    <div class="message-input">
+                        <div class="input-wrapper">
+                            <input type="text" id="messageInput" placeholder="Type your message...">
+                        </div>
+                        <label for="fileInput" class="attach-btn">
+                            <i class="fas fa-paperclip"></i>
+                        </label>
+                        <input type="file" id="fileInput" style="display: none;" accept="image/*,application/pdf,.doc,.docx">
+                        <button class="send-btn" id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </main>
+            <aside class="right-panel" id="rightPanel">
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        Announcements
+                        <span class="section-action">View All</span>
+                    </h3>
+                    <div class="announcement-list">
+                        <div class="announcement-item">
+                            Department meeting at 2 PM IST, Sep 26, 2023
+                        </div>
+                        <div class="announcement-item">
+                            Last date for course registration: Sep 30, 2023
+                        </div>
+                        <div class="announcement-item">
+                            Workshop on Research Methodologies - Oct 5, 2023
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        Shared Files
+                        <span class="section-action">View All</span>
+                    </h3>
+                    <div class="file-list">
+                        <div class="file-item">
+                            <i class="fas fa-file-pdf file-icon"></i>
+                            <span class="file-name">DeptReport.pdf</span>
+                            <button class="download-btn">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="file-item">
+                            <i class="fas fa-file-excel file-icon"></i>
+                            <span class="file-name">BudgetAllocation.xlsx</span>
+                            <button class="download-btn">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="file-item">
+                            <i class="fas fa-file-word file-icon"></i>
+                            <span class="file-name">MeetingMinutes.docx</span>
+                            <button class="download-btn">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <h3 class="section-title">Department Metrics</h3>
+                    <div class="metrics-list">
+                        <div class="metric-item">
+                            <span class="metric-label">Attendance Rate</span>
+                            <span class="metric-value">92%</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Pending Approvals</span>
+                            <span class="metric-value">3</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Upcoming Events</span>
+                            <span class="metric-value">5</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Research Papers</span>
+                            <span class="metric-value">12</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Modal for forms -->
+    <div class="modal" id="formModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">New Request</h3>
+                <div class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="modalForm">
+                    <div class="form-group">
+                        <label class="form-label" for="requestType">Request Type</label>
+                        <select class="form-select" id="requestType" required>
+                            <option value="">Select a type</option>
+                            <option value="conference">Conference Attendance</option>
+                            <option value="equipment">Equipment Purchase</option>
+                            <option value="research">Research Grant</option>
+                            <option value="leave">Leave Request</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="requestTitle">Title</label>
+                        <input type="text" class="form-input" id="requestTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="requestDescription">Description</label>
+                        <textarea class="form-textarea" id="requestDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="requestAmount">Amount (if applicable)</label>
+                        <input type="number" class="form-input" id="requestAmount">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="notification-toast" id="notificationToast">
+        <div class="notification-icon success">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title">Success</div>
+            <div class="notification-message">Your request has been submitted successfully.</div>
+        </div>
+        <div class="notification-close" id="notificationClose">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+
+    <script>
+        // Initialize variables
+        const API_BASE = 'http://localhost:3000/api';
+        const socket = io('http://localhost:3000');
+        let currentPage = 'dashboard';
+        let currentUser = null;
+        let performanceChart = null;
+
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const contentBody = document.getElementById('contentBody');
+        const pageTitle = document.getElementById('pageTitle');
+        const menuItems = document.querySelectorAll('.menu-item');
+        const contactItems = document.querySelectorAll('.contact-item');
+        const userDropdown = document.getElementById('userDropdown');
+        const userAvatar = document.querySelector('.user-avatar');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const newBtn = document.getElementById('newBtn');
+        const formModal = document.getElementById('formModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalForm = document.getElementById('modalForm');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const notificationToast = document.getElementById('notificationToast');
+        const notificationClose = document.getElementById('notificationClose');
+        const chatContainer = document.getElementById('chatContainer');
+        const rightPanel = document.getElementById('rightPanel');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const messages = document.getElementById('messages');
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            initializeEventListeners();
+            initializeChart();
+            loadDashboardData();
+        });
+
+        // Check authentication
+        function checkAuth() {
+            const user = localStorage.getItem('user');
+            const token = localStorage.getItem('jwt');
+            
+            if (!user || !token) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(user);
+                if (currentUser.role !== 'hod') {
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // Update user avatar
+                const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                userAvatar.textContent = initials;
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Toggle sidebar
+            toggleSidebar.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+            });
+
+            // Menu item clicks
+            menuItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const page = item.getAttribute('data-page');
+                    if (page) {
+                        loadPage(page);
+                        
+                        // Update active menu item
+                        menuItems.forEach(i => i.classList.remove('active'));
+                        item.classList.add('active');
+                        
+                        // Hide chat container if visible
+                        chatContainer.style.display = 'none';
+                        contentBody.style.display = 'block';
+                    }
+                });
+            });
+
+            // Contact item clicks
+            contactItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const contact = item.getAttribute('data-contact');
+                    if (contact) {
+                        openChat(contact);
+                        
+                        // Update active contact
+                        contactItems.forEach(i => i.classList.remove('active'));
+                        item.classList.add('active');
+                    }
+                });
+            });
+
+            // User dropdown
+            userAvatar.addEventListener('click', () => {
+                userDropdown.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!userAvatar.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove('active');
+                }
+            });
+
+            // Logout
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('user');
+                localStorage.removeItem('jwt');
+                window.location.href = 'index.html';
+            });
+
+            // Refresh button
+            refreshBtn.addEventListener('click', () => {
+                refreshBtn.querySelector('i').classList.add('fa-spin');
+                setTimeout(() => {
+                    refreshBtn.querySelector('i').classList.remove('fa-spin');
+                    loadPage(currentPage);
+                    showNotification('success', 'Refreshed', 'Data has been refreshed successfully.');
+                }, 1000);
+            });
+
+            // New button
+            newBtn.addEventListener('click', () => {
+                openModal();
+            });
+
+            // Modal close
+            modalClose.addEventListener('click', closeModal);
+            cancelBtn.addEventListener('click', closeModal);
+
+            // Close modal when clicking outside
+            formModal.addEventListener('click', (e) => {
+                if (e.target === formModal) {
+                    closeModal();
+                }
+            });
+
+            // Form submission
+            modalForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitForm();
+            });
+
+            // Notification close
+            notificationClose.addEventListener('click', () => {
+                notificationToast.classList.remove('show');
+            });
+
+            // Send message
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Socket.io events
+            socket.on('connect', () => {
+                console.log('Connected to server');
+            });
+
+            socket.on('message', (data) => {
+                receiveMessage(data);
+            });
+
+            socket.on('notification', (data) => {
+                showNotification(data.type, data.title, data.message);
+            });
+        }
+
+        // Load page content
+        function loadPage(page) {
+            currentPage = page;
+            
+            switch (page) {
+                case 'dashboard':
+                    pageTitle.textContent = 'Dashboard';
+                    loadDashboardData();
+                    break;
+                case 'faculty':
+                    pageTitle.textContent = 'Faculty Management';
+                    loadFacultyData();
+                    break;
+                case 'academic':
+                    pageTitle.textContent = 'Academic Planning';
+                    loadAcademicData();
+                    break;
+                case 'resources':
+                    pageTitle.textContent = 'Resource Management';
+                    loadResourcesData();
+                    break;
+                case 'budget':
+                    pageTitle.textContent = 'Budget & Finance';
+                    loadBudgetData();
+                    break;
+                case 'messages':
+                    pageTitle.textContent = 'Messages';
+                    loadMessagesData();
+                    break;
+                case 'meetings':
+                    pageTitle.textContent = 'Meetings';
+                    loadMeetingsData();
+                    break;
+                case 'announcements':
+                    pageTitle.textContent = 'Announcements';
+                    loadAnnouncementsData();
+                    break;
+                case 'reports':
+                    pageTitle.textContent = 'Department Reports';
+                    loadReportsData();
+                    break;
+                case 'analytics':
+                    pageTitle.textContent = 'Analytics';
+                    loadAnalyticsData();
+                    break;
+                default:
+                    pageTitle.textContent = 'Dashboard';
+                    loadDashboardData();
+            }
+        }
+
+        // Load dashboard data
+        function loadDashboardData() {
+            // Simulate API call
+            setTimeout(() => {
+                // Update chart data
+                if (performanceChart) {
+                    performanceChart.data.datasets[0].data = [85, 92, 78, 88, 95, 90];
+                    performanceChart.update();
+                }
+            }, 500);
+        }
+
+        // Load faculty data
+        function loadFacultyData() {
+            contentBody.innerHTML = `
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Faculty Members</h3>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search faculty...">
+                            <select class="filter-select">
+                                <option>All Departments</option>
+                                <option>Computer Science</option>
+                                <option>Electronics</option>
+                                <option>Mechanical</option>
+                                <option>Civil</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>FAC001</td>
+                                <td>Dr. John Smith</td>
+                                <td>Computer Science</td>
+                                <td>Professor</td>
+                                <td><span class="status-badge approved">Active</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>FAC002</td>
+                                <td>Dr. Sarah Johnson</td>
+                                <td>Computer Science</td>
+                                <td>Associate Professor</td>
+                                <td><span class="status-badge approved">Active</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>FAC003</td>
+                                <td>Dr. Michael Williams</td>
+                                <td>Electronics</td>
+                                <td>Professor</td>
+                                <td><span class="status-badge pending">On Leave</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>FAC004</td>
+                                <td>Dr. Emily Brown</td>
+                                <td>Mechanical</td>
+                                <td>Assistant Professor</td>
+                                <td><span class="status-badge approved">Active</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>FAC005</td>
+                                <td>Dr. David Davis</td>
+                                <td>Civil</td>
+                                <td>Associate Professor</td>
+                                <td><span class="status-badge approved">Active</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="page-btn active">1</div>
+                        <div class="page-btn">2</div>
+                        <div class="page-btn">3</div>
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load academic data
+        function loadAcademicData() {
+            contentBody.innerHTML = `
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Active Courses</h3>
+                            <div class="card-icon blue">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">32</div>
+                        <div class="card-description">Courses this semester</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Programs</h3>
+                            <div class="card-icon yellow">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">5</div>
+                        <div class="card-description">Degree programs offered</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Curriculum Updates</h3>
+                            <div class="card-icon green">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">3</div>
+                        <div class="card-description">Pending curriculum updates</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Course Schedule</h3>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search courses...">
+                            <select class="filter-select">
+                                <option>All Semesters</option>
+                                <option>Fall 2023</option>
+                                <option>Spring 2024</option>
+                                <option>Summer 2024</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Name</th>
+                                <th>Instructor</th>
+                                <th>Schedule</th>
+                                <th>Students</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CS101</td>
+                                <td>Introduction to Programming</td>
+                                <td>Dr. John Smith</td>
+                                <td>Mon, Wed 10:00-11:30</td>
+                                <td>45</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CS201</td>
+                                <td>Data Structures</td>
+                                <td>Dr. Sarah Johnson</td>
+                                <td>Tue, Thu 14:00-15:30</td>
+                                <td>38</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CS301</td>
+                                <td>Algorithms</td>
+                                <td>Dr. Robert Wilson</td>
+                                <td>Mon, Wed, Fri 09:00-10:00</td>
+                                <td>32</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="page-btn active">1</div>
+                        <div class="page-btn">2</div>
+                        <div class="page-btn">3</div>
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load resources data
+        function loadResourcesData() {
+            contentBody.innerHTML = `
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Classrooms</h3>
+                            <div class="card-icon blue">
+                                <i class="fas fa-door-open"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">18</div>
+                        <div class="card-description">Total classrooms available</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Labs</h3>
+                            <div class="card-icon yellow">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">8</div>
+                        <div class="card-description">Laboratories available</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Equipment</h3>
+                            <div class="card-icon green">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">124</div>
+                        <div class="card-description">Total equipment items</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Reservations</h3>
+                            <div class="card-icon blue">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">7</div>
+                        <div class="card-description">Pending resource reservations</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Resource Allocation</h3>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search resources...">
+                            <select class="filter-select">
+                                <option>All Types</option>
+                                <option>Classrooms</option>
+                                <option>Labs</option>
+                                <option>Equipment</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Resource Name</th>
+                                <th>Type</th>
+                                <th>Assigned To</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RES001</td>
+                                <td>Computer Lab A</td>
+                                <td>Lab</td>
+                                <td>Dr. John Smith</td>
+                                <td>2023-10-15</td>
+                                <td><span class="status-badge approved">Allocated</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RES002</td>
+                                <td>Projector P102</td>
+                                <td>Equipment</td>
+                                <td>Dr. Sarah Johnson</td>
+                                <td>2023-09-30</td>
+                                <td><span class="status-badge pending">In Use</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RES003</td>
+                                <td>Classroom B205</td>
+                                <td>Classroom</td>
+                                <td>Dr. Robert Wilson</td>
+                                <td>2023-12-15</td>
+                                <td><span class="status-badge approved">Allocated</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="page-btn active">1</div>
+                        <div class="page-btn">2</div>
+                        <div class="page-btn">3</div>
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load budget data
+        function loadBudgetData() {
+            contentBody.innerHTML = `
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Total Budget</h3>
+                            <div class="card-icon blue">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">$125,000</div>
+                        <div class="card-description">Annual department budget</div>
+                        <div class="card-action">
+                            <span>View Details</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Utilized</h3>
+                            <div class="card-icon yellow">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">$85,000</div>
+                        <div class="card-description">68% of total budget</div>
+                        <div class="card-action">
+                            <span>View Details</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Remaining</h3>
+                            <div class="card-icon green">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">$40,000</div>
+                        <div class="card-description">Available for allocation</div>
+                        <div class="card-action">
+                            <span>View Details</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Budget Allocation</h3>
+                        <div class="chart-options">
+                            <div class="chart-option active">Current Year</div>
+                            <div class="chart-option">Previous Year</div>
+                        </div>
+                    </div>
+                    <canvas id="budgetChart"></canvas>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Recent Expenses</h3>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search expenses...">
+                            <select class="filter-select">
+                                <option>All Categories</option>
+                                <option>Equipment</option>
+                                <option>Travel</option>
+                                <option>Supplies</option>
+                                <option>Maintenance</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>EXP001</td>
+                                <td>Lab Equipment Purchase</td>
+                                <td>Equipment</td>
+                                <td>$5,200</td>
+                                <td>2023-09-10</td>
+                                <td><span class="status-badge approved">Approved</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>EXP002</td>
+                                <td>Conference Registration</td>
+                                <td>Travel</td>
+                                <td>$1,500</td>
+                                <td>2023-09-05</td>
+                                <td><span class="status-badge approved">Approved</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>EXP003</td>
+                                <td>Office Supplies</td>
+                                <td>Supplies</td>
+                                <td>$850</td>
+                                <td>2023-09-01</td>
+                                <td><span class="status-badge approved">Approved</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="page-btn active">1</div>
+                        <div class="page-btn">2</div>
+                        <div class="page-btn">3</div>
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Initialize budget chart
+            setTimeout(() => {
+                const budgetCtx = document.getElementById('budgetChart');
+                if (budgetCtx) {
+                    new Chart(budgetCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Equipment', 'Travel', 'Supplies', 'Maintenance', 'Salaries', 'Other'],
+                            datasets: [{
+                                data: [35000, 15000, 8000, 12000, 45000, 10000],
+                                backgroundColor: [
+                                    'rgba(59, 130, 246, 0.8)',
+                                    'rgba(245, 158, 11, 0.8)',
+                                    'rgba(16, 185, 129, 0.8)',
+                                    'rgba(139, 92, 246, 0.8)',
+                                    'rgba(236, 72, 153, 0.8)',
+                                    'rgba(107, 114, 128, 0.8)'
+                                ],
+                                borderColor: 'rgba(10, 25, 47, 0.8)',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        color: '#FFFFFF',
+                                        font: {
+                                            size: 12
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }, 100);
+        }
+
+        // Load messages data
+        function loadMessagesData() {
+            contentBody.innerHTML = `
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Messages</h3>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search messages...">
+                            <select class="filter-select">
+                                <option>All Messages</option>
+                                <option>Unread</option>
+                                <option>Important</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>From</th>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Dr. Sarah Johnson</td>
+                                <td>Course Syllabus Update</td>
+                                <td>2023-09-20</td>
+                                <td><span class="status-badge pending">Unread</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Principal Office</td>
+                                <td>Faculty Meeting Reminder</td>
+                                <td>2023-09-19</td>
+                                <td><span class="status-badge approved">Read</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Dr. Robert Wilson</td>
+                                <td>Research Grant Proposal</td>
+                                <td>2023-09-18</td>
+                                <td><span class="status-badge approved">Read</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="page-btn active">1</div>
+                        <div class="page-btn">2</div>
+                        <div class="page-btn">3</div>
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load meetings data
+        function loadMeetingsData() {
+            contentBody.innerHTML = `
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Upcoming Meetings</h3>
+                            <div class="card-icon blue">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">5</div>
+                        <div class="card-description">Meetings this week</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Meeting Rooms</h3>
+                            <div class="card-icon yellow">
+                                <i class="fas fa-door-closed"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">3</div>
+                        <div class="card-description">Available today</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Meeting Schedule</h3>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search meetings...">
+                            <select class="filter-select">
+                                <option>All Meetings</option>
+                                <option>Today</option>
+                                <option>This Week</option>
+                                <option>This Month</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date & Time</th>
+                                <th>Location</th>
+                                <th>Organizer</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Department Faculty Meeting</td>
+                                <td>2023-09-26, 14:00</td>
+                                <td>Conference Room A</td>
+                                <td>Dr. John Smith</td>
+                                <td><span class="status-badge pending">Upcoming</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Curriculum Review Committee</td>
+                                <td>2023-09-28, 10:00</td>
+                                <td>Meeting Room B</td>
+                                <td>Dr. Sarah Johnson</td>
+                                <td><span class="status-badge pending">Upcoming</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Budget Planning Session</td>
+                                <td>2023-09-29, 15:30</td>
+                                <td>Conference Room C</td>
+                                <td>Dr. Robert Wilson</td>
+                                <td><span class="status-badge pending">Upcoming</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="page-btn active">1</div>
+                        <div class="page-btn">2</div>
+                        <div class="page-btn">3</div>
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load announcements data
+        function loadAnnouncementsData() {
+            contentBody.innerHTML = `
+                <div class="header-actions" style="margin-bottom: 1.5rem;">
+                    <button class="btn btn-primary" id="newAnnouncementBtn">
+                        <i class="fas fa-plus"></i>
+                        New Announcement
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Announcements</h3>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search announcements...">
+                            <select class="filter-select">
+                                <option>All Announcements</option>
+                                <option>Active</option>
+                                <option>Expired</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Content</th>
+                                <th>Posted By</th>
+                                <th>Date</th>
+                                <th>Expiry</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Department Meeting</td>
+                                <td>Monthly department meeting will be held on September 26, 2023 at 2 PM in Conference Room A.</td>
+                                <td>Dr. John Smith</td>
+                                <td>2023-09-20</td>
+                                <td>2023-09-26</td>
+                                <td><span class="status-badge approved">Active</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Course Registration</td>
+                                <td>Last date for course registration for the upcoming semester is September 30, 2023.</td>
+                                <td>Admin Office</td>
+                                <td>2023-09-15</td>
+                                <td>2023-09-30</td>
+                                <td><span class="status-badge approved">Active</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Workshop on Research Methodologies</td>
+                                <td>A workshop on research methodologies will be conducted on October 5, 2023. All faculty members are requested to attend.</td>
+                                <td>Dr. Sarah Johnson</td>
+                                <td>2023-09-10</td>
+                                <td>2023-10-05</td>
+                                <td><span class="status-badge approved">Active</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="page-btn active">1</div>
+                        <div class="page-btn">2</div>
+                        <div class="page-btn">3</div>
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listener for new announcement button
+            const newAnnouncementBtn = document.getElementById('newAnnouncementBtn');
+            if (newAnnouncementBtn) {
+                newAnnouncementBtn.addEventListener('click', () => {
+                    openModal('announcement');
+                });
+            }
+        }
+
+        // Load reports data
+        function loadReportsData() {
+            contentBody.innerHTML = `
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Faculty Reports</h3>
+                            <div class="card-icon blue">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">12</div>
+                        <div class="card-description">Faculty performance reports</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Student Reports</h3>
+                            <div class="card-icon yellow">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">8</div>
+                        <div class="card-description">Student performance reports</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Course Reports</h3>
+                            <div class="card-icon green">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">15</div>
+                        <div class="card-description">Course evaluation reports</div>
+                        <div class="card-action">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Generated Reports</h3>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search reports...">
+                            <select class="filter-select">
+                                <option>All Types</option>
+                                <option>Faculty</option>
+                                <option>Student</option>
+                                <option>Course</option>
+                                <option>Department</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Generated By</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RPT001</td>
+                                <td>Faculty Performance - Q3 2023</td>
+                                <td>Faculty</td>
+                                <td>Dr. John Smith</td>
+                                <td>2023-09-20</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RPT002</td>
+                                <td>Student Performance - Fall 2023</td>
+                                <td>Student</td>
+                                <td>Dr. Sarah Johnson</td>
+                                <td>2023-09-18</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RPT003</td>
+                                <td>Course Evaluation - CS101</td>
+                                <td>Course</td>
+                                <td>Dr. Robert Wilson</td>
+                                <td>2023-09-15</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <div class="action-icon view">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="page-btn active">1</div>
+                        <div class="page-btn">2</div>
+                        <div class="page-btn">3</div>
+                        <div class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load analytics data
+        function loadAnalyticsData() {
+            contentBody.innerHTML = `
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Department Performance Trends</h3>
+                        <div class="chart-options">
+                            <div class="chart-option active">Semester</div>
+                            <div class="chart-option">Year</div>
+                        </div>
+                    </div>
+                    <canvas id="trendsChart"></canvas>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Student Satisfaction</h3>
+                            <div class="card-icon blue">
+                                <i class="fas fa-smile"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">87%</div>
+                        <div class="card-description">Overall satisfaction rate</div>
+                        <div class="card-action">
+                            <span>View Details</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Faculty Utilization</h3>
+                            <div class="card-icon yellow">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">92%</div>
+                        <div class="card-description">Average faculty utilization</div>
+                        <div class="card-action">
+                            <span>View Details</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Resource Efficiency</h3>
+                            <div class="card-icon green">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">78%</div>
+                        <div class="card-description">Resource utilization efficiency</div>
+                        <div class="card-action">
+                            <span>View Details</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Course Performance</h3>
+                        <div class="chart-options">
+                            <div class="chart-option active">Current Semester</div>
+                            <div class="chart-option">Previous Semester</div>
+                        </div>
+                    </div>
+                    <canvas id="courseChart"></canvas>
+                </div>
+            `;
+            
+            // Initialize analytics charts
+            setTimeout(() => {
+                const trendsCtx = document.getElementById('trendsChart');
+                if (trendsCtx) {
+                    new Chart(trendsCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                            datasets: [{
+                                label: 'Student Performance',
+                                data: [82, 84, 83, 85, 87, 86, 88, 89, 90],
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }, {
+                                label: 'Faculty Performance',
+                                data: [85, 86, 85, 87, 88, 89, 90, 91, 92],
+                                borderColor: 'rgba(245, 158, 11, 1)',
+                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#FFFFFF'
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#FFFFFF'
+                                    }
+                                },
+                                y: {
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#FFFFFF'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                const courseCtx = document.getElementById('courseChart');
+                if (courseCtx) {
+                    new Chart(courseCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['CS101', 'CS201', 'CS301', 'CS401', 'CS501', 'CS601'],
+                            datasets: [{
+                                label: 'Pass Rate',
+                                data: [92, 88, 85, 90, 87, 91],
+                                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                borderWidth: 1
+                            }, {
+                                label: 'Average Grade',
+                                data: [85, 82, 80, 84, 81, 86],
+                                backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                                borderColor: 'rgba(245, 158, 11, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#FFFFFF'
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#FFFFFF'
+                                    }
+                                },
+                                y: {
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#FFFFFF'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }, 100);
+        }
+
+        // Initialize performance chart
+        function initializeChart() {
+            const ctx = document.getElementById('performanceChart');
+            if (ctx) {
+                performanceChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Department Performance',
+                            data: [80, 85, 82, 88, 90, 92],
+                            borderColor: 'rgba(245, 158, 11, 1)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#FFFFFF'
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#FFFFFF'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#FFFFFF'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Open chat
+        function openChat(contact) {
+            contentBody.style.display = 'none';
+            chatContainer.style.display = 'flex';
+            
+            // Load messages
+            loadMessages();
+        }
+
+        // Load messages
+        function loadMessages() {
+            // Clear existing messages
+            messages.innerHTML = '';
+            
+            // Simulate loading messages
+            const sampleMessages = [
+                {
+                    sender: 'Dr. Sarah Johnson',
+                    text: 'Good morning! Please review the course syllabus update.',
+                    time: '09:30 AM',
+                    sent: false
+                },
+                {
+                    sender: 'You',
+                    text: 'I will review it and get back to you by noon.',
+                    time: '09:32 AM',
+                    sent: true
+                },
+                {
+                    sender: 'Dr. Robert Wilson',
+                    text: 'The research grant proposal is ready for your review.',
+                    time: '10:15 AM',
+                    sent: false
+                },
+                {
+                    sender: 'You',
+                    text: 'Thank you. I will check it this afternoon.',
+                    time: '10:20 AM',
+                    sent: true
+                }
+            ];
+            
+            sampleMessages.forEach(msg => {
+                addMessageToChat(msg.sender, msg.text, msg.time, msg.sent);
+            });
+            
+            // Scroll to bottom
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // Add message to chat
+        function addMessageToChat(sender, text, time, sent) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sent ? 'sent' : 'received'}`;
+            
+            const senderDiv = document.createElement('div');
+            senderDiv.className = 'message-sender';
+            senderDiv.textContent = sent ? 'You' : sender;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            bubbleDiv.textContent = text;
+            
+            const metaDiv = document.createElement('div');
+            metaDiv.className = 'message-meta';
+            
+            const timeSpan = document.createElement('span');
+            timeSpan.textContent = time;
+            
+            const encryptionDiv = document.createElement('div');
+            encryptionDiv.className = 'encryption-indicator';
+            encryptionDiv.innerHTML = '<i class="fas fa-lock"></i> <span>Encrypted</span>';
+            
+            metaDiv.appendChild(timeSpan);
+            metaDiv.appendChild(encryptionDiv);
+            
+            messageDiv.appendChild(senderDiv);
+            messageDiv.appendChild(bubbleDiv);
+            messageDiv.appendChild(metaDiv);
+            
+            messages.appendChild(messageDiv);
+        }
+
+        // Send message
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+            
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Add message to chat
+            addMessageToChat('You', text, time, true);
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Scroll to bottom
+            messages.scrollTop = messages.scrollHeight;
+            
+            // Send via socket.io
+            socket.emit('message', {
+                sender: currentUser.name,
+                text: text,
+                time: time,
+                room: 'department'
+            });
+        }
+
+        // Receive message
+        function receiveMessage(data) {
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            addMessageToChat(data.sender, data.text, time, false);
+            
+            // Scroll to bottom
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // Open modal
+        function openModal(type = 'request') {
+            const modalTitle = document.getElementById('modalTitle');
+            
+            if (type === 'announcement') {
+                modalTitle.textContent = 'New Announcement';
+            } else {
+                modalTitle.textContent = 'New Request';
+            }
+            
+            formModal.classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            formModal.classList.remove('active');
+            modalForm.reset();
+        }
+
+        // Submit form
+        function submitForm() {
+            const formData = {
+                type: document.getElementById('requestType').value,
+                title: document.getElementById('requestTitle').value,
+                description: document.getElementById('requestDescription').value,
+                amount: document.getElementById('requestAmount').value,
+                requestedBy: currentUser.name,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            // Simulate API call
+            setTimeout(() => {
+                closeModal();
+                showNotification('success', 'Submitted', 'Your request has been submitted successfully.');
+                
+                // Refresh current page
+                loadPage(currentPage);
+            }, 1000);
+        }
+
+        // Show notification
+        function showNotification(type, title, message) {
+            const notificationIcon = notificationToast.querySelector('.notification-icon');
+            const notificationTitle = notificationToast.querySelector('.notification-title');
+            const notificationMessage = notificationToast.querySelector('.notification-message');
+            
+            // Update notification content
+            notificationTitle.textContent = title;
+            notificationMessage.textContent = message;
+            
+            // Update notification icon and color
+            notificationIcon.className = 'notification-icon ' + type;
+            
+            switch (type) {
+                case 'success':
+                    notificationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    break;
+                case 'error':
+                    notificationIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                    break;
+                case 'warning':
+                    notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+                    break;
+                case 'info':
+                    notificationIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+                    break;
+            }
+            
+            // Show notification
+            notificationToast.classList.add('show');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                notificationToast.classList.remove('show');
+            }, 5000);
+        }
+
+        // Handle responsive sidebar
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('open');
+                rightPanel.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
