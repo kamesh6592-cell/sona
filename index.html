@@ -58,9 +58,9 @@
             --mono-font: 'Fira Code', monospace;
             --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --border-radius: 12px;
-            --input-padding: 0.875rem;
-            --button-padding: 0.875rem 1.5rem;
+            --border-radius: 16px;
+            --input-padding: 1rem;
+            --button-padding: 1rem 1.5rem;
         }
 
         /* Base styles */
@@ -104,7 +104,7 @@
         .header {
             background: rgba(10, 25, 47, 0.95);
             backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            padding: 1.5rem 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -116,11 +116,11 @@
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.25rem;
         }
 
         .logo {
-            height: 50px;
+            height: 60px;
             width: auto;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
             transition: var(--transition);
@@ -131,7 +131,7 @@
         }
 
         .logo-text {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 700;
             color: var(--text-primary);
             background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
@@ -188,7 +188,7 @@
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 2.25rem;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.5rem;
@@ -199,22 +199,22 @@
         }
 
         .subtitle {
-            font-size: 1rem;
+            font-size: 1.125rem;
             color: var(--text-secondary);
             text-align: center;
         }
 
         /* Form styles */
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
             position: relative;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-primary);
             transition: var(--transition);
         }
@@ -227,7 +227,7 @@
 
         .input-icon {
             position: absolute;
-            left: 1rem;
+            left: 1.25rem;
             color: var(--text-secondary);
             z-index: 1;
             transition: var(--transition);
@@ -236,7 +236,7 @@
         input, select {
             width: 100%;
             padding: var(--input-padding);
-            padding-left: 3rem;
+            padding-left: 3.5rem;
             border: 2px solid var(--glass-border);
             border-radius: var(--border-radius);
             font-size: 1rem;
@@ -250,7 +250,7 @@
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a8b2d1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 1rem center;
+            background-position: right 1.25rem center;
             background-size: 1rem;
         }
 
@@ -266,14 +266,14 @@
 
         .password-toggle {
             position: absolute;
-            right: 1rem;
+            right: 1.25rem;
             background: none;
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
             transition: var(--transition);
-            padding: 0.25rem;
-            border-radius: 4px;
+            padding: 0.5rem;
+            border-radius: 8px;
         }
 
         .password-toggle:hover {
@@ -286,7 +286,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 1.5rem 0;
+            margin: 1.75rem 0;
             flex-wrap: wrap;
             gap: 1rem;
         }
@@ -298,7 +298,7 @@
 
         .checkbox-group input {
             width: auto;
-            margin-right: 0.5rem;
+            margin-right: 0.75rem;
             accent-color: var(--primary-yellow);
         }
 
@@ -314,7 +314,7 @@
             color: var(--info);
             text-decoration: none;
             transition: var(--transition);
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .forgot-link:hover {
@@ -338,7 +338,7 @@
             position: relative;
             overflow: hidden;
             margin-bottom: 1rem;
-            gap: 0.5rem;
+            gap: 0.75rem;
             text-decoration: none;
         }
 
@@ -411,7 +411,7 @@
         .divider {
             display: flex;
             align-items: center;
-            margin: 1.5rem 0;
+            margin: 2rem 0;
             color: var(--text-secondary);
             font-size: 0.875rem;
         }
@@ -425,22 +425,22 @@
         }
 
         .divider span {
-            padding: 0 1rem;
+            padding: 0 1.5rem;
         }
 
         /* Role badges */
         .role-badges {
             display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
+            gap: 1rem;
+            margin-top: 1.25rem;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         .role-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 30px;
+            font-size: 0.875rem;
             font-weight: 600;
             background: var(--glass-bg);
             color: var(--text-secondary);
@@ -501,7 +501,7 @@
         /* Register link */
         .register-link {
             text-align: center;
-            margin-top: 1.5rem;
+            margin-top: 2rem;
             font-size: 0.875rem;
             color: var(--text-secondary);
         }
@@ -520,8 +520,8 @@
 
         /* Security notice */
         .security-notice {
-            margin-top: 1.5rem;
-            padding: 1rem;
+            margin-top: 2rem;
+            padding: 1.25rem;
             background: rgba(241, 196, 15, 0.1);
             border-radius: var(--border-radius);
             font-size: 0.875rem;
@@ -530,7 +530,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             border-left: 4px solid var(--primary-yellow);
         }
 
@@ -554,7 +554,7 @@
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: 2.5rem;
+            padding: 3rem;
             border-radius: var(--border-radius);
             max-width: 500px;
             width: 100%;
@@ -573,8 +573,8 @@
 
         .close-btn {
             position: absolute;
-            top: 1.25rem;
-            right: 1.25rem;
+            top: 1.5rem;
+            right: 1.5rem;
             font-size: 1.5rem;
             color: var(--text-secondary);
             cursor: pointer;
@@ -595,14 +595,14 @@
         }
 
         .modal h2 {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
             color: var(--primary-yellow);
-            font-size: 1.5rem;
+            font-size: 1.75rem;
         }
 
         /* Password strength */
         .password-strength {
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
             height: 4px;
             border-radius: 2px;
             background: var(--glass-border);
@@ -632,19 +632,19 @@
 
         .password-strength-text {
             font-size: 0.75rem;
-            margin-top: 0.25rem;
+            margin-top: 0.5rem;
             color: var(--text-secondary);
         }
 
         /* Notification */
         .notification {
             position: fixed;
-            top: 1.25rem;
-            right: 1.25rem;
-            padding: 1rem 1.5rem;
+            top: 1.5rem;
+            right: 1.5rem;
+            padding: 1.25rem 1.75rem;
             border-radius: var(--border-radius);
             color: var(--white);
-            font-weight: 500;
+            font-weight: 600;
             box-shadow: var(--card-shadow);
             z-index: 1100;
             transform: translateX(150%);
@@ -701,7 +701,7 @@
         .footer {
             background: rgba(10, 25, 47, 0.95);
             backdrop-filter: blur(10px);
-            padding: 1.5rem;
+            padding: 2rem;
             text-align: center;
             color: var(--text-secondary);
             border-top: 1px solid var(--glass-border);
@@ -712,7 +712,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .footer-heart {
@@ -726,72 +726,6 @@
             50% { transform: scale(1); }
             75% { transform: scale(1.1); }
             100% { transform: scale(1); }
-        }
-
-        /* Admin accounts section */
-        .admin-accounts {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--glass-border);
-        }
-
-        .admin-accounts h3 {
-            color: var(--primary-yellow);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            text-align: center;
-        }
-
-        .admin-account {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-
-        .admin-account:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .admin-account-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .admin-account-role {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .admin-account-email {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .admin-account-dept {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .admin-account-btn {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.75rem;
-            background: var(--info);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .admin-account-btn:hover {
-            background: #2563eb;
         }
 
         /* Debug panel */
@@ -814,48 +748,6 @@
             display: block;
         }
 
-        /* Authentication setup guide */
-        .auth-setup-guide {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: rgba(59, 130, 246, 0.1);
-            border-radius: var(--border-radius);
-            font-size: 0.75rem;
-            color: var(--text-primary);
-            border-left: 4px solid var(--info);
-        }
-
-        .auth-setup-guide h4 {
-            color: var(--info);
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .auth-setup-guide ol {
-            padding-left: 1.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .auth-setup-guide li {
-            margin-bottom: 0.25rem;
-        }
-
-        /* Security notice for test accounts */
-        .test-accounts-notice {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            background: rgba(239, 68, 68, 0.1);
-            border-radius: var(--border-radius);
-            font-size: 0.75rem;
-            color: var(--text-primary);
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            border-left: 4px solid var(--error);
-        }
-
         /* Responsive design */
         @media (max-width: 768px) {
             html {
@@ -867,7 +759,7 @@
             }
             
             .logo-text {
-                font-size: 1.2rem;
+                font-size: 1.25rem;
             }
             
             .login-container {
@@ -900,7 +792,7 @@
             }
             
             .logo {
-                height: 40px;
+                height: 50px;
             }
             
             .logo-text {
@@ -908,19 +800,19 @@
             }
             
             .login-container {
-                padding: 1.5rem 1rem;
+                padding: 1.75rem 1.25rem;
             }
             
             .modal-content {
-                padding: 1.5rem 1rem;
+                padding: 1.75rem 1.25rem;
             }
             
             h1 {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
             }
             
             .btn {
-                padding: 0.75rem 1rem;
+                padding: 0.875rem 1.25rem;
             }
         }
 
@@ -934,7 +826,7 @@
             }
             
             .logo {
-                height: 35px;
+                height: 40px;
             }
             
             .logo-text {
@@ -942,11 +834,11 @@
             }
             
             .login-container {
-                padding: 1rem;
+                padding: 1.5rem 1rem;
             }
             
             .modal-content {
-                padding: 1rem;
+                padding: 1.5rem 1rem;
             }
             
             .role-badges {
@@ -954,8 +846,8 @@
             }
             
             .role-badge {
-                padding: 0.25rem 0.75rem;
-                font-size: 0.7rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
             }
         }
 
@@ -1128,51 +1020,6 @@
             
             <p class="register-link">New to Sona Communication? <a href="#" id="registerLink">Create an account</a></p>
             
-            <!-- Authentication Setup Guide -->
-            <div class="auth-setup-guide">
-                <h4>Authentication Setup Guide</h4>
-                <p>If authentication is not working, please ensure:</p>
-                <ol>
-                    <li>Google and Microsoft providers are enabled in Firebase Console</li>
-                    <li>Authorized domains are correctly configured</li>
-                    <li>OAuth consent screen is properly set up</li>
-                </ol>
-            </div>
-            
-            <!-- Administrative Accounts Section -->
-            <div class="admin-accounts">
-                <h3>Administrative Accounts</h3>
-                <div class="admin-account">
-                    <div class="admin-account-info">
-                        <div class="admin-account-role">Principal Account</div>
-                        <div class="admin-account-email">principal.test@sona.ac.in</div>
-                        <div class="admin-account-dept">Department: ADMINISTRATION</div>
-                    </div>
-                    <button class="admin-account-btn" onclick="fillAdminAccount('principal.test@sona.ac.in', 'SonaPrincipal@2025', 'principal')">Fill</button>
-                </div>
-                <div class="admin-account">
-                    <div class="admin-account-info">
-                        <div class="admin-account-role">HOD CSE Account</div>
-                        <div class="admin-account-email">hod.cse@sona.ac.in</div>
-                        <div class="admin-account-dept">Department: Computer Science Engineering</div>
-                    </div>
-                    <button class="admin-account-btn" onclick="fillAdminAccount('hod.cse@sona.ac.in', 'HodCSE@2025', 'hod')">Fill</button>
-                </div>
-                <div class="admin-account">
-                    <div class="admin-account-info">
-                        <div class="admin-account-role">HOD ECE Account</div>
-                        <div class="admin-account-email">hod.ece@sona.ac.in</div>
-                        <div class="admin-account-dept">Department: Electronics & Communication Engineering</div>
-                    </div>
-                    <button class="admin-account-btn" onclick="fillAdminAccount('hod.ece@sona.ac.in', 'HodECE@2025', 'hod')">Fill</button>
-                </div>
-                
-                <div class="test-accounts-notice">
-                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-                    <span>For testing purposes only. In production, use secure authentication methods.</span>
-                </div>
-            </div>
-            
             <div class="security-notice">
                 <i class="fas fa-shield-alt" aria-hidden="true"></i>
                 <span>All communications are end-to-end encrypted</span>
@@ -1286,7 +1133,7 @@
         <div class="modal-content">
             <button class="close-btn" id="closeMicrosoftSetup" aria-label="Close Microsoft setup modal">&times;</button>
             <h2 id="microsoftSetupModalTitle">Complete Your Profile</h2>
-            <p class="subtitle" style="margin-bottom: 1.5rem;">Please provide additional information to complete your account setup</p>
+            <p class="subtitle" style="margin-bottom: 1.75rem;">Please provide additional information to complete your account setup</p>
             <form id="microsoftSetupForm" aria-label="Microsoft account setup form">
                 <div class="form-group">
                     <label for="msCollegeId">College ID</label>
@@ -1334,7 +1181,7 @@
         <div class="modal-content">
             <button class="close-btn" id="closeGoogleSetup" aria-label="Close Google setup modal">&times;</button>
             <h2 id="googleSetupModalTitle">Complete Your Profile</h2>
-            <p class="subtitle" style="margin-bottom: 1.5rem;">Please provide additional information to complete your account setup</p>
+            <p class="subtitle" style="margin-bottom: 1.75rem;">Please provide additional information to complete your account setup</p>
             <form id="googleSetupForm" aria-label="Google account setup form">
                 <div class="form-group">
                     <label for="googleCollegeId">College ID</label>
@@ -1561,26 +1408,6 @@
                         showNotification('Error setting up admin account', 'error');
                     });
             }
-        }
-
-        // Fill admin account details
-        function fillAdminAccount(email, password, role) {
-            document.getElementById('collegeId').value = email.split('@')[0];
-            document.getElementById('password').value = password;
-            document.getElementById('role').value = role;
-            
-            // Update role badges
-            elements.roleBadges.forEach(badge => {
-                if (badge.getAttribute('data-role') === role) {
-                    badge.classList.add('active');
-                    badge.setAttribute('aria-pressed', 'true');
-                } else {
-                    badge.classList.remove('active');
-                    badge.setAttribute('aria-pressed', 'false');
-                }
-            });
-            
-            showNotification('Admin account details filled. Please click Login.', 'info');
         }
 
         // Setup event listeners
