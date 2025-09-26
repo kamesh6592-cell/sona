@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-messaging-compat.js"></script>
     <style>
         :root {
             /* Premium Dark Blue & Yellow Theme */
@@ -149,6 +154,7 @@
             padding: 4px;
             background: var(--primary-dark);
             transition: var(--transition);
+            object-fit: contain;
         }
 
         .logo-small:hover {
@@ -755,10 +761,267 @@
             color: var(--primary-yellow);
         }
 
+        /* Enhanced Messaging Section */
+        .messaging-section {
+            grid-column: span 2;
+        }
+
+        .recipient-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .recipient-option {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .recipient-option:hover {
+            background: var(--hover-bg);
+        }
+
+        .recipient-option.selected {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: var(--primary-yellow);
+        }
+
+        .recipient-option input[type="checkbox"] {
+            display: none;
+        }
+
+        .recipient-option i {
+            color: var(--primary-yellow);
+        }
+
+        .message-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+            display: none;
+        }
+
+        .message-preview.show {
+            display: block;
+        }
+
+        .message-preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .message-preview-title {
+            font-weight: 600;
+            color: var(--primary-yellow);
+        }
+
+        .message-preview-content {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+
+        /* Message Status */
+        .message-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            margin-top: var(--spacing-sm);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-full);
+        }
+
+        .status-indicator.sent {
+            background: var(--info);
+        }
+
+        .status-indicator.delivered {
+            background: var(--success);
+        }
+
+        .status-indicator.read {
+            background: var(--primary-yellow);
+        }
+
+        /* Message Search */
+        .message-search {
+            position: relative;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .message-search input {
+            width: 100%;
+            padding-left: 2.5rem;
+        }
+
+        .message-search i {
+            position: absolute;
+            left: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Message Filters */
+        .message-filters {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: var(--hover-bg);
+        }
+
+        .filter-btn.active {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: var(--primary-yellow);
+            color: var(--primary-yellow);
+        }
+
+        /* WhatsApp-style Message Inbox */
+        .message-inbox {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .message-item:hover {
+            background: var(--hover-bg);
+            transform: translateX(5px);
+        }
+
+        .message-item.unread {
+            border-left: 3px solid var(--primary-yellow);
+            background: rgba(241, 196, 15, 0.05);
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .message-time {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+
+        .message-subject {
+            font-weight: 500;
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .message-content {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* WhatsApp-style Status Indicators */
+        .message-status-icons {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-xs);
+        }
+
+        .status-icon {
+            font-size: var(--text-xs);
+            color: var(--text-dim);
+            transition: color 0.3s ease;
+        }
+
+        .status-icon.sent {
+            color: var(--info);
+        }
+
+        .status-icon.delivered {
+            color: var(--success);
+        }
+
+        .status-icon.read {
+            color: var(--primary-yellow);
+        }
+
+        /* Message Recipients Display */
+        .message-recipients {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-xs);
+            font-size: var(--text-xs);
+            color: var(--text-dim);
+        }
+
+        .recipient-tag {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            padding: 2px var(--spacing-xs);
+            font-size: var(--text-xs);
+        }
+
         /* Responsive Design */
         @media (max-width: 1200px) {
             .dashboard-grid {
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            
+            .messaging-section {
+                grid-column: span 1;
             }
         }
 
@@ -785,10 +1048,15 @@
                 width: 100%;
                 border-left: none;
                 border-top: 1px solid var(--card-border);
+                max-height: 40vh;
             }
             
             .mobile-menu-toggle {
                 display: block;
+            }
+            
+            .message-inbox {
+                max-height: 300px;
             }
         }
 
@@ -803,6 +1071,50 @@
             
             .main-content {
                 padding: var(--spacing-md);
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .nav-title {
+                font-size: var(--text-lg);
+            }
+            
+            .page-title {
+                font-size: var(--text-2xl);
+            }
+            
+            .message-inbox {
+                max-height: 250px;
+            }
+            
+            .recipient-options {
+                flex-direction: column;
+            }
+            
+            .recipient-option {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .message-inbox {
+                max-height: 200px;
             }
         }
 
@@ -856,13 +1168,267 @@
             75% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            font-size: var(--text-xl);
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--error);
+        }
+
+        .toast.info .toast-icon {
+            color: var(--info);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .toast-message {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: var(--text-lg);
+            transition: color 0.3s ease;
+        }
+
+        .toast-close:hover {
+            color: var(--text-light);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--spacing-lg);
+            color: var(--text-muted);
+        }
+
+        .loading-spinner i {
+            animation: spin 1s linear infinite;
+            margin-right: var(--spacing-sm);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-xl);
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .empty-state-description {
+            text-align: center;
+            max-width: 300px;
+        }
+
+        /* Message Thread View */
+        .message-thread {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-dark);
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .message-thread.show {
+            display: flex;
+        }
+
+        .thread-header {
+            background: rgba(23, 42, 69, 0.95);
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .thread-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+        }
+
+        .thread-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: var(--text-xl);
+            transition: color 0.3s ease;
+        }
+
+        .thread-close:hover {
+            color: var(--text-light);
+        }
+
+        .thread-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-lg);
+        }
+
+        .thread-message {
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+        }
+
+        .thread-message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-lg);
+            position: relative;
+        }
+
+        .thread-message.received .message-bubble {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+        }
+
+        .thread-message.sent .message-bubble {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+        }
+
+        .message-text {
+            font-size: var(--text-sm);
+            line-height: 1.4;
+        }
+
+        .message-time-thread {
+            font-size: var(--text-xs);
+            opacity: 0.7;
+            margin-top: var(--spacing-xs);
+            text-align: right;
+        }
+
+        .thread-message.received .message-time-thread {
+            text-align: left;
+        }
+
+        .thread-input {
+            background: rgba(23, 42, 69, 0.95);
+            padding: var(--spacing-md);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .thread-input input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-full);
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--text-light);
+        }
+
+        .thread-input button {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+            border: none;
+            border-radius: var(--radius-full);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .thread-input button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Success Animation */
+        @keyframes successPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-animation {
+            animation: successPulse 0.6s ease-in-out;
+        }
     </style>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
     <div class="dashboard">
-        <nav class="top-nav">
+        <nav class="header">
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
                 <i class="fas fa-bars fa-lg"></i>
             </button>
@@ -873,7 +1439,7 @@
             <div class="nav-actions">
                 <div class="notification-badge" id="notifications" aria-label="Notifications">
                     <i class="fas fa-bell fa-lg"></i>
-                    <span class="badge-count">4</span>
+                    <span class="badge-count" id="notificationCount">0</span>
                 </div>
                 <span class="role-indicator">
                     <i class="fas fa-user-tie"></i>
@@ -923,10 +1489,10 @@
                 
                 <div class="sidebar-footer">
                     <div class="user-profile">
-                        <div class="user-avatar">JD</div>
+                        <div class="user-avatar" id="userAvatar">JD</div>
                         <div class="user-info">
-                            <div class="user-name">Dr. John Doe</div>
-                            <div class="user-role">Principal</div>
+                            <div class="user-name" id="userName">Dr. John Doe</div>
+                            <div class="user-role" id="userRole">Principal</div>
                         </div>
                     </div>
                 </div>
@@ -1027,8 +1593,8 @@
                         </div>
                     </div>
                     
-                    <!-- College-wide Messaging -->
-                    <div class="card">
+                    <!-- Enhanced College-wide Messaging -->
+                    <div class="card messaging-section">
                         <div class="card-header">
                             <h2 class="card-title">
                                 <i class="fas fa-comments"></i>
@@ -1040,14 +1606,34 @@
                         </div>
                         <form class="message-form" id="messageForm">
                             <div class="form-group">
-                                <label class="form-label" for="messageRecipient">Recipient</label>
-                                <select class="form-select" id="messageRecipient">
-                                    <option value="all">All College</option>
-                                    <option value="faculty">Faculty Only</option>
-                                    <option value="students">Students Only</option>
-                                    <option value="admin">Admin Staff</option>
-                                    <option value="departments">Department Heads</option>
-                                </select>
+                                <label class="form-label">Select Recipients</label>
+                                <div class="recipient-options">
+                                    <label class="recipient-option">
+                                        <input type="checkbox" name="recipients" value="all" checked>
+                                        <i class="fas fa-users"></i>
+                                        <span>All College</span>
+                                    </label>
+                                    <label class="recipient-option">
+                                        <input type="checkbox" name="recipients" value="faculty">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <span>Faculty</span>
+                                    </label>
+                                    <label class="recipient-option">
+                                        <input type="checkbox" name="recipients" value="students">
+                                        <i class="fas fa-user-graduate"></i>
+                                        <span>Students</span>
+                                    </label>
+                                    <label class="recipient-option">
+                                        <input type="checkbox" name="recipients" value="admin">
+                                        <i class="fas fa-user-tie"></i>
+                                        <span>Admin Staff</span>
+                                    </label>
+                                    <label class="recipient-option">
+                                        <input type="checkbox" name="recipients" value="departments">
+                                        <i class="fas fa-sitemap"></i>
+                                        <span>Department Heads</span>
+                                    </label>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="messageSubject">Subject</label>
@@ -1069,7 +1655,20 @@
                                 <button type="button" class="btn btn-secondary">Cancel</button>
                                 <button type="submit" class="btn btn-primary">Send Message</button>
                             </div>
+                            <div class="message-status" id="messageStatus" style="display: none;">
+                                <span class="status-indicator sent"></span>
+                                <span>Sending...</span>
+                            </div>
                         </form>
+                        <div class="message-preview" id="messagePreview">
+                            <div class="message-preview-header">
+                                <h4 class="message-preview-title">Message Preview</h4>
+                                <button class="card-action" id="closePreview">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="message-preview-content" id="previewContent"></div>
+                        </div>
                     </div>
                     
                     <!-- Policy Management -->
@@ -1222,6 +1821,29 @@
                 
                 <div class="panel-section">
                     <h3 class="section-title">
+                        <i class="fas fa-envelope"></i>
+                        Message Inbox
+                    </h3>
+                    <div class="message-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-input" placeholder="Search messages..." id="messageSearch">
+                    </div>
+                    <div class="message-filters">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="unread">Unread</button>
+                        <button class="filter-btn" data-filter="urgent">Urgent</button>
+                    </div>
+                    <div class="message-inbox" id="messageInbox">
+                        <!-- Messages will be loaded here -->
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner"></i>
+                            Loading messages...
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <h3 class="section-title">
                         <i class="fas fa-file-alt"></i>
                         Shared Files
                     </h3>
@@ -1290,6 +1912,25 @@
         </div>
     </div>
 
+    <!-- Message Thread View -->
+    <div class="message-thread" id="messageThread">
+        <div class="thread-header">
+            <h3 class="thread-title" id="threadTitle">Message Thread</h3>
+            <button class="thread-close" id="closeThread">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="thread-messages" id="threadMessages">
+            <!-- Thread messages will be loaded here -->
+        </div>
+        <div class="thread-input">
+            <input type="text" placeholder="Type a message..." id="threadInput">
+            <button id="threadSendBtn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
     
@@ -1302,15 +1943,44 @@
     </footer>
 
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6k5pX6j5eXf8f8f8f8f8f8f8f8f8f8f8",
+            authDomain: "sona-college-dashboard.firebaseapp.com",
+            projectId: "sona-college-dashboard",
+            storageBucket: "sona-college-dashboard.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const messaging = firebase.messaging();
+
         // API Configuration
         const API_BASE = 'http://localhost:3000/api';
         const socket = io('http://localhost:3000');
         
         // User Authentication
-        const user = JSON.parse(localStorage.getItem('user'));
+        let user = JSON.parse(localStorage.getItem('user'));
         if (!user || user.role !== 'principal') {
-            window.location.href = 'index.html';
+            // For demo purposes, set a default user
+            user = {
+                id: 'principal001',
+                name: 'Dr. John Doe',
+                role: 'principal',
+                email: 'principal@sonatech.ac.in',
+                department: 'Administration'
+            };
+            localStorage.setItem('user', JSON.stringify(user));
         }
+        
+        // Update UI with user info
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+        document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('');
         
         // DOM Elements
         const sidebar = document.getElementById('sidebar');
@@ -1321,6 +1991,22 @@
         const emergencyForm = document.getElementById('emergencyForm');
         const attendanceChart = document.getElementById('attendanceChart');
         const notifications = document.getElementById('notifications');
+        const notificationCount = document.getElementById('notificationCount');
+        const messageInbox = document.getElementById('messageInbox');
+        const messageSearch = document.getElementById('messageSearch');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const messageStatus = document.getElementById('messageStatus');
+        const messagePreview = document.getElementById('messagePreview');
+        const previewContent = document.getElementById('previewContent');
+        const closePreview = document.getElementById('closePreview');
+        
+        // Message Thread Elements
+        const messageThread = document.getElementById('messageThread');
+        const threadTitle = document.getElementById('threadTitle');
+        const threadMessages = document.getElementById('threadMessages');
+        const threadInput = document.getElementById('threadInput');
+        const threadSendBtn = document.getElementById('threadSendBtn');
+        const closeThread = document.getElementById('closeThread');
         
         // Initialize Chart
         let chart;
@@ -1455,42 +2141,163 @@
         // Handle Message Form Submission
         messageForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const recipient = document.getElementById('messageRecipient').value;
+            
+            // Get selected recipients
+            const recipientCheckboxes = document.querySelectorAll('input[name="recipients"]:checked');
+            const recipients = Array.from(recipientCheckboxes).map(cb => cb.value);
+            
+            if (recipients.length === 0) {
+                showToast('Please select at least one recipient', 'error');
+                return;
+            }
+            
             const subject = document.getElementById('messageSubject').value;
             const content = document.getElementById('messageContent').value;
             const priority = document.getElementById('messagePriority').value;
             
             if (!subject || !content) {
-                showNotification('Please fill in all fields', 'error');
+                showToast('Please fill in all fields', 'error');
                 return;
             }
             
+            // Show sending status
+            messageStatus.style.display = 'flex';
+            messageStatus.querySelector('.status-indicator').className = 'status-indicator sent';
+            messageStatus.querySelector('span').textContent = 'Sending...';
+            
             try {
-                const response = await fetch(`${API_BASE}/messages/send`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-                    },
-                    body: JSON.stringify({
-                        recipient,
-                        subject,
-                        content,
-                        priority,
-                        senderId: user.id
-                    })
+                // Save message to Firebase for each recipient
+                const batch = db.batch();
+                const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                const messageIds = [];
+                
+                recipients.forEach(recipient => {
+                    const messageRef = db.collection('messages').doc();
+                    messageIds.push(messageRef.id);
+                    batch.set(messageRef, {
+                        id: messageRef.id,
+                        senderId: user.id,
+                        senderName: user.name,
+                        senderRole: user.role,
+                        recipient: recipient,
+                        recipientType: 'role',
+                        subject: subject,
+                        content: content,
+                        priority: priority,
+                        timestamp: timestamp,
+                        readBy: [],
+                        status: 'sent'
+                    });
                 });
                 
-                if (response.ok) {
-                    showNotification('Message sent successfully', 'success');
-                    messageForm.reset();
-                } else {
-                    showNotification('Failed to send message', 'error');
-                }
+                await batch.commit();
+                
+                // Update status to delivered
+                messageStatus.querySelector('.status-indicator').className = 'status-indicator delivered';
+                messageStatus.querySelector('span').textContent = 'Delivered';
+                
+                // Show success toast
+                showToast('Message sent successfully!', 'success', 'Success');
+                
+                // Add success animation to send button
+                const sendBtn = messageForm.querySelector('button[type="submit"]');
+                sendBtn.classList.add('success-animation');
+                setTimeout(() => {
+                    sendBtn.classList.remove('success-animation');
+                }, 600);
+                
+                messageForm.reset();
+                
+                // Reset recipient selection to "All"
+                document.querySelector('input[name="recipients"][value="all"]').checked = true;
+                document.querySelectorAll('.recipient-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                document.querySelector('.recipient-option input[value="all"]').parentElement.classList.add('selected');
+                
+                // Hide status after delay
+                setTimeout(() => {
+                    messageStatus.style.display = 'none';
+                }, 3000);
+                
+                // Simulate delivery and read status updates
+                setTimeout(() => {
+                    messageIds.forEach(messageId => {
+                        // Update status to delivered
+                        db.collection('messages').doc(messageId).update({
+                            status: 'delivered'
+                        });
+                    });
+                }, 2000);
+                
+                // Send real-time notification via socket
+                recipients.forEach(recipient => {
+                    socket.emit('new-message', {
+                        recipient: recipient,
+                        message: {
+                            sender: user.name,
+                            subject: subject,
+                            content: content.substring(0, 100) + (content.length > 100 ? '...' : ''),
+                            priority: priority
+                        }
+                    });
+                });
             } catch (error) {
                 console.error('Error sending message:', error);
-                showNotification('Error sending message', 'error');
+                messageStatus.querySelector('.status-indicator').className = 'status-indicator';
+                messageStatus.querySelector('span').textContent = 'Failed to send';
+                showToast('Error sending message', 'error');
             }
+        });
+        
+        // Handle recipient selection
+        document.querySelectorAll('.recipient-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const checkbox = option.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                
+                if (checkbox.checked) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+                
+                // If "All" is selected, deselect others
+                if (checkbox.value === 'all' && checkbox.checked) {
+                    document.querySelectorAll('.recipient-option input[type="checkbox"]:not([value="all"])').forEach(cb => {
+                        cb.checked = false;
+                        cb.parentElement.classList.remove('selected');
+                    });
+                } 
+                // If any other option is selected, deselect "All"
+                else if (checkbox.value !== 'all' && checkbox.checked) {
+                    document.querySelector('.recipient-option input[type="checkbox"][value="all"]').checked = false;
+                    document.querySelector('.recipient-option input[type="checkbox"][value="all"]').parentElement.classList.remove('selected');
+                }
+            });
+        });
+        
+        // Handle message preview
+        document.getElementById('messageSubject').addEventListener('input', updatePreview);
+        document.getElementById('messageContent').addEventListener('input', updatePreview);
+        
+        function updatePreview() {
+            const subject = document.getElementById('messageSubject').value;
+            const content = document.getElementById('messageContent').value;
+            
+            if (subject || content) {
+                previewContent.innerHTML = `
+                    <strong>Subject:</strong> ${subject || 'No subject'}<br><br>
+                    <strong>Message:</strong> ${content || 'No message content'}
+                `;
+                messagePreview.classList.add('show');
+            } else {
+                messagePreview.classList.remove('show');
+            }
+        }
+        
+        closePreview.addEventListener('click', () => {
+            messagePreview.classList.remove('show');
         });
         
         // Handle Emergency Form Submission
@@ -1501,35 +2308,39 @@
             const message = document.getElementById('alertMessage').value;
             
             if (!message) {
-                showNotification('Please enter an emergency message', 'error');
+                showToast('Please enter an emergency message', 'error');
                 return;
             }
             
             if (confirm('Are you sure you want to send this emergency alert? This will notify all users immediately.')) {
                 try {
-                    const response = await fetch(`${API_BASE}/alerts/emergency`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-                        },
-                        body: JSON.stringify({
-                            type: alertType,
-                            severity,
-                            message,
-                            senderId: user.id
-                        })
+                    // Save emergency alert to Firebase
+                    const alertRef = db.collection('emergencyAlerts').doc();
+                    await alertRef.set({
+                        id: alertRef.id,
+                        type: alertType,
+                        severity: severity,
+                        message: message,
+                        senderId: user.id,
+                        senderName: user.name,
+                        senderRole: user.role,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        acknowledgedBy: []
                     });
                     
-                    if (response.ok) {
-                        showNotification('Emergency alert sent successfully', 'success');
-                        emergencyForm.reset();
-                    } else {
-                        showNotification('Failed to send emergency alert', 'error');
-                    }
+                    showToast('Emergency alert sent successfully!', 'success', 'Success');
+                    emergencyForm.reset();
+                    
+                    // Send real-time notification via socket
+                    socket.emit('emergency-alert', {
+                        type: alertType,
+                        severity: severity,
+                        message: message,
+                        sender: user.name
+                    });
                 } catch (error) {
                     console.error('Error sending emergency alert:', error);
-                    showNotification('Error sending emergency alert', 'error');
+                    showToast('Error sending emergency alert', 'error');
                 }
             }
         });
@@ -1538,13 +2349,20 @@
         document.getElementById('newAnnouncementBtn').addEventListener('click', () => {
             document.getElementById('messageSubject').value = 'New Announcement';
             document.getElementById('messageContent').value = '';
-            document.getElementById('messageRecipient').value = 'all';
             document.getElementById('messagePriority').value = 'normal';
+            
+            // Select "All" recipients
+            document.querySelector('input[name="recipients"][value="all"]').checked = true;
+            document.querySelectorAll('.recipient-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector('.recipient-option input[value="all"]').parentElement.classList.add('selected');
+            
             document.querySelector('.message-form').scrollIntoView({ behavior: 'smooth' });
         });
         
         document.getElementById('newPolicyBtn').addEventListener('click', () => {
-            showNotification('Opening policy creation form...', 'info');
+            showToast('Opening policy creation form...', 'info');
             // In a real app, this would navigate to a policy creation form
         });
         
@@ -1553,74 +2371,482 @@
         });
         
         document.getElementById('scheduleMeetingBtn').addEventListener('click', () => {
-            showNotification('Opening meeting scheduler...', 'info');
+            showToast('Opening meeting scheduler...', 'info');
             // In a real app, this would open a meeting scheduler
         });
         
-        // Notification System
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--info)'};
-                color: white;
-                border-radius: 10px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                z-index: 1000;
-                font-weight: 600;
-                animation: slideIn 0.3s ease;
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
+        // Toast Notification System
+        function showToast(message, type = 'info', title = '') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
             
+            let icon = '';
+            if (type === 'success') icon = 'fa-check-circle';
+            else if (type === 'error') icon = 'fa-exclamation-circle';
+            else icon = 'fa-info-circle';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title || type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Show toast
             setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+                toast.classList.add('show');
+            }, 10);
+            
+            // Auto hide after 5 seconds
+            const hideTimeout = setTimeout(() => {
+                hideToast(toast);
+            }, 5000);
+            
+            // Close button
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                clearTimeout(hideTimeout);
+                hideToast(toast);
+            });
         }
         
-        // Add notification animations
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
+        function hideToast(toast) {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }
         
         // Notifications click handler
         notifications.addEventListener('click', () => {
-            showNotification('You have 4 new notifications', 'info');
+            showToast('You have new notifications', 'info');
             // In a real app, this would open a notifications panel
+        });
+        
+        // Load messages from Firebase with real-time status updates
+        function loadMessages(filter = 'all') {
+            messageInbox.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading messages...</div>';
+            
+            // Query messages for the current user based on their role
+            let query;
+            if (user.role === 'principal') {
+                // Principal can see all messages
+                query = db.collection('messages').orderBy('timestamp', 'desc');
+            } else if (user.role === 'hod') {
+                // HOD can see messages sent to all, admin, departments, or their department
+                query = db.collection('messages')
+                    .where('recipient', 'in', ['all', 'admin', 'departments', user.department])
+                    .orderBy('timestamp', 'desc');
+            } else if (user.role === 'faculty') {
+                // Faculty can see messages sent to all, faculty, or their department
+                query = db.collection('messages')
+                    .where('recipient', 'in', ['all', 'faculty', user.department])
+                    .orderBy('timestamp', 'desc');
+            } else if (user.role === 'student') {
+                // Students can see messages sent to all or students
+                query = db.collection('messages')
+                    .where('recipient', 'in', ['all', 'students'])
+                    .orderBy('timestamp', 'desc');
+            }
+            
+            query.onSnapshot(snapshot => {
+                messageInbox.innerHTML = '';
+                let unreadCount = 0;
+                
+                if (snapshot.empty) {
+                    messageInbox.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <div class="empty-state-title">No Messages</div>
+                            <div class="empty-state-description">You don't have any messages yet.</div>
+                        </div>
+                    `;
+                    notificationCount.textContent = '0';
+                    return;
+                }
+                
+                let messages = [];
+                snapshot.forEach(doc => {
+                    const message = doc.data();
+                    messages.push({ id: doc.id, ...message });
+                });
+                
+                // Apply search filter if search term exists
+                const searchTerm = messageSearch.value.toLowerCase();
+                if (searchTerm) {
+                    messages = messages.filter(msg => 
+                        msg.subject.toLowerCase().includes(searchTerm) || 
+                        msg.content.toLowerCase().includes(searchTerm) ||
+                        msg.senderName.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                // Apply other filters
+                if (filter === 'unread') {
+                    messages = messages.filter(msg => !msg.readBy.includes(user.id));
+                } else if (filter === 'urgent') {
+                    messages = messages.filter(msg => msg.priority === 'urgent');
+                }
+                
+                if (messages.length === 0) {
+                    messageInbox.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <div class="empty-state-title">No Messages Found</div>
+                            <div class="empty-state-description">No messages match your search criteria.</div>
+                        </div>
+                    `;
+                    notificationCount.textContent = '0';
+                    return;
+                }
+                
+                messages.forEach(message => {
+                    const isUnread = !message.readBy.includes(user.id);
+                    if (isUnread) unreadCount++;
+                    
+                    const messageEl = document.createElement('div');
+                    messageEl.className = `message-item ${isUnread ? 'unread' : ''}`;
+                    messageEl.dataset.messageId = message.id;
+                    
+                    // Format timestamp
+                    let timeStr = 'Just now';
+                    if (message.timestamp) {
+                        const date = message.timestamp.toDate();
+                        const now = new Date();
+                        const diffMs = now - date;
+                        const diffMins = Math.floor(diffMs / 60000);
+                        
+                        if (diffMins < 1) timeStr = 'Just now';
+                        else if (diffMins < 60) timeStr = `${diffMins} min ago`;
+                        else if (diffMins < 1440) timeStr = `${Math.floor(diffMins / 60)} hours ago`;
+                        else timeStr = date.toLocaleDateString();
+                    }
+                    
+                    // Priority indicator
+                    let priorityIcon = '';
+                    if (message.priority === 'urgent') {
+                        priorityIcon = '<i class="fas fa-exclamation-circle" style="color: var(--error);"></i> ';
+                    } else if (message.priority === 'high') {
+                        priorityIcon = '<i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> ';
+                    }
+                    
+                    // Status icons (WhatsApp style)
+                    let statusIcon = '';
+                    if (message.status === 'sent') {
+                        statusIcon = '<i class="fas fa-check status-icon sent"></i>';
+                    } else if (message.status === 'delivered') {
+                        statusIcon = '<i class="fas fa-check-double status-icon delivered"></i>';
+                    } else if (message.status === 'read') {
+                        statusIcon = '<i class="fas fa-check-double status-icon read"></i>';
+                    }
+                    
+                    // Recipient tags
+                    let recipientTags = '';
+                    if (message.recipient === 'all') {
+                        recipientTags = '<span class="recipient-tag">All College</span>';
+                    } else if (message.recipient === 'faculty') {
+                        recipientTags = '<span class="recipient-tag">Faculty</span>';
+                    } else if (message.recipient === 'students') {
+                        recipientTags = '<span class="recipient-tag">Students</span>';
+                    } else if (message.recipient === 'admin') {
+                        recipientTags = '<span class="recipient-tag">Admin Staff</span>';
+                    } else if (message.recipient === 'departments') {
+                        recipientTags = '<span class="recipient-tag">Department Heads</span>';
+                    }
+                    
+                    messageEl.innerHTML = `
+                        <div class="message-header">
+                            <span class="message-sender">
+                                <i class="fas fa-user-circle" style="color: var(--primary-yellow);"></i>
+                                ${message.senderName}
+                            </span>
+                            <span class="message-time">${timeStr}</span>
+                        </div>
+                        <div class="message-subject">${priorityIcon}${message.subject}</div>
+                        <div class="message-content">${message.content}</div>
+                        <div class="message-status-icons">
+                            ${statusIcon}
+                            <span style="margin-left: auto; font-size: var(--text-xs); color: var(--text-dim);">
+                                ${recipientTags}
+                            </span>
+                        </div>
+                    `;
+                    
+                    // Add real-time status listener
+                    db.collection('messages').doc(message.id).onSnapshot(doc => {
+                        const updatedMessage = doc.data();
+                        const statusIconEl = messageEl.querySelector('.status-icon');
+                        
+                        if (updatedMessage.status === 'sent') {
+                            statusIconEl.className = 'fas fa-check status-icon sent';
+                        } else if (updatedMessage.status === 'delivered') {
+                            statusIconEl.className = 'fas fa-check-double status-icon delivered';
+                        } else if (updatedMessage.status === 'read') {
+                            statusIconEl.className = 'fas fa-check-double status-icon read';
+                        }
+                    });
+                    
+                    messageEl.addEventListener('click', () => {
+                        // Mark as read
+                        if (isUnread) {
+                            db.collection('messages').doc(message.id).update({
+                                readBy: firebase.firestore.FieldValue.arrayUnion(user.id),
+                                status: 'read'
+                            });
+                            messageEl.classList.remove('unread');
+                            unreadCount--;
+                            notificationCount.textContent = unreadCount > 0 ? unreadCount.toString() : '';
+                            
+                            // Update status icon
+                            const statusIconEl = messageEl.querySelector('.status-icon');
+                            if (statusIconEl) {
+                                statusIconEl.className = 'fas fa-check-double status-icon read';
+                            }
+                        }
+                        
+                        // Open message thread view
+                        openMessageThread(message);
+                    });
+                    
+                    messageInbox.appendChild(messageEl);
+                });
+                
+                // Update notification count
+                notificationCount.textContent = unreadCount > 0 ? unreadCount.toString() : '';
+            }, error => {
+                console.error('Error loading messages:', error);
+                messageInbox.innerHTML = '<div class="error-loading">Error loading messages</div>';
+            });
+        }
+        
+        // Open message thread view
+        function openMessageThread(message) {
+            threadTitle.textContent = message.subject;
+            threadMessages.innerHTML = '';
+            
+            // Add the original message
+            const messageEl = document.createElement('div');
+            messageEl.className = 'thread-message received';
+            messageEl.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-text">${message.content}</div>
+                    <div class="message-time-thread">${formatTime(message.timestamp)}</div>
+                </div>
+            `;
+            threadMessages.appendChild(messageEl);
+            
+            // Load replies
+            db.collection('messageReplies')
+                .where('messageId', '==', message.id)
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    // Clear existing replies except the original message
+                    const originalMessage = threadMessages.querySelector('.thread-message');
+                    threadMessages.innerHTML = '';
+                    threadMessages.appendChild(originalMessage);
+                    
+                    snapshot.forEach(doc => {
+                        const reply = doc.data();
+                        const replyEl = document.createElement('div');
+                        replyEl.className = `thread-message ${reply.senderId === user.id ? 'sent' : 'received'}`;
+                        replyEl.innerHTML = `
+                            <div class="message-bubble">
+                                <div class="message-text">${reply.content}</div>
+                                <div class="message-time-thread">${formatTime(reply.timestamp)}</div>
+                            </div>
+                        `;
+                        threadMessages.appendChild(replyEl);
+                    });
+                    
+                    // Scroll to bottom
+                    threadMessages.scrollTop = threadMessages.scrollHeight;
+                });
+            
+            // Show thread view
+            messageThread.classList.add('show');
+            
+            // Focus on input
+            threadInput.focus();
+            
+            // Store current message context
+            threadInput.dataset.messageId = message.id;
+            threadInput.dataset.recipient = message.senderId;
+        }
+        
+        // Close message thread
+        closeThread.addEventListener('click', () => {
+            messageThread.classList.remove('show');
+            threadInput.value = '';
+        });
+        
+        // Send message in thread
+        threadSendBtn.addEventListener('click', sendThreadMessage);
+        threadInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendThreadMessage();
+            }
+        });
+        
+        function sendThreadMessage() {
+            const content = threadInput.value.trim();
+            if (!content) return;
+            
+            const messageId = threadInput.dataset.messageId;
+            const recipient = threadInput.dataset.recipient;
+            
+            // Add message to thread
+            const messageEl = document.createElement('div');
+            messageEl.className = 'thread-message sent';
+            messageEl.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-text">${content}</div>
+                    <div class="message-time-thread">Just now</div>
+                </div>
+            `;
+            threadMessages.appendChild(messageEl);
+            
+            // Clear input
+            threadInput.value = '';
+            
+            // Scroll to bottom
+            threadMessages.scrollTop = threadMessages.scrollHeight;
+            
+            // Save to Firebase
+            const replyRef = db.collection('messageReplies').doc();
+            replyRef.set({
+                id: replyRef.id,
+                messageId: messageId,
+                senderId: user.id,
+                senderName: user.name,
+                recipientId: recipient,
+                content: content,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Show success toast
+            showToast('Reply sent successfully!', 'success', 'Success');
+            
+            // Send real-time notification
+            socket.emit('message-reply', {
+                messageId: messageId,
+                recipientId: recipient,
+                reply: {
+                    sender: user.name,
+                    content: content
+                }
+            });
+        }
+        
+        // Format timestamp
+        function formatTime(timestamp) {
+            if (!timestamp) return 'Just now';
+            
+            const date = timestamp.toDate();
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) return 'Just now';
+            else if (diffMins < 60) return `${diffMins} min ago`;
+            else if (diffMins < 1440) return `${Math.floor(diffMins / 60)} hours ago`;
+            else return date.toLocaleDateString();
+        }
+        
+        // Message search functionality
+        messageSearch.addEventListener('input', () => {
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            loadMessages(activeFilter);
+        });
+        
+        // Message filter functionality
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                loadMessages(button.dataset.filter);
+            });
         });
         
         // Socket.io for real-time updates
         socket.on('connect', () => {
             console.log('Connected to server');
+            
+            // Join room based on user role
+            socket.emit('join-room', user.role);
+            if (user.department) {
+                socket.emit('join-room', user.department);
+            }
         });
         
         socket.on('new-message', (data) => {
             console.log('New message received:', data);
-            showNotification(`New message from ${data.sender}`, 'info');
+            
+            // Check if this message is for the current user
+            if (user.role === 'principal' || 
+                data.recipient === 'all' || 
+                data.recipient === user.role || 
+                (user.department && data.recipient === user.department)) {
+                
+                showToast(`New message from ${data.message.sender}: ${data.message.subject}`, 'info');
+                
+                // Update notification count
+                const currentCount = parseInt(notificationCount.textContent) || 0;
+                notificationCount.textContent = (currentCount + 1).toString();
+                
+                // Reload messages
+                const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+                loadMessages(activeFilter);
+            }
+        });
+        
+        socket.on('message-reply', (data) => {
+            console.log('Message reply received:', data);
+            
+            // If this thread is open and the reply is for the current message
+            if (messageThread.classList.contains('show') && 
+                threadInput.dataset.messageId === data.messageId) {
+                
+                const messageEl = document.createElement('div');
+                messageEl.className = 'thread-message received';
+                messageEl.innerHTML = `
+                    <div class="message-bubble">
+                        <div class="message-text">${data.reply.content}</div>
+                        <div class="message-time-thread">Just now</div>
+                    </div>
+                `;
+                threadMessages.appendChild(messageEl);
+                threadMessages.scrollTop = threadMessages.scrollHeight;
+                
+                // Show success toast
+                showToast('New reply received!', 'info', 'New Reply');
+            }
         });
         
         socket.on('emergency-alert', (data) => {
             console.log('Emergency alert received:', data);
-            showNotification(`EMERGENCY ALERT: ${data.message}`, 'error');
+            showToast(`EMERGENCY ALERT from ${data.sender}: ${data.message}`, 'error');
+            
+            // Play alert sound if available
+            const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+            audio.play().catch(e => console.log('Audio play failed:', e));
         });
         
         // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
             loadContacts();
+            loadMessages();
+            
+            // Initialize recipient selection
+            document.querySelector('.recipient-option input[value="all"]').checked = true;
+            document.querySelector('.recipient-option input[value="all"]').parentElement.classList.add('selected');
             
             // Simulate real-time updates
             setInterval(() => {
@@ -1643,6 +2869,55 @@
                     chart.update();
                 }
             }, 10000); // Update every 10 seconds
+        });
+        
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+        
+        // Register service worker for notifications
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                    
+                    // Get FCM token
+                    messaging.getToken({ vapidKey: 'YOUR_VAPID_KEY' })
+                        .then(token => {
+                            console.log('FCM Token:', token);
+                            // Save token to user profile in Firebase
+                            if (user && user.id) {
+                                db.collection('users').doc(user.id).update({
+                                    fcmToken: token
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error getting FCM token:', error);
+                        });
+                })
+                .catch(error => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        }
+        
+        // Handle foreground notifications
+        messaging.onMessage(payload => {
+            console.log('Message received in foreground:', payload);
+            
+            const { title, body, icon } = payload.notification;
+            
+            // Show toast notification
+            showToast(body, 'info', title);
+            
+            // Update notification count
+            const currentCount = parseInt(notificationCount.textContent) || 0;
+            notificationCount.textContent = (currentCount + 1).toString();
+            
+            // Reload messages
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            loadMessages(activeFilter);
         });
     </script>
 </body>
