@@ -1,0 +1,3062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Faculty Dashboard for Sona College of Technology Communication App">
+    <title>Sona College of Technology - Faculty Dashboard</title>
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css">
+    <style>
+        :root {
+            /* Premium Dark Blue & Yellow Theme */
+            --primary-dark: #0c1445;
+            --primary-blue: #1a237e;
+            --secondary-blue: #3949ab;
+            --accent-blue: #5c6bc0;
+            --primary-yellow: #f1c40f;
+            --secondary-yellow: #ffeb3b;
+            --accent-yellow: #fff59d;
+            
+            /* Neutral Colors */
+            --white: #ffffff;
+            --light-gray: #f5f5f5;
+            --medium-gray: #9e9e9e;
+            --dark-gray: #424242;
+            --darker-gray: #212121;
+            
+            /* Status Colors */
+            --success: #4caf50;
+            --warning: #ff9800;
+            --error: #f44336;
+            --info: #03a9f4;
+            
+            /* Typography */
+            --font-family: 'Inter', sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            --shadow-lg: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            --shadow-xl: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--darker-gray);
+            color: var(--white);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker-gray);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-blue);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            height: 80px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .header-link {
+            color: var(--medium-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .header-link:hover {
+            color: var(--primary-yellow);
+        }
+
+        .header-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-yellow);
+            transition: var(--transition);
+        }
+
+        .header-link:hover::after {
+            width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-action {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--medium-gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .header-action:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--primary-yellow);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 20px;
+            height: 20px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
+        }
+
+        .profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .profile-menu:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary-yellow);
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-yellow);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+        }
+
+        .profile-role {
+            font-size: var(--font-size-xs);
+            color: var(--medium-gray);
+        }
+
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary-blue) 100%);
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            position: relative;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+            padding: var(--spacing-md);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-text {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .sidebar.collapsed .logo-text {
+            display: none;
+        }
+
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--white);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-menu {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary-yellow);
+            transform: translateX(-100%);
+            transition: var(--transition);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--white);
+        }
+
+        .nav-item.active:before {
+            transform: translateX(0);
+        }
+
+        .nav-icon {
+            width: 24px;
+            margin-right: var(--spacing-md);
+            text-align: center;
+        }
+
+        .nav-text {
+            font-weight: 500;
+        }
+
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+        }
+
+        .user-role {
+            font-size: var(--font-size-xs);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .sidebar.collapsed .user-info {
+            display: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--darker-gray);
+            overflow: hidden;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: var(--primary-blue);
+            padding: var(--spacing-md) var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+            z-index: 50;
+        }
+
+        .nav-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: var(--radius-full);
+            padding: var(--spacing-sm) var(--spacing-md);
+            padding-left: 40px;
+            color: var(--white);
+            width: 250px;
+            transition: var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            width: 300px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .notification-badge:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--error);
+            color: var(--white);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            width: 20px;
+            height: 20px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .page-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--medium-gray);
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-2xl);
+            color: var(--primary-yellow);
+        }
+
+        .stat-value {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            font-size: var(--font-size-sm);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .stat-change {
+            position: absolute;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--error);
+        }
+
+        /* Dashboard Sections */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .dashboard-card {
+            background: var(--primary-dark);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .dashboard-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .card-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+        }
+
+        .card-action {
+            color: var(--primary-yellow);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .card-action:hover {
+            text-decoration: underline;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .quick-action {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quick-action:hover {
+            background: rgba(241, 196, 15, 0.1);
+            border-color: var(--primary-yellow);
+            transform: translateY(-3px);
+        }
+
+        .quick-action-icon {
+            font-size: var(--font-size-2xl);
+            color: var(--primary-yellow);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .quick-action-text {
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+        }
+
+        /* Announcements */
+        .announcement-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .announcement-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            border-left: 4px solid var(--primary-yellow);
+            transition: var(--transition);
+        }
+
+        .announcement-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .announcement-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .announcement-date {
+            font-size: var(--font-size-xs);
+            color: var(--medium-gray);
+        }
+
+        /* Calendar */
+        #calendar {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+        }
+
+        /* Class Management */
+        .class-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .class-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .class-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .class-info {
+            flex: 1;
+        }
+
+        .class-name {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .class-code {
+            font-size: var(--font-size-sm);
+            color: var(--medium-gray);
+        }
+
+        .class-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .class-action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--white);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .class-action-btn:hover {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+        }
+
+        /* Messaging */
+        .messaging-container {
+            display: flex;
+            height: calc(100vh - 180px);
+            background: var(--primary-dark);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .messaging-sidebar {
+            width: 300px;
+            background: var(--primary-blue);
+            padding: var(--spacing-md);
+            overflow-y: auto;
+        }
+
+        .messaging-header {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .messaging-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .message-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .message-tab {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+        }
+
+        .message-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .message-tab.active {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+        }
+
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-item.active {
+            background: rgba(241, 196, 15, 0.2);
+        }
+
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: var(--spacing-sm);
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-name {
+            font-weight: 500;
+        }
+
+        .contact-status {
+            font-size: var(--font-size-xs);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .contact-time {
+            font-size: var(--font-size-xs);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .messaging-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: var(--spacing-md);
+        }
+
+        .chat-details {
+            flex: 1;
+        }
+
+        .chat-name {
+            font-weight: 600;
+        }
+
+        .chat-status {
+            font-size: var(--font-size-xs);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .chat-action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--white);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chat-action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+
+        .message-sender {
+            font-size: var(--font-size-xs);
+            color: var(--medium-gray);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .message-bubble {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-xl);
+            font-size: var(--font-size-base);
+            position: relative;
+        }
+
+        .message.sent .message-bubble {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            border-bottom-right-radius: var(--radius-sm);
+        }
+
+        .message.received .message-bubble {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border-bottom-left-radius: var(--radius-sm);
+        }
+
+        .message-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--font-size-xs);
+            color: var(--medium-gray);
+            margin-top: var(--spacing-xs);
+        }
+
+        .encryption-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .message-input {
+            padding: var(--spacing-md);
+            background: var(--primary-blue);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            padding: var(--spacing-sm) var(--spacing-md);
+        }
+
+        #messageInput {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--white);
+            font-size: var(--font-size-base);
+        }
+
+        #messageInput:focus {
+            outline: none;
+        }
+
+        #messageInput::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .attach-btn, .send-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .attach-btn:hover, .send-btn:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .send-btn {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+        }
+
+        .send-btn:hover {
+            background: var(--secondary-yellow);
+        }
+
+        /* Assignments */
+        .assignment-form {
+            background: var(--primary-dark);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-yellow);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-md);
+        }
+
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-yellow);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .assignment-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .assignment-card {
+            background: var(--primary-dark);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-yellow);
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .assignment-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .assignment-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-sm);
+            color: var(--medium-gray);
+        }
+
+        .assignment-description {
+            margin-bottom: var(--spacing-md);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .assignment-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+        }
+
+        /* Grades */
+        .grade-overview {
+            background: var(--primary-dark);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .grade-chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .grade-table-container {
+            background: var(--primary-dark);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            overflow-x: auto;
+        }
+
+        .grade-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .grade-table th, .grade-table td {
+            padding: var(--spacing-sm);
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .grade-table th {
+            font-weight: 600;
+            color: var(--primary-yellow);
+        }
+
+        .grade-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+        }
+
+        .grade-excellent {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--success);
+        }
+
+        .grade-good {
+            background: rgba(3, 169, 244, 0.2);
+            color: var(--info);
+        }
+
+        .grade-average {
+            background: rgba(255, 152, 0, 0.2);
+            color: var(--warning);
+        }
+
+        .grade-poor {
+            background: rgba(244, 67, 54, 0.2);
+            color: var(--error);
+        }
+
+        /* Student Queries */
+        .queries-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        .query-section {
+            background: var(--primary-dark);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .query-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .query-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            border-left: 4px solid var(--info);
+            transition: var(--transition);
+        }
+
+        .query-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .query-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .query-title {
+            font-weight: 600;
+        }
+
+        .query-status {
+            font-size: var(--font-size-sm);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgba(255, 152, 0, 0.2);
+            color: var(--warning);
+        }
+
+        .status-resolved {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--success);
+        }
+
+        .query-content {
+            margin-bottom: var(--spacing-sm);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .query-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-size-xs);
+            color: var(--medium-gray);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .query-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+        }
+
+        /* Calendar */
+        .calendar-container {
+            background: var(--primary-dark);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        #full-calendar {
+            height: 600px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 80px;
+                height: calc(100vh - 80px);
+                z-index: 1000;
+                transform: translateX(-100%);
+                transition: var(--transition);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .queries-container {
+                grid-template-columns: 1fr;
+            }
+
+            .messaging-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .messaging-sidebar {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .assignment-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-yellow);
+            animation: spin 1s ease-in-out infinite;
+            margin: var(--spacing-xl) auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Notification Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--primary-dark);
+            color: var(--white);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--info);
+        }
+
+        .toast-icon {
+            margin-right: var(--spacing-md);
+            font-size: var(--font-size-lg);
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--error);
+        }
+
+        .toast.warning .toast-icon {
+            color: var(--warning);
+        }
+
+        .toast.info .toast-icon {
+            color: var(--info);
+        }
+
+        .toast-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--medium-gray);
+            cursor: pointer;
+            font-size: var(--font-size-lg);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Focus styles */
+        *:focus {
+            outline: 2px solid var(--primary-yellow);
+            outline-offset: 2px;
+        }
+
+        /* Skip to content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--medium-gray);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.875rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-heart {
+            color: #e74c3c;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" alt="Sona College of Technology Logo" class="logo">
+            <span class="logo-text">Sona College of Technology</span>
+        </div>
+        <nav class="header-nav">
+            <a href="#" class="header-link">Dashboard</a>
+            <a href="#" class="header-link">Courses</a>
+            <a href="#" class="header-link">Students</a>
+            <a href="#" class="header-link">Resources</a>
+        </nav>
+        <div class="header-actions">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search...">
+            </div>
+            <div class="notification-badge">
+                <i class="fas fa-bell"></i>
+                <span class="badge-count">3</span>
+            </div>
+            <div class="profile-menu">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-avatar">
+                <div class="profile-info">
+                    <div class="profile-name">Dr. John Doe</div>
+                    <div class="profile-role">Professor</div>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </header>
+    
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" alt="Sona College of Technology Logo" width="40" height="40">
+                    </div>
+                    <div class="logo-text">SONA</div>
+                </div>
+                <button class="toggle-btn" id="toggleSidebar" aria-label="Toggle sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <nav class="nav-menu" role="navigation" aria-label="Main navigation">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="messaging">
+                    <i class="fas fa-comments nav-icon"></i>
+                    <span class="nav-text">Messaging</span>
+                </a>
+                <a href="#" class="nav-item" data-page="assignments">
+                    <i class="fas fa-tasks nav-icon"></i>
+                    <span class="nav-text">Assignments</span>
+                </a>
+                <a href="#" class="nav-item" data-page="grades">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span class="nav-text">Grades</span>
+                </a>
+                <a href="#" class="nav-item" data-page="queries">
+                    <i class="fas fa-question-circle nav-icon"></i>
+                    <span class="nav-text">Student Queries</span>
+                </a>
+                <a href="#" class="nav-item" data-page="calendar">
+                    <i class="fas fa-calendar-alt nav-icon"></i>
+                    <span class="nav-text">Calendar</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <div class="user-name">Dr. John Doe</div>
+                        <div class="user-role">Professor, CSE</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <!-- Top Navigation -->
+            <nav class="top-nav">
+                <h1 class="nav-title">Faculty Dashboard</h1>
+                <div class="nav-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search...">
+                    </div>
+                    <div class="notification-badge" id="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge-count">3</span>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page">
+                    <div class="page-header">
+                        <h2 class="page-title">Faculty Dashboard</h2>
+                        <p class="page-subtitle">Welcome back! Here's what's happening with your classes today.</p>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-value">142</div>
+                            <div class="stat-label">Total Students</div>
+                            <div class="stat-change positive">+12%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="stat-value">6</div>
+                            <div class="stat-label">Active Classes</div>
+                            <div class="stat-change positive">+1</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Pending Assignments</div>
+                            <div class="stat-change negative">-2</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Student Queries</div>
+                            <div class="stat-change positive">+3</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dashboard Grid -->
+                    <div class="dashboard-grid">
+                        <!-- Quick Actions -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Quick Actions</h3>
+                                <div class="card-action">
+                                    View All <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="quick-actions">
+                                <div class="quick-action" data-action="create-assignment">
+                                    <div class="quick-action-icon">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </div>
+                                    <div class="quick-action-text">Create Assignment</div>
+                                </div>
+                                <div class="quick-action" data-action="take-attendance">
+                                    <div class="quick-action-icon">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                    <div class="quick-action-text">Take Attendance</div>
+                                </div>
+                                <div class="quick-action" data-action="schedule-class">
+                                    <div class="quick-action-icon">
+                                        <i class="fas fa-calendar-plus"></i>
+                                    </div>
+                                    <div class="quick-action-text">Schedule Class</div>
+                                </div>
+                                <div class="quick-action" data-action="post-announcement">
+                                    <div class="quick-action-icon">
+                                        <i class="fas fa-bullhorn"></i>
+                                    </div>
+                                    <div class="quick-action-text">Post Announcement</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Announcements -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Announcements</h3>
+                                <div class="card-action">
+                                    View All <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="announcement-list">
+                                <div class="announcement-item">
+                                    <div class="announcement-title">Assignment due by 11:59 PM IST, Sep 27, 2025</div>
+                                    <div class="announcement-date">Posted on Sep 20, 2025</div>
+                                </div>
+                                <div class="announcement-item">
+                                    <div class="announcement-title">Mid-term examinations scheduled from Oct 5, 2025</div>
+                                    <div class="announcement-date">Posted on Sep 18, 2025</div>
+                                </div>
+                                <div class="announcement-item">
+                                    <div class="announcement-title">Guest lecture on AI and Machine Learning on Sep 30, 2025</div>
+                                    <div class="announcement-date">Posted on Sep 15, 2025</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Calendar -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Upcoming Schedule</h3>
+                                <div class="card-action">
+                                    View Calendar <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div id="calendar"></div>
+                        </div>
+                        
+                        <!-- Class Management -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Class Management</h3>
+                                <div class="card-action">
+                                    View All <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="class-list">
+                                <div class="class-item">
+                                    <div class="class-info">
+                                        <div class="class-name">Introduction to Programming</div>
+                                        <div class="class-code">CS101</div>
+                                    </div>
+                                    <div class="class-actions">
+                                        <button class="class-action-btn" title="Schedule Class" aria-label="Schedule Class">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </button>
+                                        <button class="class-action-btn" title="Take Attendance" aria-label="Take Attendance">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>
+                                        <button class="class-action-btn" title="Class Materials" aria-label="Class Materials">
+                                            <i class="fas fa-folder-open"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="class-item">
+                                    <div class="class-info">
+                                        <div class="class-name">Data Structures</div>
+                                        <div class="class-code">CS201</div>
+                                    </div>
+                                    <div class="class-actions">
+                                        <button class="class-action-btn" title="Schedule Class" aria-label="Schedule Class">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </button>
+                                        <button class="class-action-btn" title="Take Attendance" aria-label="Take Attendance">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>
+                                        <button class="class-action-btn" title="Class Materials" aria-label="Class Materials">
+                                            <i class="fas fa-folder-open"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="class-item">
+                                    <div class="class-info">
+                                        <div class="class-name">Algorithms</div>
+                                        <div class="class-code">CS301</div>
+                                    </div>
+                                    <div class="class-actions">
+                                        <button class="class-action-btn" title="Schedule Class" aria-label="Schedule Class">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </button>
+                                        <button class="class-action-btn" title="Take Attendance" aria-label="Take Attendance">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>
+                                        <button class="class-action-btn" title="Class Materials" aria-label="Class Materials">
+                                            <i class="fas fa-folder-open"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messaging Page -->
+                <div id="messaging-page" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h2 class="page-title">Messaging</h2>
+                        <p class="page-subtitle">Communicate with students, faculty, and HOD.</p>
+                    </div>
+                    
+                    <div class="messaging-container">
+                        <div class="messaging-sidebar">
+                            <div class="messaging-header">
+                                <h3 class="messaging-title">Messages</h3>
+                                <div class="message-tabs">
+                                    <div class="message-tab active" data-tab="students">Students</div>
+                                    <div class="message-tab" data-tab="faculty">Faculty</div>
+                                    <div class="message-tab" data-tab="hod">HOD</div>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-list">
+                                <div class="contact-item active" data-contact="class-group">
+                                    <div class="contact-avatar">CG</div>
+                                    <div class="contact-info">
+                                        <div class="contact-name">Class Group</div>
+                                        <div class="contact-status">142 members</div>
+                                    </div>
+                                    <div class="contact-time">10:30 AM</div>
+                                </div>
+                                <div class="contact-item" data-contact="hod-science">
+                                    <div class="contact-avatar">HS</div>
+                                    <div class="contact-info">
+                                        <div class="contact-name">HOD Science</div>
+                                        <div class="contact-status">Online</div>
+                                    </div>
+                                    <div class="contact-time">Yesterday</div>
+                                </div>
+                                <div class="contact-item" data-contact="faculty-cse">
+                                    <div class="contact-avatar">FC</div>
+                                    <div class="contact-info">
+                                        <div class="contact-name">Faculty CSE</div>
+                                        <div class="contact-status">24 members</div>
+                                    </div>
+                                    <div class="contact-time">2 days ago</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="messaging-main">
+                            <div class="chat-header">
+                                <div class="chat-info">
+                                    <div class="chat-avatar">CG</div>
+                                    <div class="chat-details">
+                                        <div class="chat-name">Class Group</div>
+                                        <div class="chat-status">142 members, 12 online</div>
+                                    </div>
+                                </div>
+                                <div class="chat-actions">
+                                    <button class="chat-action-btn" title="Video Call" aria-label="Start Video Call">
+                                        <i class="fas fa-video"></i>
+                                    </button>
+                                    <button class="chat-action-btn" title="Search" aria-label="Search Messages">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-messages" id="chat-messages">
+                                <!-- Messages will be loaded here -->
+                            </div>
+                            
+                            <div class="message-input">
+                                <div class="input-wrapper">
+                                    <input type="text" id="messageInput" placeholder="Type your message...">
+                                </div>
+                                <label for="fileInput" class="attach-btn">
+                                    <i class="fas fa-paperclip"></i>
+                                </label>
+                                <input type="file" id="fileInput" style="display: none;" accept="image/*,application/pdf,.doc,.docx">
+                                <button class="send-btn" id="sendButton">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Assignments Page -->
+                <div id="assignments-page" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h2 class="page-title">Assignment Distribution</h2>
+                        <p class="page-subtitle">Create and manage assignments for your classes.</p>
+                    </div>
+                    
+                    <div class="assignment-form">
+                        <h3 class="card-title">Create New Assignment</h3>
+                        <form id="assignmentForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="assignmentTitle">Assignment Title</label>
+                                        <input type="text" class="form-control" id="assignmentTitle" placeholder="Enter assignment title" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="assignmentClass">Class</label>
+                                        <select class="form-control" id="assignmentClass" required>
+                                            <option value="">Select a class</option>
+                                            <option value="cs101">CS101 - Introduction to Programming</option>
+                                            <option value="cs201">CS201 - Data Structures</option>
+                                            <option value="cs301">CS301 - Algorithms</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="assignmentDueDate">Due Date</label>
+                                        <input type="datetime-local" class="form-control" id="assignmentDueDate" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="assignmentPoints">Total Points</label>
+                                        <input type="number" class="form-control" id="assignmentPoints" placeholder="100" min="1" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="assignmentDescription">Description</label>
+                                <textarea class="form-control" id="assignmentDescription" rows="4" placeholder="Enter assignment description" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="assignmentFile">Attach File (Optional)</label>
+                                <input type="file" class="form-control" id="assignmentFile" accept="image/*,application/pdf,.doc,.docx">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Create Assignment</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <h3 class="card-title">Existing Assignments</h3>
+                    <div class="assignment-list" id="assignmentList">
+                        <!-- Assignments will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Grades Page -->
+                <div id="grades-page" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h2 class="page-title">Grade Communication</h2>
+                        <p class="page-subtitle">View and communicate student grades.</p>
+                    </div>
+                    
+                    <div class="grade-overview">
+                        <h3 class="card-title">Grade Distribution</h3>
+                        <div class="grade-chart-container">
+                            <canvas id="gradeChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="grade-table-container">
+                        <h3 class="card-title">Student Grades</h3>
+                        <table class="grade-table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Class</th>
+                                    <th>Assignment</th>
+                                    <th>Grade</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gradeTableBody">
+                                <!-- Grades will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Student Queries Page -->
+                <div id="queries-page" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h2 class="page-title">Student Queries</h2>
+                        <p class="page-subtitle">Manage and respond to student questions.</p>
+                    </div>
+                    
+                    <div class="queries-container">
+                        <div class="query-section">
+                            <h3 class="card-title">Pending Queries</h3>
+                            <div class="query-list" id="pendingQueries">
+                                <!-- Pending queries will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="query-section">
+                            <h3 class="card-title">Resolved Queries</h3>
+                            <div class="query-list" id="resolvedQueries">
+                                <!-- Resolved queries will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calendar Page -->
+                <div id="calendar-page" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h2 class="page-title">Academic Calendar</h2>
+                        <p class="page-subtitle">Schedule and manage your classes and events.</p>
+                    </div>
+                    
+                    <div class="calendar-container">
+                        <div id="full-calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Sona College of Technology. All rights reserved.</p>
+            <p>Made with <i class="fas fa-heart footer-heart"></i> by Krishna</p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        // Global variables
+        let currentPage = 'dashboard';
+        let socket;
+        let user = {
+            id: 'faculty-001',
+            name: 'Dr. John Doe',
+            role: 'faculty',
+            avatar: 'JD'
+        };
+        
+        // Sample data
+        const sampleData = {
+            assignments: [
+                {
+                    id: 'a1',
+                    title: 'Programming Assignment #3',
+                    class: 'CS101',
+                    dueDate: '2025-09-27T23:59:00',
+                    points: 100,
+                    description: 'Implement a sorting algorithm and analyze its time complexity.',
+                    file: null
+                },
+                {
+                    id: 'a2',
+                    title: 'Data Structures Project',
+                    class: 'CS201',
+                    dueDate: '2025-10-05T23:59:00',
+                    points: 150,
+                    description: 'Design and implement a library management system using appropriate data structures.',
+                    file: 'project-guidelines.pdf'
+                },
+                {
+                    id: 'a3',
+                    title: 'Algorithm Analysis',
+                    class: 'CS301',
+                    dueDate: '2025-10-10T23:59:00',
+                    points: 100,
+                    description: 'Analyze the time and space complexity of given algorithms.',
+                    file: null
+                }
+            ],
+            grades: [
+                {
+                    studentId: 'CS2021001',
+                    name: 'John Doe',
+                    class: 'CS101',
+                    assignment: 'Programming Assignment #3',
+                    grade: 'A',
+                    score: 92,
+                    status: 'Submitted'
+                },
+                {
+                    studentId: 'CS2021002',
+                    name: 'Jane Smith',
+                    class: 'CS101',
+                    assignment: 'Programming Assignment #3',
+                    grade: 'B',
+                    score: 85,
+                    status: 'Submitted'
+                },
+                {
+                    studentId: 'CS2021003',
+                    name: 'Robert Johnson',
+                    class: 'CS101',
+                    assignment: 'Programming Assignment #3',
+                    grade: 'C',
+                    score: 78,
+                    status: 'Submitted'
+                },
+                {
+                    studentId: 'CS2021004',
+                    name: 'Emily Davis',
+                    class: 'CS101',
+                    assignment: 'Programming Assignment #3',
+                    grade: 'D',
+                    score: 65,
+                    status: 'Submitted'
+                }
+            ],
+            queries: {
+                pending: [
+                    {
+                        id: 'q1',
+                        title: 'Question about Assignment #3',
+                        student: 'John Doe',
+                        studentId: 'CS2021001',
+                        class: 'CS101',
+                        content: 'I\'m having trouble understanding the requirements for the third assignment. Could you please clarify what is expected in the algorithm analysis section?',
+                        date: '2025-09-21T10:30:00'
+                    },
+                    {
+                        id: 'q2',
+                        title: 'Request for Extension',
+                        student: 'Jane Smith',
+                        studentId: 'CS2021002',
+                        class: 'CS101',
+                        content: 'Due to personal reasons, I would like to request a 2-day extension for the Data Structures project due on October 5th.',
+                        date: '2025-09-20T14:15:00'
+                    }
+                ],
+                resolved: [
+                    {
+                        id: 'q3',
+                        title: 'Question about Lecture 5',
+                        student: 'Robert Johnson',
+                        studentId: 'CS2021003',
+                        class: 'CS101',
+                        content: 'Could you please explain the concept of dynamic programming again? I didn\'t quite understand it in class.',
+                        date: '2025-09-18T09:45:00',
+                        response: 'Dynamic programming is a method for solving complex problems by breaking them down into simpler subproblems. We\'ll cover this in more detail in the next lecture.',
+                        resolvedDate: '2025-09-18T11:30:00'
+                    }
+                ]
+            },
+            messages: {
+                'class-group': [
+                    {
+                        id: 'm1',
+                        sender: 'John Doe',
+                        senderId: 'CS2021001',
+                        content: 'Hello professor, I have a question about the assignment.',
+                        timestamp: '2025-09-21T10:30:00',
+                        sent: false
+                    },
+                    {
+                        id: 'm2',
+                        sender: 'You',
+                        senderId: user.id,
+                        content: 'Sure, what would you like to know?',
+                        timestamp: '2025-09-21T10:32:00',
+                        sent: true
+                    },
+                    {
+                        id: 'm3',
+                        sender: 'John Doe',
+                        senderId: 'CS2021001',
+                        content: 'I\'m not sure about the requirements for the algorithm analysis section.',
+                        timestamp: '2025-09-21T10:35:00',
+                        sent: false
+                    }
+                ],
+                'hod-science': [
+                    {
+                        id: 'm4',
+                        sender: 'HOD Science',
+                        senderId: 'hod-001',
+                        content: 'Please submit your mid-term exam papers by Friday.',
+                        timestamp: '2025-09-20T09:15:00',
+                        sent: false
+                    },
+                    {
+                        id: 'm5',
+                        sender: 'You',
+                        senderId: user.id,
+                        content: 'Will do, thank you for the reminder.',
+                        timestamp: '2025-09-20T09:20:00',
+                        sent: true
+                    }
+                ],
+                'faculty-cse': [
+                    {
+                        id: 'm6',
+                        sender: 'Dr. Smith',
+                        senderId: 'faculty-002',
+                        content: 'Are we still meeting tomorrow to discuss the curriculum?',
+                        timestamp: '2025-09-19T14:30:00',
+                        sent: false
+                    },
+                    {
+                        id: 'm7',
+                        sender: 'You',
+                        senderId: user.id,
+                        content: 'Yes, 2 PM in the faculty lounge.',
+                        timestamp: '2025-09-19T14:35:00',
+                        sent: true
+                    }
+                ]
+            }
+        };
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+        
+        function initializeApp() {
+            // Initialize socket connection
+            socket = io('http://localhost:3000');
+            
+            // Set up socket event listeners
+            setupSocketListeners();
+            
+            // Set up navigation
+            setupNavigation();
+            
+            // Set up sidebar toggle
+            setupSidebarToggle();
+            
+            // Set up quick actions
+            setupQuickActions();
+            
+            // Set up messaging
+            setupMessaging();
+            
+            // Set up assignment form
+            setupAssignmentForm();
+            
+            // Load initial data
+            loadDashboardData();
+            loadAssignments();
+            loadGrades();
+            loadQueries();
+            
+            // Initialize calendar
+            initializeCalendar();
+            
+            // Initialize grade chart
+            initializeGradeChart();
+        }
+        
+        function setupSocketListeners() {
+            socket.on('connect', function() {
+                console.log('Connected to server');
+                
+                // Join faculty room
+                socket.emit('joinRoom', { room: 'faculty', userId: user.id });
+            });
+            
+            socket.on('newMessage', function(data) {
+                console.log('New message received:', data);
+                
+                // If we're in the messaging view, add the message to the chat
+                if (currentPage === 'messaging') {
+                    addMessageToChat(data);
+                }
+                
+                // Update notification badge
+                updateNotificationBadge();
+                
+                // Show notification
+                showToast('New message from ' + data.senderName, 'info');
+            });
+            
+            socket.on('newAssignment', function(data) {
+                console.log('New assignment created:', data);
+                
+                // If we're in the assignments view, refresh the list
+                if (currentPage === 'assignments') {
+                    loadAssignments();
+                }
+                
+                // Show notification
+                showToast('New assignment created: ' + data.title, 'success');
+            });
+            
+            socket.on('newQuery', function(data) {
+                console.log('New query received:', data);
+                
+                // If we're in the queries view, refresh the list
+                if (currentPage === 'queries') {
+                    loadQueries();
+                }
+                
+                // Update notification badge
+                updateNotificationBadge();
+                
+                // Show notification
+                showToast('New query from ' + data.studentName, 'warning');
+            });
+        }
+        
+        function setupNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const page = this.getAttribute('data-page');
+                    navigateToPage(page);
+                });
+            });
+        }
+        
+        function setupSidebarToggle() {
+            const toggleBtn = document.getElementById('toggleSidebar');
+            const sidebar = document.getElementById('sidebar');
+            
+            toggleBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+            });
+        }
+        
+        function setupQuickActions() {
+            const quickActions = document.querySelectorAll('.quick-action');
+            
+            quickActions.forEach(action => {
+                action.addEventListener('click', function() {
+                    const actionType = this.getAttribute('data-action');
+                    
+                    switch(actionType) {
+                        case 'create-assignment':
+                            navigateToPage('assignments');
+                            break;
+                        case 'take-attendance':
+                            showToast('Attendance feature coming soon!', 'info');
+                            break;
+                        case 'schedule-class':
+                            navigateToPage('calendar');
+                            break;
+                        case 'post-announcement':
+                            showToast('Announcement feature coming soon!', 'info');
+                            break;
+                    }
+                });
+            });
+        }
+        
+        function setupMessaging() {
+            // Message tabs
+            const messageTabs = document.querySelectorAll('.message-tab');
+            
+            messageTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    messageTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const tabType = this.getAttribute('data-tab');
+                    loadContacts(tabType);
+                });
+            });
+            
+            // Contact items
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.contact-item')) {
+                    const contactItem = e.target.closest('.contact-item');
+                    const contactId = contactItem.getAttribute('data-contact');
+                    
+                    // Update active contact
+                    document.querySelectorAll('.contact-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    contactItem.classList.add('active');
+                    
+                    // Load messages for this contact
+                    loadMessages(contactId);
+                }
+            });
+            
+            // Send message
+            const sendButton = document.getElementById('sendButton');
+            const messageInput = document.getElementById('messageInput');
+            
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // File upload
+            const fileInput = document.getElementById('fileInput');
+            fileInput.addEventListener('change', handleFileUpload);
+        }
+        
+        function setupAssignmentForm() {
+            const assignmentForm = document.getElementById('assignmentForm');
+            
+            assignmentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    id: 'a' + (sampleData.assignments.length + 1),
+                    title: document.getElementById('assignmentTitle').value,
+                    class: document.getElementById('assignmentClass').value,
+                    dueDate: document.getElementById('assignmentDueDate').value,
+                    points: parseInt(document.getElementById('assignmentPoints').value),
+                    description: document.getElementById('assignmentDescription').value,
+                    file: document.getElementById('assignmentFile').files[0]?.name || null
+                };
+                
+                // Add to sample data
+                sampleData.assignments.push(formData);
+                
+                // Emit via socket
+                socket.emit('createAssignment', formData);
+                
+                // Reset form
+                assignmentForm.reset();
+                
+                // Refresh assignment list
+                loadAssignments();
+                
+                // Show notification
+                showToast('Assignment created successfully!', 'success');
+            });
+        }
+        
+        function navigateToPage(page) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(p => {
+                p.style.display = 'none';
+            });
+            
+            // Show selected page
+            document.getElementById(page + '-page').style.display = 'block';
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            
+            // Update current page
+            currentPage = page;
+            
+            // Page-specific initialization
+            if (page === 'dashboard') {
+                initializeDashboardCalendar();
+            } else if (page === 'messaging') {
+                // Load default messages
+                loadMessages('class-group');
+            } else if (page === 'grades') {
+                initializeGradeChart();
+            } else if (page === 'calendar') {
+                initializeFullCalendar();
+            }
+        }
+        
+        function loadDashboardData() {
+            // Initialize dashboard calendar
+            initializeDashboardCalendar();
+        }
+        
+        function loadAssignments() {
+            const assignmentList = document.getElementById('assignmentList');
+            assignmentList.innerHTML = '';
+            
+            sampleData.assignments.forEach(assignment => {
+                const assignmentCard = document.createElement('div');
+                assignmentCard.className = 'assignment-card';
+                
+                const dueDate = new Date(assignment.dueDate);
+                const formattedDate = dueDate.toLocaleDateString() + ' ' + dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                assignmentCard.innerHTML = `
+                    <div class="assignment-title">${assignment.title}</div>
+                    <div class="assignment-meta">
+                        <span>${assignment.class}</span>
+                        <span>Due: ${formattedDate}</span>
+                        <span>${assignment.points} pts</span>
+                    </div>
+                    <div class="assignment-description">${assignment.description}</div>
+                    <div class="assignment-actions">
+                        <button class="btn btn-primary">View Submissions</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                `;
+                
+                assignmentList.appendChild(assignmentCard);
+            });
+        }
+        
+        function loadGrades() {
+            const gradeTableBody = document.getElementById('gradeTableBody');
+            gradeTableBody.innerHTML = '';
+            
+            sampleData.grades.forEach(grade => {
+                const row = document.createElement('tr');
+                
+                let gradeClass = '';
+                if (grade.grade === 'A') gradeClass = 'grade-excellent';
+                else if (grade.grade === 'B') gradeClass = 'grade-good';
+                else if (grade.grade === 'C') gradeClass = 'grade-average';
+                else if (grade.grade === 'D') gradeClass = 'grade-poor';
+                
+                row.innerHTML = `
+                    <td>${grade.studentId}</td>
+                    <td>${grade.name}</td>
+                    <td>${grade.class}</td>
+                    <td>${grade.assignment}</td>
+                    <td><span class="grade-badge ${gradeClass}">${grade.grade} (${grade.score}%)</span></td>
+                    <td>${grade.status}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm">Message</button>
+                    </td>
+                `;
+                
+                gradeTableBody.appendChild(row);
+            });
+        }
+        
+        function loadQueries() {
+            // Load pending queries
+            const pendingQueries = document.getElementById('pendingQueries');
+            pendingQueries.innerHTML = '';
+            
+            sampleData.queries.pending.forEach(query => {
+                const queryItem = document.createElement('div');
+                queryItem.className = 'query-item';
+                
+                const date = new Date(query.date);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                queryItem.innerHTML = `
+                    <div class="query-header">
+                        <div class="query-title">${query.title}</div>
+                        <div class="query-status status-pending">Pending</div>
+                    </div>
+                    <div class="query-content">${query.content}</div>
+                    <div class="query-meta">
+                        <span>${query.student} (${query.studentId})</span>
+                        <span>${query.class}</span>
+                        <span>${formattedDate}</span>
+                    </div>
+                    <div class="query-actions">
+                        <button class="btn btn-primary" data-query-id="${query.id}">Respond</button>
+                        <button class="btn btn-secondary" data-query-id="${query.id}">Mark as Resolved</button>
+                    </div>
+                `;
+                
+                pendingQueries.appendChild(queryItem);
+            });
+            
+            // Load resolved queries
+            const resolvedQueries = document.getElementById('resolvedQueries');
+            resolvedQueries.innerHTML = '';
+            
+            sampleData.queries.resolved.forEach(query => {
+                const queryItem = document.createElement('div');
+                queryItem.className = 'query-item';
+                
+                const date = new Date(query.date);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const resolvedDate = new Date(query.resolvedDate);
+                const formattedResolvedDate = resolvedDate.toLocaleDateString() + ' ' + resolvedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                queryItem.innerHTML = `
+                    <div class="query-header">
+                        <div class="query-title">${query.title}</div>
+                        <div class="query-status status-resolved">Resolved</div>
+                    </div>
+                    <div class="query-content">${query.content}</div>
+                    <div class="query-response">
+                        <strong>Response:</strong> ${query.response}
+                    </div>
+                    <div class="query-meta">
+                        <span>Resolved on: ${formattedResolvedDate}</span>
+                    </div>
+                    <div class="query-actions">
+                        <button class="btn btn-secondary" data-query-id="${query.id}">View Details</button>
+                    </div>
+                `;
+                
+                resolvedQueries.appendChild(queryItem);
+            });
+            
+            // Add event listeners to query action buttons
+            document.querySelectorAll('.query-actions button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const queryId = this.getAttribute('data-query-id');
+                    const action = this.textContent.trim();
+                    
+                    if (action === 'Respond') {
+                        showToast('Response feature coming soon!', 'info');
+                    } else if (action === 'Mark as Resolved') {
+                        markQueryAsResolved(queryId);
+                    } else if (action === 'View Details') {
+                        showToast('Query details feature coming soon!', 'info');
+                    }
+                });
+            });
+        }
+        
+        function markQueryAsResolved(queryId) {
+            // Find the query in pending list
+            const queryIndex = sampleData.queries.pending.findIndex(q => q.id === queryId);
+            
+            if (queryIndex !== -1) {
+                const query = sampleData.queries.pending[queryIndex];
+                
+                // Move to resolved list
+                query.response = 'This query has been resolved.';
+                query.resolvedDate = new Date().toISOString();
+                
+                sampleData.queries.resolved.push(query);
+                sampleData.queries.pending.splice(queryIndex, 1);
+                
+                // Refresh queries
+                loadQueries();
+                
+                // Show notification
+                showToast('Query marked as resolved!', 'success');
+            }
+        }
+        
+        function loadContacts(tabType) {
+            // In a real app, this would fetch contacts based on the tab type
+            // For now, we'll just use the existing contact list
+            console.log('Loading contacts for tab:', tabType);
+        }
+        
+        function loadMessages(contactId) {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = '';
+            
+            const messages = sampleData.messages[contactId] || [];
+            
+            messages.forEach(message => {
+                addMessageToChat(message);
+            });
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addMessageToChat(message) {
+            const chatMessages = document.getElementById('chat-messages');
+            
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${message.sent ? 'sent' : 'received'}`;
+            
+            const date = new Date(message.timestamp);
+            const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageEl.innerHTML = `
+                <div class="message-sender">${message.sender}</div>
+                <div class="message-bubble">${message.content}</div>
+                <div class="message-meta">
+                    <span>${timeString}</span>
+                    <div class="encryption-indicator">
+                        <i class="fas fa-lock"></i>
+                        <span>Encrypted</span>
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageEl);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (message === '') return;
+            
+            // Get active contact
+            const activeContact = document.querySelector('.contact-item.active');
+            if (!activeContact) return;
+            
+            const contactId = activeContact.getAttribute('data-contact');
+            
+            // Create message object
+            const messageObj = {
+                id: 'm' + Date.now(),
+                sender: user.name,
+                senderId: user.id,
+                content: message,
+                timestamp: new Date().toISOString(),
+                sent: true
+            };
+            
+            // Add to sample data
+            if (!sampleData.messages[contactId]) {
+                sampleData.messages[contactId] = [];
+            }
+            sampleData.messages[contactId].push(messageObj);
+            
+            // Add to chat
+            addMessageToChat(messageObj);
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Emit via socket
+            socket.emit('sendMessage', {
+                recipient: contactId,
+                message: message,
+                timestamp: messageObj.timestamp
+            });
+        }
+        
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // In a real application, you would upload the file to the server
+            console.log('File uploaded:', file.name);
+            
+            // Show notification
+            showToast(`File "${file.name}" uploaded successfully!`, 'success');
+            
+            // Reset the file input
+            e.target.value = '';
+        }
+        
+        function initializeDashboardCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            if (!calendarEl) return;
+            
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 300,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: ''
+                },
+                events: [
+                    {
+                        title: 'CS101 Class',
+                        start: '2025-09-22T10:00:00',
+                        end: '2025-09-22T11:30:00',
+                        color: '#f1c40f'
+                    },
+                    {
+                        title: 'Assignment Due',
+                        start: '2025-09-27',
+                        color: '#f44336'
+                    },
+                    {
+                        title: 'CS201 Class',
+                        start: '2025-09-23T14:00:00',
+                        end: '2025-09-23T15:30:00',
+                        color: '#f1c40f'
+                    }
+                ]
+            });
+            
+            calendar.render();
+        }
+        
+        function initializeFullCalendar() {
+            const calendarEl = document.getElementById('full-calendar');
+            if (!calendarEl) return;
+            
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [
+                    {
+                        title: 'CS101 Class',
+                        start: '2025-09-22T10:00:00',
+                        end: '2025-09-22T11:30:00',
+                        color: '#f1c40f'
+                    },
+                    {
+                        title: 'Assignment Due',
+                        start: '2025-09-27',
+                        color: '#f44336'
+                    },
+                    {
+                        title: 'CS201 Class',
+                        start: '2025-09-23T14:00:00',
+                        end: '2025-09-23T15:30:00',
+                        color: '#f1c40f'
+                    },
+                    {
+                        title: 'Mid-term Exam',
+                        start: '2025-10-05',
+                        end: '2025-10-07',
+                        color: '#f44336'
+                    },
+                    {
+                        title: 'Guest Lecture',
+                        start: '2025-09-30T13:00:00',
+                        end: '2025-09-30T15:00:00',
+                        color: '#4caf50'
+                    }
+                ]
+            });
+            
+            calendar.render();
+        }
+        
+        function initializeGradeChart() {
+            const ctx = document.getElementById('gradeChart');
+            if (!ctx) return;
+            
+            // Calculate grade distribution
+            const gradeDistribution = {
+                'A': 0,
+                'B': 0,
+                'C': 0,
+                'D': 0,
+                'F': 0
+            };
+            
+            sampleData.grades.forEach(grade => {
+                gradeDistribution[grade.grade]++;
+            });
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['A', 'B', 'C', 'D', 'F'],
+                    datasets: [{
+                        label: 'Number of Students',
+                        data: [
+                            gradeDistribution['A'],
+                            gradeDistribution['B'],
+                            gradeDistribution['C'],
+                            gradeDistribution['D'],
+                            gradeDistribution['F']
+                        ],
+                        backgroundColor: [
+                            'rgba(76, 175, 80, 0.7)',
+                            'rgba(3, 169, 244, 0.7)',
+                            'rgba(255, 152, 0, 0.7)',
+                            'rgba(244, 67, 54, 0.7)',
+                            'rgba(158, 158, 158, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(76, 175, 80, 1)',
+                            'rgba(3, 169, 244, 1)',
+                            'rgba(255, 152, 0, 1)',
+                            'rgba(244, 67, 54, 1)',
+                            'rgba(158, 158, 158, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateNotificationBadge() {
+            const badge = document.querySelector('.badge-count');
+            const currentCount = parseInt(badge.textContent);
+            badge.textContent = currentCount + 1;
+        }
+        
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = '';
+            if (type === 'success') icon = 'fa-check-circle';
+            else if (type === 'error') icon = 'fa-times-circle';
+            else if (type === 'warning') icon = 'fa-exclamation-circle';
+            else icon = 'fa-info-circle';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon} toast-icon"></i>
+                <div>${message}</div>
+                <button class="toast-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+            
+            // Close button
+            toast.querySelector('.toast-close').addEventListener('click', function() {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            });
+        }
+    </script>
+</body>
+</html>
