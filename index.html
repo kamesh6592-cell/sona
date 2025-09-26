@@ -17,6 +17,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/tonsky/FiraCode@4/distr/fira_code.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    
     <!-- JavaScript -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -92,7 +97,7 @@
             padding: 1rem 2rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             z-index: 100;
             border-bottom: 1px solid var(--glass-border);
@@ -123,38 +128,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-        }
-
-        .header-nav {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .header-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .header-link:hover {
-            color: var(--primary-yellow);
-        }
-
-        .header-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary-yellow);
-            transition: var(--transition);
-        }
-
-        .header-link:hover::after {
-            width: 100%;
         }
 
         /* Main container */
@@ -707,11 +680,7 @@
             }
             
             .logo-text {
-                display: none;
-            }
-            
-            .header-nav {
-                display: none;
+                font-size: 1.2rem;
             }
             
             .login-container {
@@ -739,6 +708,18 @@
                 font-size: 13px;
             }
             
+            .header {
+                padding: 0.75rem;
+            }
+            
+            .logo {
+                height: 40px;
+            }
+            
+            .logo-text {
+                font-size: 1rem;
+            }
+            
             .login-container {
                 padding: 1.5rem 1rem;
             }
@@ -759,6 +740,18 @@
         @media (max-width: 320px) {
             html {
                 font-size: 12px;
+            }
+            
+            .header {
+                padding: 0.5rem;
+            }
+            
+            .logo {
+                height: 35px;
+            }
+            
+            .logo-text {
+                font-size: 0.9rem;
             }
             
             .login-container {
@@ -861,12 +854,6 @@
             <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" alt="Sona College of Technology Logo" class="logo">
             <span class="logo-text">Sona College of Technology</span>
         </div>
-        <nav class="header-nav">
-            <a href="#" class="header-link">Home</a>
-            <a href="#" class="header-link">About</a>
-            <a href="#" class="header-link">Academics</a>
-            <a href="#" class="header-link">Contact</a>
-        </nav>
     </header>
     
     <!-- Main Container -->
@@ -1103,29 +1090,20 @@
     </footer>
 
     <script>
-        // Test accounts for demonstration
-        const testAccounts = {
-            'PRIN2024001': { password: 'Principal@123', role: 'principal', name: 'Principal', department: 'Administration' },
-            'HOD2024001': { password: 'HOD@123', role: 'hod', name: 'HOD Computer Science', department: 'CSE' },
-            'FAC2024001': { password: 'Faculty@123', role: 'faculty', name: 'Dr. John Smith', department: 'CSE' },
-            'STU2024001': { password: 'Student@123', role: 'student', name: 'Rahul Kumar', department: 'CSE' }
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCf2xqZ6Xq7g0h8L6f4g7j5k4l3i2o1p0r8",
+            authDomain: "sona-college-comm-platform.firebaseapp.com",
+            projectId: "sona-college-comm-platform",
+            storageBucket: "sona-college-comm-platform.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef1234567890"
         };
 
-        // Mock Microsoft accounts
-        const microsoftAccounts = {
-            'microsoft.user1@sonatech.ac.in': { 
-                name: 'Microsoft User', 
-                role: 'faculty', 
-                department: 'CSE',
-                needsSetup: true
-            },
-            'microsoft.user2@sonatech.ac.in': { 
-                name: 'Microsoft Admin', 
-                role: 'principal', 
-                department: 'Administration',
-                needsSetup: false
-            }
-        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // DOM Elements
         const elements = {
@@ -1153,6 +1131,34 @@
         document.addEventListener('DOMContentLoaded', () => {
             checkRememberedUser();
             setupEventListeners();
+            
+            // Set up authentication state observer
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // User is signed in
+                    const uid = user.uid;
+                    
+                    // Get user data from Firestore
+                    db.collection('users').doc(uid).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                const userData = doc.data();
+                                // Store user data in localStorage
+                                localStorage.setItem('user', JSON.stringify({
+                                    uid: uid,
+                                    ...userData
+                                }));
+                                
+                                // Redirect to role-based page
+                                redirectBasedOnRole(userData.role);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error getting user data:", error);
+                            showNotification('Error loading user data', 'error');
+                        });
+                }
+            });
         });
 
         // Setup event listeners
@@ -1291,108 +1297,94 @@
             document.body.style.overflow = '';
         }
 
-        // Microsoft Authentication (simulated)
-        function simulateMicrosoftAuth(isLogin = true) {
-            return new Promise((resolve, reject) => {
-                // Simulate Microsoft authentication flow
-                setTimeout(() => {
-                    // For demo purposes, we'll randomly succeed or fail
-                    const isSuccess = Math.random() > 0.2; // 80% success rate
-                    
-                    if (isSuccess) {
-                        // Return a mock Microsoft user
-                        const emails = Object.keys(microsoftAccounts);
-                        const randomEmail = emails[Math.floor(Math.random() * emails.length)];
-                        const account = microsoftAccounts[randomEmail];
-                        
-                        resolve({
-                            email: randomEmail,
-                            name: account.name,
-                            needsSetup: account.needsSetup
-                        });
-                    } else {
-                        reject(new Error("Microsoft authentication failed"));
-                    }
-                }, 1500);
-            });
-        }
-
         // Handle Microsoft authentication
-        async function handleMicrosoftAuth(isLogin) {
+        function handleMicrosoftAuth(isLogin) {
             const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
             button.classList.add('btn-loading');
             
-            try {
-                const microsoftUser = await simulateMicrosoftAuth(isLogin);
-                
-                if (microsoftUser.needsSetup) {
-                    // User needs to complete setup
-                    openModal(elements.microsoftSetupModal);
-                    document.getElementById('msFullName').value = microsoftUser.name;
-                } else {
-                    // User is already set up, log them in
-                    showNotification(`Welcome back, ${microsoftUser.name}!`, 'success');
+            const provider = new firebase.auth.OAuthProvider('microsoft.com');
+            
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
                     
-                    // Simulate key generation
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    // In a real app, you would generate and store keys here
-                    localStorage.setItem('user', JSON.stringify(microsoftUser));
-                    
-                    // Redirect to dashboard (simulated)
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-                }
-            } catch (error) {
-                showNotification('Microsoft authentication failed. Please try again.', 'error');
-            } finally {
-                button.classList.remove('btn-loading');
-            }
+                    // Check if user exists in Firestore
+                    return db.collection('users').doc(user.uid).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                // User exists, redirect based on role
+                                const userData = doc.data();
+                                redirectBasedOnRole(userData.role);
+                            } else {
+                                // User doesn't exist, show setup modal
+                                openModal(elements.microsoftSetupModal);
+                                document.getElementById('msFullName').value = user.displayName || '';
+                                document.getElementById('msEmail').value = user.email || '';
+                            }
+                        });
+                })
+                .catch((error) => {
+                    console.error('Microsoft auth error:', error);
+                    showNotification('Microsoft authentication failed. Please try again.', 'error');
+                })
+                .finally(() => {
+                    button.classList.remove('btn-loading');
+                });
         }
 
         // Handle Microsoft setup form
-        async function handleMicrosoftSetup(e) {
+        function handleMicrosoftSetup(e) {
             e.preventDefault();
             const submitBtn = elements.microsoftSetupForm.querySelector('.btn');
             
             // Show loading state
             submitBtn.classList.add('btn-loading');
             
-            // Simulate API call
-            setTimeout(() => {
-                submitBtn.classList.remove('btn-loading');
-                
-                const collegeId = document.getElementById('msCollegeId').value;
-                const role = document.getElementById('msRole').value;
-                const department = document.getElementById('msDepartment').value;
-                const fullName = document.getElementById('msFullName').value;
-                
+            const collegeId = document.getElementById('msCollegeId').value;
+            const role = document.getElementById('msRole').value;
+            const department = document.getElementById('msDepartment').value;
+            const fullName = document.getElementById('msFullName').value;
+            
+            // Get current user
+            const user = auth.currentUser;
+            
+            if (user) {
                 // Create user object
-                const user = {
+                const userData = {
                     collegeId,
                     role,
-                    department,
+                    department: parseInt(department),
                     name: fullName,
-                    authMethod: 'microsoft'
+                    email: user.email,
+                    authMethod: 'microsoft',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
-                // Store user
-                localStorage.setItem('user', JSON.stringify(user));
-                
-                showNotification('Account setup completed successfully!', 'success');
-                closeModal(elements.microsoftSetupModal);
-                elements.microsoftSetupForm.reset();
-                
-                // Redirect to dashboard (simulated)
-                setTimeout(() => {
-                    window.location.href = `${role}.html`;
-                }, 1000);
-            }, 1500);
+                // Save user to Firestore
+                db.collection('users').doc(user.uid).set(userData)
+                    .then(() => {
+                        showNotification('Account setup completed successfully!', 'success');
+                        closeModal(elements.microsoftSetupModal);
+                        elements.microsoftSetupForm.reset();
+                        
+                        // Redirect based on role
+                        redirectBasedOnRole(role);
+                    })
+                    .catch((error) => {
+                        console.error('Error saving user data:', error);
+                        showNotification('Error saving user data. Please try again.', 'error');
+                    })
+                    .finally(() => {
+                        submitBtn.classList.remove('btn-loading');
+                    });
+            } else {
+                showNotification('Authentication error. Please try again.', 'error');
+                submitBtn.classList.remove('btn-loading');
+            }
         }
 
         // Handle login form submission
-        async function handleLogin(e) {
+        function handleLogin(e) {
             e.preventDefault();
             const collegeId = document.getElementById('collegeId').value;
             const password = document.getElementById('password').value;
@@ -1402,31 +1394,53 @@
             // Show loading state
             submitBtn.classList.add('btn-loading');
             
-            // Simulate API call delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            const account = testAccounts[collegeId];
-            if (account && account.password === password && account.role === role) {
-                showNotification(`Welcome back, ${account.name}!`, 'success');
-                
-                // Simulate key generation
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                // In a real app, you would generate and store keys here
-                localStorage.setItem('user', JSON.stringify(account));
-                
-                if (document.getElementById('rememberMe').checked) {
-                    localStorage.setItem('rememberedUser', JSON.stringify(account));
-                }
-                
-                // Redirect to dashboard (simulated)
-                setTimeout(() => {
-                    window.location.href = `${role}.html`;
-                }, 1000);
-            } else {
-                submitBtn.classList.remove('btn-loading');
-                showNotification('Invalid credentials. Please try again.', 'error');
-            }
+            // Query Firestore for user with this collegeId
+            db.collection('users')
+                .where('collegeId', '==', collegeId)
+                .where('role', '==', role)
+                .limit(1)
+                .get()
+                .then(querySnapshot => {
+                    if (querySnapshot.empty) {
+                        // No user found
+                        submitBtn.classList.remove('btn-loading');
+                        showNotification('Invalid credentials. Please try again.', 'error');
+                        return;
+                    }
+                    
+                    const userDoc = querySnapshot.docs[0];
+                    const userData = userDoc.data();
+                    
+                    // Get email from user data
+                    const email = userData.email;
+                    
+                    // Sign in with email and password
+                    return auth.signInWithEmailAndPassword(email, password);
+                })
+                .then((userCredential) => {
+                    // Login successful
+                    showNotification(`Welcome back, ${collegeId}!`, 'success');
+                    
+                    // Remember user if checkbox is checked
+                    if (document.getElementById('rememberMe').checked) {
+                        localStorage.setItem('rememberedUser', JSON.stringify({
+                            collegeId,
+                            role
+                        }));
+                    }
+                    
+                    // Redirect will be handled by auth state observer
+                })
+                .catch((error) => {
+                    console.error('Login error:', error);
+                    submitBtn.classList.remove('btn-loading');
+                    
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        showNotification('Invalid credentials. Please try again.', 'error');
+                    } else {
+                        showNotification('Login failed. Please try again.', 'error');
+                    }
+                });
         }
 
         // Handle registration form submission
@@ -1437,15 +1451,57 @@
             // Show loading state
             submitBtn.classList.add('btn-loading');
             
-            // Simulate API call
-            setTimeout(() => {
-                submitBtn.classList.remove('btn-loading');
-                showNotification('Registration submitted for approval. You will receive an email once approved.', 'success');
-                closeModal(elements.registerModal);
-                elements.registerForm.reset();
-                elements.passwordStrength.className = 'password-strength';
-                elements.passwordStrengthText.textContent = 'Password strength';
-            }, 1500);
+            const collegeId = document.getElementById('regCollegeId').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+            const department = parseInt(document.getElementById('regDepartment').value);
+            const fullName = document.getElementById('regFullName').value;
+            
+            // Create user with email and password
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // Create user object
+                    const userData = {
+                        collegeId,
+                        role,
+                        department,
+                        name: fullName,
+                        email,
+                        authMethod: 'email',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        approved: false // Default to not approved
+                    };
+                    
+                    // Save user to Firestore
+                    return db.collection('users').doc(user.uid).set(userData);
+                })
+                .then(() => {
+                    showNotification('Registration submitted for approval. You will receive an email once approved.', 'success');
+                    closeModal(elements.registerModal);
+                    elements.registerForm.reset();
+                    elements.passwordStrength.className = 'password-strength';
+                    elements.passwordStrengthText.textContent = 'Password strength';
+                    
+                    // Sign out the user until they're approved
+                    auth.signOut();
+                })
+                .catch((error) => {
+                    console.error('Registration error:', error);
+                    
+                    if (error.code === 'auth/email-already-in-use') {
+                        showNotification('Email already in use. Please use a different email.', 'error');
+                    } else if (error.code === 'auth/weak-password') {
+                        showNotification('Password is too weak. Please use a stronger password.', 'error');
+                    } else {
+                        showNotification('Registration failed. Please try again.', 'error');
+                    }
+                })
+                .finally(() => {
+                    submitBtn.classList.remove('btn-loading');
+                });
         }
 
         // Handle forgot password form submission
@@ -1456,13 +1512,27 @@
             // Show loading state
             submitBtn.classList.add('btn-loading');
             
-            // Simulate API call
-            setTimeout(() => {
-                submitBtn.classList.remove('btn-loading');
-                showNotification('Password reset link sent to your email.', 'info');
-                closeModal(elements.forgotModal);
-                elements.forgotForm.reset();
-            }, 1500);
+            const email = document.getElementById('forgotEmail').value;
+            
+            // Send password reset email
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showNotification('Password reset link sent to your email.', 'info');
+                    closeModal(elements.forgotModal);
+                    elements.forgotForm.reset();
+                })
+                .catch((error) => {
+                    console.error('Password reset error:', error);
+                    
+                    if (error.code === 'auth/user-not-found') {
+                        showNotification('No user found with this email address.', 'error');
+                    } else {
+                        showNotification('Failed to send reset link. Please try again.', 'error');
+                    }
+                })
+                .finally(() => {
+                    submitBtn.classList.remove('btn-loading');
+                });
         }
 
         // Check for remembered user
@@ -1470,7 +1540,7 @@
             const rememberedUser = localStorage.getItem('rememberedUser');
             if (rememberedUser) {
                 const user = JSON.parse(rememberedUser);
-                document.getElementById('collegeId').value = Object.keys(testAccounts).find(key => testAccounts[key].name === user.name);
+                document.getElementById('collegeId').value = user.collegeId;
                 document.getElementById('role').value = user.role;
                 document.getElementById('rememberMe').checked = true;
                 
@@ -1481,6 +1551,26 @@
                         badge.setAttribute('aria-pressed', 'true');
                     }
                 });
+            }
+        }
+
+        // Redirect based on user role
+        function redirectBasedOnRole(role) {
+            switch(role) {
+                case 'student':
+                    window.location.href = 'student.html';
+                    break;
+                case 'faculty':
+                    window.location.href = 'faculty.html';
+                    break;
+                case 'hod':
+                    window.location.href = 'hod.html';
+                    break;
+                case 'principal':
+                    window.location.href = 'principal.html';
+                    break;
+                default:
+                    window.location.href = 'dashboard.html';
             }
         }
 
