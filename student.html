@@ -1651,6 +1651,279 @@
             left: 22px;
         }
         
+        /* Message Modal */
+        .message-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .message-modal.show {
+            display: flex;
+        }
+        
+        .message-modal-content {
+            background: var(--secondary-dark);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .message-modal-header {
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+            color: var(--primary-dark);
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .message-modal-title {
+            font-weight: 700;
+            font-size: var(--font-size-xl);
+        }
+        
+        .message-modal-close {
+            background: none;
+            border: none;
+            color: var(--primary-dark);
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .message-modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        .message-modal-body {
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .message-modal-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .message-modal-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin-right: var(--spacing-lg);
+            object-fit: cover;
+            border: 3px solid var(--primary-yellow);
+        }
+        
+        .message-modal-sender {
+            flex: 1;
+        }
+        
+        .message-modal-name {
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .message-modal-role {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .message-modal-time {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+        
+        .message-modal-content-text {
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+        
+        .message-modal-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+        }
+        
+        /* Event Modal */
+        .event-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .event-modal.show {
+            display: flex;
+        }
+        
+        .event-modal-content {
+            background: var(--secondary-dark);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .event-modal-header {
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+            color: var(--primary-dark);
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .event-modal-title {
+            font-weight: 700;
+            font-size: var(--font-size-xl);
+        }
+        
+        .event-modal-close {
+            background: none;
+            border: none;
+            color: var(--primary-dark);
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .event-modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        .event-modal-body {
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .event-modal-date {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            color: var(--primary-yellow);
+        }
+        
+        .event-modal-date i {
+            margin-right: var(--spacing-sm);
+            font-size: var(--font-size-lg);
+        }
+        
+        .event-modal-time {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-secondary);
+        }
+        
+        .event-modal-time i {
+            margin-right: var(--spacing-sm);
+            font-size: var(--font-size-lg);
+        }
+        
+        .event-modal-location {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-secondary);
+        }
+        
+        .event-modal-location i {
+            margin-right: var(--spacing-sm);
+            font-size: var(--font-size-lg);
+        }
+        
+        .event-modal-description {
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+        
+        .event-modal-participants {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .event-modal-participants-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .event-modal-participant {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .event-modal-participant-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: var(--spacing-sm);
+            object-fit: cover;
+        }
+        
+        .event-modal-participant-name {
+            font-weight: 500;
+        }
+        
+        .event-modal-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+        }
+        
         /* Responsive Design */
         @media (max-width: 1200px) {
             .dashboard-grid {
@@ -1697,6 +1970,11 @@
                 width: 90%;
                 max-width: 350px;
             }
+            
+            .message-modal-content, .event-modal-content {
+                width: 95%;
+                max-width: 500px;
+            }
         }
         
         @media (max-width: 768px) {
@@ -1725,6 +2003,21 @@
             
             .card {
                 padding: var(--spacing-md);
+            }
+            
+            .message-modal-content, .event-modal-content {
+                width: 95%;
+                max-width: 400px;
+            }
+            
+            .message-modal-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .message-modal-avatar {
+                margin-right: 0;
+                margin-bottom: var(--spacing-md);
             }
         }
         
@@ -1756,6 +2049,11 @@
             .notification-panel, .settings-panel {
                 width: 95%;
             }
+            
+            .message-modal-content, .event-modal-content {
+                width: 95%;
+                max-width: 350px;
+            }
         }
         
         @media (max-width: 320px) {
@@ -1774,6 +2072,11 @@
             .role-badge {
                 padding: 0.25rem 0.75rem;
                 font-size: 0.7rem;
+            }
+            
+            .message-modal-content, .event-modal-content {
+                width: 95%;
+                max-width: 300px;
             }
         }
         
@@ -2269,6 +2572,86 @@
         </aside>
     </div>
     
+    <!-- Message Modal -->
+    <div class="message-modal" id="messageModal">
+        <div class="message-modal-content">
+            <div class="message-modal-header">
+                <div class="message-modal-title">Message Details</div>
+                <button class="message-modal-close" id="messageModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="message-modal-body">
+                <div class="message-modal-info">
+                    <img src="" alt="Sender" class="message-modal-avatar" id="messageModalAvatar">
+                    <div class="message-modal-sender">
+                        <div class="message-modal-name" id="messageModalName">-</div>
+                        <div class="message-modal-role" id="messageModalRole">-</div>
+                        <div class="message-modal-time" id="messageModalTime">-</div>
+                    </div>
+                </div>
+                <div class="message-modal-content-text" id="messageModalContent">
+                    <!-- Message content will be displayed here -->
+                </div>
+                <div class="message-modal-actions">
+                    <button class="btn btn-secondary" id="messageModalReply">
+                        <i class="fas fa-reply"></i>
+                        Reply
+                    </button>
+                    <button class="btn btn-primary" id="messageModalMarkAsRead">
+                        <i class="fas fa-check"></i>
+                        Mark as Read
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Event Modal -->
+    <div class="event-modal" id="eventModal">
+        <div class="event-modal-content">
+            <div class="event-modal-header">
+                <div class="event-modal-title" id="eventModalTitle">Event Details</div>
+                <button class="event-modal-close" id="eventModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="event-modal-body">
+                <div class="event-modal-date" id="eventModalDate">
+                    <i class="fas fa-calendar"></i>
+                    <span>-</span>
+                </div>
+                <div class="event-modal-time" id="eventModalTime">
+                    <i class="fas fa-clock"></i>
+                    <span>-</span>
+                </div>
+                <div class="event-modal-location" id="eventModalLocation">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>-</span>
+                </div>
+                <div class="event-modal-description" id="eventModalDescription">
+                    <!-- Event description will be displayed here -->
+                </div>
+                <div class="event-modal-participants">
+                    <div class="event-modal-participants-title">Participants</div>
+                    <div id="eventModalParticipants">
+                        <!-- Participants will be displayed here -->
+                    </div>
+                </div>
+                <div class="event-modal-actions">
+                    <button class="btn btn-secondary" id="eventModalDecline">
+                        <i class="fas fa-times"></i>
+                        Decline
+                    </button>
+                    <button class="btn btn-primary" id="eventModalAccept">
+                        <i class="fas fa-check"></i>
+                        Accept
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- AI Assistant -->
     <div class="ai-assistant" id="aiAssistant">
         <i class="fas fa-robot"></i>
@@ -2379,7 +2762,28 @@
             calendarGrid: document.getElementById('calendarGrid'),
             calendarPrev: document.getElementById('calendarPrev'),
             calendarToday: document.getElementById('calendarToday'),
-            calendarNext: document.getElementById('calendarNext')
+            calendarNext: document.getElementById('calendarNext'),
+            // Message Modal Elements
+            messageModal: document.getElementById('messageModal'),
+            messageModalClose: document.getElementById('messageModalClose'),
+            messageModalAvatar: document.getElementById('messageModalAvatar'),
+            messageModalName: document.getElementById('messageModalName'),
+            messageModalRole: document.getElementById('messageModalRole'),
+            messageModalTime: document.getElementById('messageModalTime'),
+            messageModalContent: document.getElementById('messageModalContent'),
+            messageModalReply: document.getElementById('messageModalReply'),
+            messageModalMarkAsRead: document.getElementById('messageModalMarkAsRead'),
+            // Event Modal Elements
+            eventModal: document.getElementById('eventModal'),
+            eventModalClose: document.getElementById('eventModalClose'),
+            eventModalTitle: document.getElementById('eventModalTitle'),
+            eventModalDate: document.getElementById('eventModalDate'),
+            eventModalTime: document.getElementById('eventModalTime'),
+            eventModalLocation: document.getElementById('eventModalLocation'),
+            eventModalDescription: document.getElementById('eventModalDescription'),
+            eventModalParticipants: document.getElementById('eventModalParticipants'),
+            eventModalAccept: document.getElementById('eventModalAccept'),
+            eventModalDecline: document.getElementById('eventModalDecline')
         };
 
         // Check if user is logged in
@@ -2394,6 +2798,9 @@
                 
                 // Initialize calendar
                 initializeCalendar();
+                
+                // Load user settings
+                loadUserSettings(user.uid);
             } else {
                 // User is signed out, redirect to login page
                 window.location.href = 'index.html';
@@ -2607,9 +3014,9 @@
                                     
                                     elements.messagesList.appendChild(messageItem);
                                     
-                                    // Add click event to mark as read
+                                    // Add click event to open message modal
                                     messageItem.addEventListener('click', () => {
-                                        markMessageAsRead(messageId);
+                                        openMessageModal(message, senderData);
                                     });
                                 }
                             })
@@ -2624,21 +3031,59 @@
                 });
         }
 
-        // Mark message as read
-        function markMessageAsRead(messageId) {
-            db.collection('messages').doc(messageId).update({
-                read: true
-            })
-            .then(() => {
-                // Reload messages
-                const userId = auth.currentUser.uid;
-                loadMessages(userId);
-                updateNotificationCount(userId);
-            })
-            .catch(error => {
-                console.error('Error marking message as read:', error);
-            });
+        // Open message modal
+        function openMessageModal(message, senderData) {
+            // Populate modal with message data
+            elements.messageModalAvatar.src = senderData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(senderData.name || 'User')}&background=f1c40f&color=0a192f&size=64&format=png`;
+            elements.messageModalName.textContent = senderData.name || 'Unknown';
+            elements.messageModalRole.textContent = senderData.role || 'User';
+            elements.messageModalTime.textContent = message.timestamp ? formatDateTime(message.timestamp.toDate()) : 'Unknown time';
+            elements.messageModalContent.textContent = message.content || 'No content';
+            
+            // Store message ID for mark as read functionality
+            elements.messageModalMarkAsRead.dataset.messageId = message.id;
+            
+            // Show modal
+            elements.messageModal.classList.add('show');
         }
+
+        // Close message modal
+        elements.messageModalClose.addEventListener('click', () => {
+            elements.messageModal.classList.remove('show');
+        });
+
+        // Mark message as read
+        elements.messageModalMarkAsRead.addEventListener('click', () => {
+            const messageId = elements.messageModalMarkAsRead.dataset.messageId;
+            
+            if (messageId) {
+                db.collection('messages').doc(messageId).update({
+                    read: true
+                })
+                .then(() => {
+                    // Reload messages
+                    const userId = auth.currentUser.uid;
+                    loadMessages(userId);
+                    updateNotificationCount(userId);
+                    
+                    // Close modal
+                    elements.messageModal.classList.remove('show');
+                })
+                .catch(error => {
+                    console.error('Error marking message as read:', error);
+                });
+            }
+        });
+
+        // Reply to message
+        elements.messageModalReply.addEventListener('click', () => {
+            // This would open a reply interface
+            // For now, we'll just close the modal
+            elements.messageModal.classList.remove('show');
+            
+            // In a real app, this would open a compose message interface
+            alert('Reply functionality would be implemented here');
+        });
 
         // Update notification count
         function updateNotificationCount(userId) {
@@ -2695,6 +3140,21 @@
                         
                         notificationItem.appendChild(content);
                         notificationItem.appendChild(time);
+                        
+                        // Add click event to open message modal
+                        notificationItem.addEventListener('click', () => {
+                            // Get sender data
+                            db.collection('users').doc(message.senderId).get()
+                                .then(senderDoc => {
+                                    if (senderDoc.exists) {
+                                        const senderData = senderDoc.data();
+                                        openMessageModal(message, senderData);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error getting sender data:', error);
+                                });
+                        });
                         
                         elements.notificationList.appendChild(notificationItem);
                     });
@@ -2820,6 +3280,12 @@
                 courseItem.appendChild(icon);
                 courseItem.appendChild(info);
                 
+                // Add click event to view course details
+                courseItem.addEventListener('click', () => {
+                    // In a real app, this would navigate to the course page
+                    console.log('Viewing course:', course.courseName);
+                });
+                
                 elements.courseDetails.appendChild(courseItem);
             });
         }
@@ -2908,6 +3374,12 @@
                             .catch(error => {
                                 console.error('Error updating assignment:', error);
                             });
+                        });
+                        
+                        // Add click event to view assignment details
+                        title.addEventListener('click', () => {
+                            // In a real app, this would open the assignment details
+                            console.log('Viewing assignment:', assignment.title);
                         });
                     });
                 })
@@ -3107,6 +3579,12 @@
                 
                 resourceItem.appendChild(icon);
                 resourceItem.appendChild(info);
+                
+                // Add click event to view resource
+                resourceItem.addEventListener('click', () => {
+                    // In a real app, this would open the resource
+                    console.log('Viewing resource:', resource.name);
+                });
                 
                 elements.resourceDetails.appendChild(resourceItem);
             });
@@ -3435,6 +3913,12 @@
                                 }, 2000);
                             }, 1500);
                         });
+                        
+                        // Add click event to view file
+                        name.addEventListener('click', () => {
+                            // In a real app, this would open the file
+                            console.log('Viewing file:', file.name);
+                        });
                     });
                 })
                 .catch(error => {
@@ -3505,6 +3989,12 @@
                         announcementCard.appendChild(actions);
                         
                         elements.announcementsList.appendChild(announcementCard);
+                        
+                        // Add click event to read more
+                        readMoreBtn.addEventListener('click', () => {
+                            // In a real app, this would open the full announcement
+                            console.log('Reading announcement:', announcement.title);
+                        });
                     });
                 })
                 .catch(error => {
@@ -3517,8 +4007,10 @@
         function loadCalendarEvents(userId) {
             // Get events for the current month
             const now = new Date();
-            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-            const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const startOfMonth = new Date(year, month, 1);
+            const endOfMonth = new Date(year, month + 1, 0);
             
             db.collection('events')
                 .where('participants', 'array-contains', userId)
@@ -3528,7 +4020,10 @@
                 .then(querySnapshot => {
                     const events = [];
                     querySnapshot.forEach(doc => {
-                        events.push(doc.data());
+                        events.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
                     });
                     
                     // Update calendar with events
@@ -3610,69 +4105,352 @@
                 
                 // Add event listener
                 dayElement.addEventListener('click', () => {
-                    // Handle day click
-                    console.log(`Day clicked: ${day} ${monthNames[month]} ${year}`);
+                    // Load events for this day
+                    loadEventsForDay(year, month, day);
                 });
                 
                 elements.calendarGrid.appendChild(dayElement);
             }
+            
+            // Load events for this month
+            loadCalendarEvents(auth.currentUser.uid);
         }
 
         // Update calendar events
         function updateCalendarEvents(events) {
-            // This would update the calendar to show events
-            // For now, we'll just log the events
-            console.log('Calendar events:', events);
+            // Clear existing event indicators
+            document.querySelectorAll('.calendar-day.has-event').forEach(day => {
+                day.classList.remove('has-event');
+            });
+            
+            // Add event indicators to calendar days
+            events.forEach(event => {
+                if (event.date) {
+                    const eventDate = event.date.toDate();
+                    const day = eventDate.getDate();
+                    
+                    // Find the calendar day element for this date
+                    const dayElements = document.querySelectorAll('.calendar-day');
+                    dayElements.forEach(dayElement => {
+                        if (parseInt(dayElement.textContent) === day && !dayElement.classList.contains('other-month')) {
+                            dayElement.classList.add('has-event');
+                            
+                            // Store event data for click handler
+                            if (!dayElement.dataset.events) {
+                                dayElement.dataset.events = JSON.stringify([]);
+                            }
+                            
+                            const eventsArray = JSON.parse(dayElement.dataset.events);
+                            eventsArray.push(event);
+                            dayElement.dataset.events = JSON.stringify(eventsArray);
+                        }
+                    });
+                }
+            });
         }
 
-        // Format file size
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
+        // Load events for a specific day
+        function loadEventsForDay(year, month, day) {
+            const startOfDay = new Date(year, month, day);
+            const endOfDay = new Date(year, month, day + 1);
             
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            db.collection('events')
+                .where('date', '>=', startOfDay)
+                .where('date', '<', endOfDay)
+                .get()
+                .then(querySnapshot => {
+                    const events = [];
+                    querySnapshot.forEach(doc => {
+                        events.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    
+                    // If there are events, show the first one in a modal
+                    if (events.length > 0) {
+                        openEventModal(events[0]);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading events for day:', error);
+                });
         }
 
-        // Format date
-        function formatDate(date) {
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            return date.toLocaleDateString(undefined, options);
+        // Open event modal
+        function openEventModal(event) {
+            // Populate modal with event data
+            elements.eventModalTitle.textContent = event.title || 'Untitled Event';
+            
+            // Format date
+            if (event.date) {
+                const eventDate = event.date.toDate();
+                elements.eventModalDate.querySelector('span').textContent = formatDate(eventDate);
+            } else {
+                elements.eventModalDate.querySelector('span').textContent = 'Unknown date';
+            }
+            
+            // Format time
+            if (event.startTime) {
+                elements.eventModalTime.querySelector('span').textContent = formatTime(event.startTime.toDate());
+            } else {
+                elements.eventModalTime.querySelector('span').textContent = 'Unknown time';
+            }
+            
+            // Location
+            elements.eventModalLocation.querySelector('span').textContent = event.location || 'No location specified';
+            
+            // Description
+            elements.eventModalDescription.textContent = event.description || 'No description available';
+            
+            // Load participants
+            elements.eventModalParticipants.innerHTML = '';
+            
+            if (event.participants && event.participants.length > 0) {
+                event.participants.forEach(participantId => {
+                    db.collection('users').doc(participantId).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                const participant = doc.data();
+                                
+                                const participantElement = document.createElement('div');
+                                participantElement.className = 'event-modal-participant';
+                                
+                                const avatar = document.createElement('img');
+                                avatar.src = participant.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(participant.name || 'User')}&background=f1c40f&color=0a192f&size=32&format=png`;
+                                avatar.alt = 'Participant';
+                                avatar.className = 'event-modal-participant-avatar';
+                                
+                                const name = document.createElement('div');
+                                name.className = 'event-modal-participant-name';
+                                name.textContent = participant.name || 'Unknown';
+                                
+                                participantElement.appendChild(avatar);
+                                participantElement.appendChild(name);
+                                
+                                elements.eventModalParticipants.appendChild(participantElement);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading participant:', error);
+                        });
+                });
+            } else {
+                elements.eventModalParticipants.innerHTML = '<div class="text-center text-muted">No participants listed</div>';
+            }
+            
+            // Store event ID for accept/decline functionality
+            elements.eventModalAccept.dataset.eventId = event.id;
+            elements.eventModalDecline.dataset.eventId = event.id;
+            
+            // Show modal
+            elements.eventModal.classList.add('show');
         }
 
-        // Format time ago
-        function formatTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
+        // Close event modal
+        elements.eventModalClose.addEventListener('click', () => {
+            elements.eventModal.classList.remove('show');
+        });
+
+        // Accept event
+        elements.eventModalAccept.addEventListener('click', () => {
+            const eventId = elements.eventModalAccept.dataset.eventId;
             
-            let interval = Math.floor(seconds / 31536000);
-            if (interval >= 1) {
-                return interval + " year" + (interval > 1 ? "s" : "") + " ago";
+            if (eventId) {
+                // Update event status in Firestore
+                db.collection('events').doc(eventId).update({
+                    status: 'accepted'
+                })
+                .then(() => {
+                    // Close modal
+                    elements.eventModal.classList.remove('show');
+                    
+                    // Show success message
+                    showNotification('Event accepted successfully!', 'success');
+                })
+                .catch(error => {
+                    console.error('Error accepting event:', error);
+                    showNotification('Error accepting event', 'error');
+                });
             }
+        });
+
+        // Decline event
+        elements.eventModalDecline.addEventListener('click', () => {
+            const eventId = elements.eventModalDecline.dataset.eventId;
             
-            interval = Math.floor(seconds / 2592000);
-            if (interval >= 1) {
-                return interval + " month" + (interval > 1 ? "s" : "") + " ago";
+            if (eventId) {
+                // Update event status in Firestore
+                db.collection('events').doc(eventId).update({
+                    status: 'declined'
+                })
+                .then(() => {
+                    // Close modal
+                    elements.eventModal.classList.remove('show');
+                    
+                    // Show success message
+                    showNotification('Event declined successfully!', 'success');
+                })
+                .catch(error => {
+                    console.error('Error declining event:', error);
+                    showNotification('Error declining event', 'error');
+                });
             }
-            
-            interval = Math.floor(seconds / 86400);
-            if (interval >= 1) {
-                return interval + " day" + (interval > 1 ? "s" : "") + " ago";
-            }
-            
-            interval = Math.floor(seconds / 3600);
-            if (interval >= 1) {
-                return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
-            }
-            
-            interval = Math.floor(seconds / 60);
-            if (interval >= 1) {
-                return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
-            }
-            
-            return "Just now";
+        });
+
+        // Load user settings
+        function loadUserSettings(userId) {
+            // Get user settings from Firestore
+            db.collection('userSettings').doc(userId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const settings = doc.data();
+                        
+                        // Apply settings
+                        if (settings.emailNotifications !== undefined) {
+                            const emailToggle = document.getElementById('emailNotificationsToggle');
+                            if (settings.emailNotifications) {
+                                emailToggle.classList.add('active');
+                            } else {
+                                emailToggle.classList.remove('active');
+                            }
+                        }
+                        
+                        if (settings.pushNotifications !== undefined) {
+                            const pushToggle = document.getElementById('pushNotificationsToggle');
+                            if (settings.pushNotifications) {
+                                pushToggle.classList.add('active');
+                            } else {
+                                pushToggle.classList.remove('active');
+                            }
+                        }
+                        
+                        if (settings.darkMode !== undefined) {
+                            const darkModeToggle = document.getElementById('darkModeToggle');
+                            if (settings.darkMode) {
+                                darkModeToggle.classList.add('active');
+                            } else {
+                                darkModeToggle.classList.remove('active');
+                            }
+                        }
+                        
+                        if (settings.compactView !== undefined) {
+                            const compactViewToggle = document.getElementById('compactViewToggle');
+                            if (settings.compactView) {
+                                compactViewToggle.classList.add('active');
+                            } else {
+                                compactViewToggle.classList.remove('active');
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user settings:', error);
+                });
         }
+
+        // Save user settings
+        function saveUserSettings(settingName, value) {
+            const userId = auth.currentUser.uid;
+            
+            db.collection('userSettings').doc(userId).set({
+                [settingName]: value
+            }, { merge: true })
+            .then(() => {
+                console.log(`Setting ${settingName} saved successfully`);
+            })
+            .catch(error => {
+                console.error(`Error saving setting ${settingName}:`, error);
+            });
+        }
+
+        // Settings toggles
+        document.getElementById('emailNotificationsToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            saveUserSettings('emailNotifications', this.classList.contains('active'));
+        });
+
+        document.getElementById('pushNotificationsToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            saveUserSettings('pushNotifications', this.classList.contains('active'));
+        });
+
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            saveUserSettings('darkMode', this.classList.contains('active'));
+        });
+
+        document.getElementById('compactViewToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            saveUserSettings('compactView', this.classList.contains('active'));
+        });
+
+        // Calendar button
+        elements.calendarBtn.addEventListener('click', () => {
+            elements.calendarCard.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Courses toggle
+        elements.coursesToggle.addEventListener('click', () => {
+            elements.courseDetails.classList.toggle('show');
+            
+            if (elements.courseDetails.classList.contains('show')) {
+                elements.coursesToggle.classList.remove('fa-chevron-down');
+                elements.coursesToggle.classList.add('fa-chevron-up');
+            } else {
+                elements.coursesToggle.classList.remove('fa-chevron-up');
+                elements.coursesToggle.classList.add('fa-chevron-down');
+            }
+        });
+
+        // Resources toggle
+        elements.resourcesToggle.addEventListener('click', () => {
+            elements.resourceDetails.classList.toggle('show');
+            
+            if (elements.resourceDetails.classList.contains('show')) {
+                elements.resourcesToggle.classList.remove('fa-chevron-down');
+                elements.resourcesToggle.classList.add('fa-chevron-up');
+            } else {
+                elements.resourcesToggle.classList.remove('fa-chevron-up');
+                elements.resourcesToggle.classList.add('fa-chevron-down');
+            }
+        });
+
+        // Header navigation
+        document.querySelectorAll('.header-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                const targetId = link.getAttribute('href').substring(1);
+                let targetElement;
+                
+                switch(targetId) {
+                    case 'dashboard':
+                        targetElement = document.getElementById('dashboard');
+                        break;
+                    case 'courses':
+                        targetElement = document.getElementById('coursesCard');
+                        break;
+                    case 'resources':
+                        targetElement = document.getElementById('resourcesCard');
+                        break;
+                    case 'calendar':
+                        targetElement = document.getElementById('calendarCard');
+                        break;
+                }
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // If it's courses or resources, expand the details
+                    if (targetId === 'courses' && !elements.courseDetails.classList.contains('show')) {
+                        elements.coursesToggle.click();
+                    } else if (targetId === 'resources' && !elements.resourceDetails.classList.contains('show')) {
+                        elements.resourcesToggle.click();
+                    }
+                }
+            });
+        });
 
         // Mobile menu toggle
         elements.mobileMenuToggle.addEventListener('click', () => {
@@ -3763,90 +4541,6 @@
             elements.notificationPanel.classList.remove('show');
         });
 
-        // Settings toggles
-        document.getElementById('emailNotificationsToggle').addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-
-        document.getElementById('pushNotificationsToggle').addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-
-        document.getElementById('compactViewToggle').addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-
-        // Calendar button
-        elements.calendarBtn.addEventListener('click', () => {
-            elements.calendarCard.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Courses toggle
-        elements.coursesToggle.addEventListener('click', () => {
-            elements.courseDetails.classList.toggle('show');
-            
-            if (elements.courseDetails.classList.contains('show')) {
-                elements.coursesToggle.classList.remove('fa-chevron-down');
-                elements.coursesToggle.classList.add('fa-chevron-up');
-            } else {
-                elements.coursesToggle.classList.remove('fa-chevron-up');
-                elements.coursesToggle.classList.add('fa-chevron-down');
-            }
-        });
-
-        // Resources toggle
-        elements.resourcesToggle.addEventListener('click', () => {
-            elements.resourceDetails.classList.toggle('show');
-            
-            if (elements.resourceDetails.classList.contains('show')) {
-                elements.resourcesToggle.classList.remove('fa-chevron-down');
-                elements.resourcesToggle.classList.add('fa-chevron-up');
-            } else {
-                elements.resourcesToggle.classList.remove('fa-chevron-up');
-                elements.resourcesToggle.classList.add('fa-chevron-down');
-            }
-        });
-
-        // Header navigation
-        document.querySelectorAll('.header-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                const targetId = link.getAttribute('href').substring(1);
-                let targetElement;
-                
-                switch(targetId) {
-                    case 'dashboard':
-                        targetElement = document.getElementById('dashboard');
-                        break;
-                    case 'courses':
-                        targetElement = document.getElementById('coursesCard');
-                        break;
-                    case 'resources':
-                        targetElement = document.getElementById('resourcesCard');
-                        break;
-                    case 'calendar':
-                        targetElement = document.getElementById('calendarCard');
-                        break;
-                }
-                
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
-                    
-                    // If it's courses or resources, expand the details
-                    if (targetId === 'courses' && !elements.courseDetails.classList.contains('show')) {
-                        elements.coursesToggle.click();
-                    } else if (targetId === 'resources' && !elements.resourceDetails.classList.contains('show')) {
-                        elements.resourcesToggle.click();
-                    }
-                }
-            });
-        });
-
         // AI Assistant
         elements.aiAssistant.addEventListener('click', () => {
             elements.aiChatWindow.style.display = 'flex';
@@ -3888,6 +4582,31 @@
             }
         });
 
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification-toast notification-${type}`;
+            notification.textContent = message;
+            
+            // Add to body
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Hide and remove notification after delay
+            setTimeout(() => {
+                notification.classList.remove('show');
+                
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
         // Simulate real-time updates
         setInterval(() => {
             // Update online status randomly
@@ -3919,6 +4638,17 @@
                     fill.style.width = width;
                 }, 300);
             });
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === elements.messageModal) {
+                elements.messageModal.classList.remove('show');
+            }
+            
+            if (e.target === elements.eventModal) {
+                elements.eventModal.classList.remove('show');
+            }
         });
     </script>
 </body>
