@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Premium Principal Dashboard for Sona College of Technology">
+    <title>Sona College of Technology - Principal Dashboard</title>
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+        :root {
+            /* Premium Dark Blue & Yellow Theme */
+            --primary-dark: #0a192f;
+            --secondary-dark: #172a45;
+            --accent-blue: #233554;
+            --primary-yellow: #f1c40f;
+            --secondary-yellow: #f9e79f;
+            --accent-yellow: #ffd700;
+            --text-light: #e6f1ff;
+            --text-muted: #8892b0;
+            --text-dim: #64748b;
+            --white: #ffffff;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --error: #e74c3c;
+            --info: #3498db;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --hover-bg: rgba(241, 196, 15, 0.1);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.2);
+            
+            /* Typography Scale */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+            
+            /* Spacing Scale */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 0.75rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 15px;
+            --radius-xl: 20px;
+            --radius-full: 50%;
+            
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-yellow);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-yellow);
+        }
+
+        /* Skip to content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+            font-weight: 600;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        .dashboard {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            z-index: 100;
+            border-bottom: 1px solid var(--card-border);
+            height: 80px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-small {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--primary-yellow);
+            padding: 4px;
+            background: var(--primary-dark);
+            transition: var(--transition);
+        }
+
+        .logo-small:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-light) 0%, var(--primary-yellow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            flex: 1;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+        }
+
+        .notification-badge:hover {
+            color: var(--primary-yellow);
+            background: var(--hover-bg);
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--error);
+            color: var(--white);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.5);
+        }
+
+        .role-indicator {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
+        }
+
+        .role-indicator i {
+            font-size: var(--text-sm);
+        }
+
+        /* Main Layout */
+        .main-layout {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(23, 42, 69, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--card-border);
+            overflow-y: auto;
+            padding: var(--spacing-lg) var(--spacing-md);
+            transition: var(--transition);
+            z-index: 50;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .sidebar-title {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--primary-yellow);
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            padding: var(--spacing-xs);
+            border-radius: var(--radius-md);
+        }
+
+        .toggle-btn:hover {
+            color: var(--primary-yellow);
+            background: var(--hover-bg);
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-muted);
+            text-decoration: none;
+            gap: var(--spacing-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary-yellow);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--hover-bg);
+            color: var(--text-light);
+        }
+
+        .nav-item.active {
+            background: var(--hover-bg);
+            color: var(--primary-yellow);
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            transform: translateX(0);
+        }
+
+        .nav-item i {
+            font-size: var(--text-lg);
+            width: 24px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover i {
+            transform: scale(1.1);
+        }
+
+        .nav-text {
+            flex: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .sidebar-title {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--card-border);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            background: var(--card-bg);
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background: var(--hover-bg);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: var(--text-sm);
+        }
+
+        .user-role {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+
+        .sidebar.collapsed .user-info {
+            display: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: transparent;
+        }
+
+        .content-header {
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-xl) var(--spacing-xl) 0;
+        }
+
+        .page-title {
+            font-size: var(--text-3xl);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-light) 0%, var(--primary-yellow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: var(--text-lg);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            padding: 0 var(--spacing-xl) var(--spacing-xl);
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: var(--spacing-xl);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .card-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .card-title i {
+            color: var(--primary-yellow);
+            font-size: var(--text-xl);
+        }
+
+        .card-action {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .card-action:hover {
+            color: var(--primary-yellow);
+            background: var(--hover-bg);
+            transform: rotate(15deg);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.1) 0%, rgba(241, 196, 15, 0.05) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            text-align: center;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(241, 196, 15, 0.2);
+        }
+
+        .kpi-value {
+            font-size: var(--text-3xl);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-light) 0%, var(--primary-yellow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .kpi-label {
+            color: var(--text-muted);
+            font-size: var(--text-sm);
+            font-weight: 500;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+        }
+
+        .action-button.emergency {
+            background: linear-gradient(135deg, var(--error) 0%, #c0392b 100%);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .action-button.emergency:hover {
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Forms */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--text-light);
+            font-size: var(--text-base);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-yellow);
+            box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Lists */
+        .list-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            transition: all 0.3s ease;
+        }
+
+        .list-item:hover {
+            background: var(--hover-bg);
+            transform: translateX(5px);
+        }
+
+        .list-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .list-item-title {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .list-item-meta {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+
+        /* Emergency Form */
+        .emergency-form {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+        }
+
+        .emergency-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            color: var(--error);
+        }
+
+        .emergency-header i {
+            font-size: var(--text-2xl);
+        }
+
+        .emergency-header h3 {
+            font-size: var(--text-xl);
+            font-weight: 700;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        /* Right Panel */
+        .right-panel {
+            width: 350px;
+            background: rgba(23, 42, 69, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid var(--card-border);
+            overflow-y: auto;
+            padding: var(--spacing-xl);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+            height: calc(100vh - 80px);
+        }
+
+        .panel-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+        }
+
+        .section-title {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--primary-yellow);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: var(--hover-bg);
+            color: var(--primary-yellow);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 80px;
+                height: calc(100vh - 80px);
+                z-index: 100;
+                transform: translateX(-100%);
+                box-shadow: var(--shadow);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .right-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid var(--card-border);
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .main-content {
+                padding: var(--spacing-md);
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.875rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-heart {
+            color: #e74c3c;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <div class="dashboard">
+        <nav class="top-nav">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars fa-lg"></i>
+            </button>
+            <div class="logo-container">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" alt="Sona College of Technology Logo" class="logo-small">
+                <span class="nav-title">Principal Dashboard</span>
+            </div>
+            <div class="nav-actions">
+                <div class="notification-badge" id="notifications" aria-label="Notifications">
+                    <i class="fas fa-bell fa-lg"></i>
+                    <span class="badge-count">4</span>
+                </div>
+                <span class="role-indicator">
+                    <i class="fas fa-user-tie"></i>
+                    Principal
+                </span>
+            </div>
+        </nav>
+        
+        <div class="main-layout">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-title">Navigation</span>
+                    <button class="toggle-btn" id="toggleSidebar" aria-label="Toggle Sidebar">
+                        <i class="fas fa-angle-left"></i>
+                    </button>
+                </div>
+                <nav class="nav-menu" role="navigation">
+                    <a href="#" class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="messaging">
+                        <i class="fas fa-comments"></i>
+                        <span class="nav-text">Messaging</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="policies">
+                        <i class="fas fa-file-contract"></i>
+                        <span class="nav-text">Policies</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="emergency">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span class="nav-text">Emergency</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="nav-text">Analytics</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="contacts">
+                        <i class="fas fa-address-book"></i>
+                        <span class="nav-text">Contacts</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </nav>
+                
+                <div class="sidebar-footer">
+                    <div class="user-profile">
+                        <div class="user-avatar">JD</div>
+                        <div class="user-info">
+                            <div class="user-name">Dr. John Doe</div>
+                            <div class="user-role">Principal</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            
+            <main class="main-content" id="main-content">
+                <div class="content-header">
+                    <h1 class="page-title">Executive Command Center</h1>
+                    <p class="page-subtitle">College-wide oversight and strategic management</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <!-- KPI Cards -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-chart-pie"></i>
+                                Key Performance Indicators
+                            </h2>
+                            <button class="card-action" aria-label="Refresh KPIs">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-value">89%</div>
+                                <div class="kpi-label">Attendance Rate</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-value">92%</div>
+                                <div class="kpi-label">Faculty Satisfaction</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-value">5</div>
+                                <div class="kpi-label">Pending Approvals</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-value">12</div>
+                                <div class="kpi-label">Active Alerts</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-bolt"></i>
+                                Quick Actions
+                            </h2>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="action-button" id="newAnnouncementBtn">
+                                <i class="fas fa-bullhorn"></i>
+                                New Announcement
+                            </button>
+                            <button class="action-button" id="newPolicyBtn">
+                                <i class="fas fa-file-alt"></i>
+                                Create Policy
+                            </button>
+                            <button class="action-button emergency pulse" id="emergencyAlertBtn">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Emergency Alert
+                            </button>
+                            <button class="action-button" id="scheduleMeetingBtn">
+                                <i class="fas fa-calendar-alt"></i>
+                                Schedule Meeting
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Announcements -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-bullhorn"></i>
+                                Recent Announcements
+                            </h2>
+                            <button class="card-action" aria-label="View All Announcements">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                        <div class="announcement-list">
+                            <div class="list-item">
+                                <div class="list-item-header">
+                                    <h4 class="list-item-title">College Annual Day - Oct 15, 2025</h4>
+                                    <span class="list-item-meta">2 days ago</span>
+                                </div>
+                                <p>All students and faculty are requested to attend the college annual day function...</p>
+                            </div>
+                            <div class="list-item">
+                                <div class="list-item-header">
+                                    <h4 class="list-item-title">Library Timings Extended</h4>
+                                    <span class="list-item-meta">1 week ago</span>
+                                </div>
+                                <p>The college library will now remain open until 9 PM on weekdays...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- College-wide Messaging -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-comments"></i>
+                                College-wide Messaging
+                            </h2>
+                            <button class="card-action" aria-label="View All Messages">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                        <form class="message-form" id="messageForm">
+                            <div class="form-group">
+                                <label class="form-label" for="messageRecipient">Recipient</label>
+                                <select class="form-select" id="messageRecipient">
+                                    <option value="all">All College</option>
+                                    <option value="faculty">Faculty Only</option>
+                                    <option value="students">Students Only</option>
+                                    <option value="admin">Admin Staff</option>
+                                    <option value="departments">Department Heads</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="messageSubject">Subject</label>
+                                <input type="text" class="form-input" id="messageSubject" placeholder="Enter message subject">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="messageContent">Message</label>
+                                <textarea class="form-textarea" id="messageContent" placeholder="Enter your message here"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="messagePriority">Priority</label>
+                                <select class="form-select" id="messagePriority">
+                                    <option value="normal">Normal</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Send Message</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Policy Management -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-file-contract"></i>
+                                Policy Management
+                            </h2>
+                            <button class="card-action" aria-label="Add New Policy">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="policy-list">
+                            <div class="list-item">
+                                <div class="list-item-header">
+                                    <h4 class="list-item-title">Academic Integrity Policy</h4>
+                                    <div>
+                                        <button class="icon-button" aria-label="View Policy">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="icon-button" aria-label="Edit Policy">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="list-item-meta">Updated on Sep 15, 2025</p>
+                            </div>
+                            <div class="list-item">
+                                <div class="list-item-header">
+                                    <h4 class="list-item-title">Student Safety Guidelines</h4>
+                                    <div>
+                                        <button class="icon-button" aria-label="View Policy">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="icon-button" aria-label="Edit Policy">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="list-item-meta">Updated on Aug 30, 2025</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Emergency Alert System -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Emergency Alert System
+                            </h2>
+                        </div>
+                        <form class="emergency-form" id="emergencyForm">
+                            <div class="emergency-header">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <h3>Send Emergency Alert</h3>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="alertType">Alert Type</label>
+                                <select class="form-select" id="alertType">
+                                    <option value="weather">Weather Emergency</option>
+                                    <option value="security">Security Threat</option>
+                                    <option value="health">Health Emergency</option>
+                                    <option value="facility">Facility Issue</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="alertSeverity">Severity Level</label>
+                                <select class="form-select" id="alertSeverity">
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="critical">Critical</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="alertMessage">Emergency Message</label>
+                                <textarea class="form-textarea" id="alertMessage" placeholder="Enter emergency alert details"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary">Cancel</button>
+                                <button type="submit" class="btn" style="background: linear-gradient(135deg, var(--error) 0%, #c0392b 100%); color: var(--white);">
+                                    Send Emergency Alert
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Analytics Dashboard -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-chart-line"></i>
+                                Analytics Dashboard
+                            </h2>
+                            <button class="card-action" aria-label="Refresh Analytics">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="attendanceChart"></canvas>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-value">87%</div>
+                                <div class="kpi-label">Attendance</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-value">94%</div>
+                                <div class="kpi-label">Satisfaction</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-value">78%</div>
+                                <div class="kpi-label">Engagement</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-value">92%</div>
+                                <div class="kpi-label">Performance</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <aside class="right-panel">
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-bullhorn"></i>
+                        Announcements
+                    </h3>
+                    <div class="announcement-list">
+                        <div class="list-item">
+                            <div class="list-item-header">
+                                <h4 class="list-item-title">College Event on Oct 5, 2025</h4>
+                                <span class="list-item-meta">2 days ago</span>
+                            </div>
+                            <p>Technical symposium for all departments</p>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-header">
+                                <h4 class="list-item-title">Holiday Notice</h4>
+                                <span class="list-item-meta">1 week ago</span>
+                            </div>
+                            <p>College closed on Oct 2 for Gandhi Jayanti</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-file-alt"></i>
+                        Shared Files
+                    </h3>
+                    <div class="file-list">
+                        <div class="list-item">
+                            <div class="list-item-header">
+                                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                                    <i class="fas fa-file-pdf" style="color: var(--error);"></i>
+                                    <span class="list-item-title">AnnualReport.pdf</span>
+                                </div>
+                                <button class="icon-button" aria-label="Download File">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-header">
+                                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                                    <i class="fas fa-file-excel" style="color: var(--success);"></i>
+                                    <span class="list-item-title">Budget2025.xlsx</span>
+                                </div>
+                                <button class="icon-button" aria-label="Download File">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-header">
+                                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                                    <i class="fas fa-file-powerpoint" style="color: var(--warning);"></i>
+                                    <span class="list-item-title">StrategicPlan.pptx</span>
+                                </div>
+                                <button class="icon-button" aria-label="Download File">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        College Analytics
+                    </h3>
+                    <div class="analytics-item">
+                        <div class="kpi-card">
+                            <div class="kpi-value">89%</div>
+                            <div class="kpi-label">Overall Attendance</div>
+                        </div>
+                    </div>
+                    <div class="analytics-item">
+                        <div class="kpi-card">
+                            <div class="kpi-value">5</div>
+                            <div class="kpi-label">Pending Approvals</div>
+                        </div>
+                    </div>
+                    <div class="analytics-item">
+                        <div class="kpi-card">
+                            <div class="kpi-value">12</div>
+                            <div class="kpi-label">Active Alerts</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Sona College of Technology. All rights reserved.</p>
+            <p>Made with <i class="fas fa-heart footer-heart"></i> by Krishna</p>
+        </div>
+    </footer>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'http://localhost:3000/api';
+        const socket = io('http://localhost:3000');
+        
+        // User Authentication
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || user.role !== 'principal') {
+            window.location.href = 'index.html';
+        }
+        
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebarBtn = document.getElementById('toggleSidebar');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const navItems = document.querySelectorAll('.nav-item');
+        const messageForm = document.getElementById('messageForm');
+        const emergencyForm = document.getElementById('emergencyForm');
+        const attendanceChart = document.getElementById('attendanceChart');
+        const notifications = document.getElementById('notifications');
+        
+        // Initialize Chart
+        let chart;
+        
+        // Toggle Sidebar
+        toggleSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            const icon = toggleSidebarBtn.querySelector('i');
+            icon.classList.toggle('fa-angle-left');
+            icon.classList.toggle('fa-angle-right');
+        });
+        
+        // Mobile Menu Toggle
+        mobileMenuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+        
+        // Navigation
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Close mobile menu after selection
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('open');
+                }
+                
+                // In a real app, this would load different sections
+                const section = item.dataset.section;
+                console.log(`Navigating to ${section} section`);
+            });
+        });
+        
+        // Initialize Attendance Chart
+        function initChart() {
+            const ctx = attendanceChart.getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Attendance %',
+                        data: [85, 88, 90, 87, 92, 89, 86],
+                        backgroundColor: 'rgba(241, 196, 15, 0.2)',
+                        borderColor: '#f1c40f',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#f1c40f',
+                        pointBorderColor: '#0a192f',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(23, 42, 69, 0.9)',
+                            titleColor: '#e6f1ff',
+                            bodyColor: '#e6f1ff',
+                            borderColor: '#f1c40f',
+                            borderWidth: 1,
+                            cornerRadius: 10,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 70,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#8892b0',
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#8892b0'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Load Contacts
+        async function loadContacts() {
+            try {
+                const res = await fetch(`${API_BASE}/groups/user/${user.id}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
+                });
+                const groups = await res.json();
+                const list = document.querySelector('.contact-list');
+                if (list) {
+                    list.innerHTML = '';
+                    groups.forEach(group => {
+                        const item = document.createElement('div');
+                        item.className = 'contact-item';
+                        item.innerHTML = `
+                            <div class="contact-avatar">${group.name[0]}</div>
+                            <div class="contact-info">
+                                <span class="contact-name">${group.name}</span>
+                                <span class="contact-status">${group.description || 'Group'}</span>
+                            </div>
+                            <div class="status-dot status-online"></div>
+                        `;
+                        list.appendChild(item);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading contacts:', error);
+            }
+        }
+        
+        // Handle Message Form Submission
+        messageForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const recipient = document.getElementById('messageRecipient').value;
+            const subject = document.getElementById('messageSubject').value;
+            const content = document.getElementById('messageContent').value;
+            const priority = document.getElementById('messagePriority').value;
+            
+            if (!subject || !content) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/messages/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                    },
+                    body: JSON.stringify({
+                        recipient,
+                        subject,
+                        content,
+                        priority,
+                        senderId: user.id
+                    })
+                });
+                
+                if (response.ok) {
+                    showNotification('Message sent successfully', 'success');
+                    messageForm.reset();
+                } else {
+                    showNotification('Failed to send message', 'error');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showNotification('Error sending message', 'error');
+            }
+        });
+        
+        // Handle Emergency Form Submission
+        emergencyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertType = document.getElementById('alertType').value;
+            const severity = document.getElementById('alertSeverity').value;
+            const message = document.getElementById('alertMessage').value;
+            
+            if (!message) {
+                showNotification('Please enter an emergency message', 'error');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to send this emergency alert? This will notify all users immediately.')) {
+                try {
+                    const response = await fetch(`${API_BASE}/alerts/emergency`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                        },
+                        body: JSON.stringify({
+                            type: alertType,
+                            severity,
+                            message,
+                            senderId: user.id
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        showNotification('Emergency alert sent successfully', 'success');
+                        emergencyForm.reset();
+                    } else {
+                        showNotification('Failed to send emergency alert', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error sending emergency alert:', error);
+                    showNotification('Error sending emergency alert', 'error');
+                }
+            }
+        });
+        
+        // Quick Action Buttons
+        document.getElementById('newAnnouncementBtn').addEventListener('click', () => {
+            document.getElementById('messageSubject').value = 'New Announcement';
+            document.getElementById('messageContent').value = '';
+            document.getElementById('messageRecipient').value = 'all';
+            document.getElementById('messagePriority').value = 'normal';
+            document.querySelector('.message-form').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        document.getElementById('newPolicyBtn').addEventListener('click', () => {
+            showNotification('Opening policy creation form...', 'info');
+            // In a real app, this would navigate to a policy creation form
+        });
+        
+        document.getElementById('emergencyAlertBtn').addEventListener('click', () => {
+            document.querySelector('.emergency-form').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        document.getElementById('scheduleMeetingBtn').addEventListener('click', () => {
+            showNotification('Opening meeting scheduler...', 'info');
+            // In a real app, this would open a meeting scheduler
+        });
+        
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--info)'};
+                color: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                z-index: 1000;
+                font-weight: 600;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add notification animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Notifications click handler
+        notifications.addEventListener('click', () => {
+            showNotification('You have 4 new notifications', 'info');
+            // In a real app, this would open a notifications panel
+        });
+        
+        // Socket.io for real-time updates
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+        
+        socket.on('new-message', (data) => {
+            console.log('New message received:', data);
+            showNotification(`New message from ${data.sender}`, 'info');
+        });
+        
+        socket.on('emergency-alert', (data) => {
+            console.log('Emergency alert received:', data);
+            showNotification(`EMERGENCY ALERT: ${data.message}`, 'error');
+        });
+        
+        // Initialize Dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            loadContacts();
+            
+            // Simulate real-time updates
+            setInterval(() => {
+                // Update random KPI
+                const kpiValues = document.querySelectorAll('.kpi-value');
+                if (kpiValues.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * kpiValues.length);
+                    const currentValue = parseInt(kpiValues[randomIndex].textContent);
+                    const change = Math.floor(Math.random() * 5) - 2; // Random change between -2 and +2
+                    const newValue = Math.max(0, Math.min(100, currentValue + change));
+                    kpiValues[randomIndex].textContent = newValue + '%';
+                }
+                
+                // Update chart data
+                if (chart && chart.data.datasets[0].data) {
+                    chart.data.datasets[0].data = chart.data.datasets[0].data.map(value => {
+                        const change = Math.floor(Math.random() * 5) - 2;
+                        return Math.max(70, Math.min(100, value + change));
+                    });
+                    chart.update();
+                }
+            }, 10000); // Update every 10 seconds
+        });
+    </script>
+</body>
+</html>
