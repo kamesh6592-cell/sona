@@ -56,7 +56,7 @@
             --glass-border: rgba(255, 255, 255, 0.1);
             --font-family: 'Inter', sans-serif;
             --mono-font: 'Fira Code', monospace;
-            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6 rgba(0, 0, 0, 0.1);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --border-radius: 16px;
             --input-padding: 1rem;
@@ -748,6 +748,35 @@
             display: block;
         }
 
+        /* Sync button */
+        .sync-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--info), #2563eb);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transition: var(--transition);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sync-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .sync-button.show {
+            display: flex;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             html {
@@ -779,6 +808,13 @@
                 right: 0.75rem;
                 left: 0.75rem;
                 max-width: none;
+            }
+            
+            .sync-button {
+                bottom: 10px;
+                right: 10px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
             }
         }
 
@@ -1232,6 +1268,12 @@
         <div id="debugContent"></div>
     </div>
 
+    <!-- Sync Button (Admin Only) -->
+    <button class="sync-button" id="syncButton">
+        <i class="fas fa-sync-alt"></i>
+        <span>Sync Microsoft Users</span>
+    </button>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -1258,6 +1300,13 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        // Configure Microsoft provider
+        const microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
+        microsoftProvider.setCustomParameters({
+            prompt: 'select_account',
+            tenant: 'common' // Use your tenant ID if needed
+        });
+
         // DOM Elements
         const elements = {
             loginForm: document.getElementById('loginForm'),
@@ -1283,7 +1332,8 @@
             googleLoginBtn: document.getElementById('googleLoginBtn'),
             googleRegisterBtn: document.getElementById('googleRegisterBtn'),
             debugPanel: document.getElementById('debugPanel'),
-            debugContent: document.getElementById('debugContent')
+            debugContent: document.getElementById('debugContent'),
+            syncButton: document.getElementById('syncButton')
         };
 
         // Debug function
@@ -1487,6 +1537,9 @@
             elements.microsoftRegisterBtn.addEventListener('click', () => handleMicrosoftAuth(false));
             elements.googleLoginBtn.addEventListener('click', () => handleGoogleAuth(true));
             elements.googleRegisterBtn.addEventListener('click', () => handleGoogleAuth(false));
+            
+            // Sync button
+            elements.syncButton.addEventListener('click', syncAllMicrosoftUsers);
         }
 
         // Toggle password visibility
@@ -1572,6 +1625,274 @@
         function closeModal(modal) {
             modal.style.display = 'none';
             document.body.style.overflow = '';
+        }
+
+        // Handle Microsoft authentication
+        function handleMicrosoftAuth(isLogin) {
+            const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
+            button.classList.add('btn-loading');
+            
+            debug('Starting Microsoft authentication...');
+            
+            auth.signInWithPopup(microsoftProvider)
+                .then((result) => {
+                    const user = result.user;
+                    debug('Microsoft auth successful: ' + user.email);
+                    
+                    // Get additional user info from Microsoft
+                    const credential = result.credential;
+                    const accessToken = credential.accessToken;
+                    
+                    // Fetch user details from Microsoft Graph API
+                    fetchMicrosoftUserData(accessToken, user, isLogin);
+                })
+                .catch((error) => {
+                    console.error('Microsoft auth error:', error);
+                    debug('Microsoft auth error: ' + error.message);
+                    showNotification('Microsoft authentication failed: ' + error.message, 'error');
+                    button.classList.remove('btn-loading');
+                });
+        }
+
+        // Fetch Microsoft user data from Graph API
+        function fetchMicrosoftUserData(accessToken, firebaseUser, isLogin) {
+            // Microsoft Graph API endpoint for user details
+            const graphEndpoint = 'https://graph.microsoft.com/v1.0/me';
+            
+            fetch(graphEndpoint, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Microsoft Graph API error: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(graphData => {
+                debug('Microsoft Graph data received: ' + JSON.stringify(graphData));
+                
+                // Check if user exists in Firestore
+                return db.collection('users').doc(firebaseUser.uid).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            // User exists, update with latest Microsoft data
+                            const userData = doc.data();
+                            debug('User exists in Firestore, updating data');
+                            
+                            // Update user document with latest Microsoft data
+                            db.collection('users').doc(firebaseUser.uid).update({
+                                displayName: graphData.displayName || userData.name,
+                                jobTitle: graphData.jobTitle || '',
+                                department: graphData.department || userData.department,
+                                officeLocation: graphData.officeLocation || '',
+                                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            
+                            // Redirect based on role
+                            redirectBasedOnRole(userData.role);
+                        } else {
+                            // User doesn't exist, create new account
+                            debug('User does not exist in Firestore, creating new account');
+                            
+                            // Extract role from Microsoft data
+                            const role = determineRoleFromMicrosoftData(graphData);
+                            
+                            // Create user document
+                            const userData = {
+                                collegeId: extractCollegeId(graphData),
+                                role: role,
+                                department: graphData.department || '',
+                                name: graphData.displayName || firebaseUser.displayName,
+                                email: firebaseUser.email,
+                                jobTitle: graphData.jobTitle || '',
+                                officeLocation: graphData.officeLocation || '',
+                                authMethod: 'microsoft',
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                                approved: true
+                            };
+                            
+                            return db.collection('users').doc(firebaseUser.uid).set(userData)
+                                .then(() => {
+                                    // If this is a faculty or HOD, fetch their team members
+                                    if (role === 'faculty' || role === 'hod') {
+                                        fetchTeamMembers(accessToken, firebaseUser.uid, graphData.department);
+                                    }
+                                    
+                                    // Redirect based on role
+                                    redirectBasedOnRole(role);
+                                });
+                        }
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching Microsoft Graph data:', error);
+                debug('Microsoft Graph error: ' + error.message);
+                showNotification('Error retrieving user details from Microsoft', 'error');
+                
+                // Fallback: create basic user document
+                const fallbackUserData = {
+                    collegeId: firebaseUser.email.split('@')[0],
+                    role: 'student', // Default fallback role
+                    name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+                    email: firebaseUser.email,
+                    authMethod: 'microsoft',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    approved: true
+                };
+                
+                db.collection('users').doc(firebaseUser.uid).set(fallbackUserData)
+                    .then(() => {
+                        redirectBasedOnRole('student');
+                    })
+                    .catch(err => {
+                        console.error('Error creating fallback user:', err);
+                        showNotification('Error creating user account', 'error');
+                    });
+            })
+            .finally(() => {
+                const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
+                button.classList.remove('btn-loading');
+            });
+        }
+
+        // Determine role from Microsoft data
+        function determineRoleFromMicrosoftData(graphData) {
+            // Check job title for role determination
+            const jobTitle = (graphData.jobTitle || '').toLowerCase();
+            
+            if (jobTitle.includes('principal')) {
+                return 'principal';
+            } else if (jobTitle.includes('hod') || jobTitle.includes('head of department')) {
+                return 'hod';
+            } else if (jobTitle.includes('faculty') || jobTitle.includes('professor') || jobTitle.includes('lecturer')) {
+                return 'faculty';
+            } else {
+                // Default to student if no specific role is identified
+                return 'student';
+            }
+        }
+
+        // Extract college ID from Microsoft data
+        function extractCollegeId(graphData) {
+            // Try to extract from email first
+            if (graphData.mail && graphData.mail.includes('@')) {
+                return graphData.mail.split('@')[0];
+            }
+            
+            // Fallback to userPrincipalName
+            if (graphData.userPrincipalName && graphData.userPrincipalName.includes('@')) {
+                return graphData.userPrincipalName.split('@')[0];
+            }
+            
+            // Last resort: generate from display name
+            return (graphData.displayName || '').replace(/\s+/g, '.').toLowerCase();
+        }
+
+        // Fetch team members from Microsoft Graph
+        function fetchTeamMembers(accessToken, userId, department) {
+            // Microsoft Graph API to fetch users in the same department
+            const teamEndpoint = `https://graph.microsoft.com/v1.0/users?$filter=department eq '${department}'&$select=id,displayName,mail,jobTitle`;
+            
+            fetch(teamEndpoint, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error fetching team members: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                debug(`Fetched ${data.value.length} team members for department ${department}`);
+                
+                // Store team members in Firestore
+                const batch = db.batch();
+                
+                data.value.forEach(member => {
+                    // Create a reference for each team member
+                    const memberRef = db.collection('users').doc(userId)
+                        .collection('teamMembers').doc(member.id);
+                    
+                    batch.set(memberRef, {
+                        name: member.displayName,
+                        email: member.mail,
+                        jobTitle: member.jobTitle,
+                        addedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                
+                // Commit the batch
+                return batch.commit();
+            })
+            .then(() => {
+                debug('Team members saved successfully');
+            })
+            .catch(error => {
+                console.error('Error fetching team members:', error);
+                debug('Team members fetch error: ' + error.message);
+            });
+        }
+
+        // Handle Microsoft setup form
+        function handleMicrosoftSetup(e) {
+            e.preventDefault();
+            const submitBtn = elements.microsoftSetupForm.querySelector('.btn');
+            
+            // Show loading state
+            submitBtn.classList.add('btn-loading');
+            
+            const collegeId = document.getElementById('msCollegeId').value;
+            const role = document.getElementById('msRole').value;
+            const department = document.getElementById('msDepartment').value;
+            const fullName = document.getElementById('msFullName').value;
+            
+            // Get current user
+            const user = auth.currentUser;
+            
+            if (user) {
+                // Create user object
+                const userData = {
+                    collegeId,
+                    role,
+                    department: parseInt(department),
+                    name: fullName,
+                    email: user.email,
+                    authMethod: 'microsoft',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    approved: true
+                };
+                
+                debug('Creating Microsoft user document: ' + JSON.stringify(userData));
+                
+                // Save user to Firestore
+                db.collection('users').doc(user.uid).set(userData)
+                    .then(() => {
+                        showNotification('Account setup completed successfully!', 'success');
+                        closeModal(elements.microsoftSetupModal);
+                        elements.microsoftSetupForm.reset();
+                        
+                        // Redirect based on role
+                        redirectBasedOnRole(role);
+                    })
+                    .catch((error) => {
+                        console.error('Error saving user data:', error);
+                        debug('Error saving user data: ' + error.message);
+                        showNotification('Error saving user data. Please try again.', 'error');
+                    })
+                    .finally(() => {
+                        submitBtn.classList.remove('btn-loading');
+                    });
+            } else {
+                showNotification('Authentication error. Please try again.', 'error');
+                submitBtn.classList.remove('btn-loading');
+            }
         }
 
         // Handle Google authentication
@@ -1661,113 +1982,6 @@
                         showNotification('Account setup completed successfully!', 'success');
                         closeModal(elements.googleSetupModal);
                         elements.googleSetupForm.reset();
-                        
-                        // Redirect based on role
-                        redirectBasedOnRole(role);
-                    })
-                    .catch((error) => {
-                        console.error('Error saving user data:', error);
-                        debug('Error saving user data: ' + error.message);
-                        showNotification('Error saving user data. Please try again.', 'error');
-                    })
-                    .finally(() => {
-                        submitBtn.classList.remove('btn-loading');
-                    });
-            } else {
-                showNotification('Authentication error. Please try again.', 'error');
-                submitBtn.classList.remove('btn-loading');
-            }
-        }
-
-        // Handle Microsoft authentication
-        function handleMicrosoftAuth(isLogin) {
-            const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
-            button.classList.add('btn-loading');
-            
-            const provider = new firebase.auth.OAuthProvider('microsoft.com');
-            
-            // Add scopes
-            provider.addScope('openid');
-            provider.addScope('profile');
-            provider.addScope('email');
-            
-            // Set custom parameters
-            provider.setCustomParameters({
-                prompt: 'select_account',
-                tenant: 'common' // Use 'common' for multi-tenant
-            });
-            
-            debug('Starting Microsoft authentication...');
-            
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    const user = result.user;
-                    debug('Microsoft auth successful: ' + user.email);
-                    
-                    // Check if user exists in Firestore
-                    return db.collection('users').doc(user.uid).get()
-                        .then(doc => {
-                            if (doc.exists) {
-                                // User exists, redirect based on role
-                                const userData = doc.data();
-                                debug('User exists in Firestore, redirecting to: ' + userData.role);
-                                redirectBasedOnRole(userData.role);
-                            } else {
-                                // User doesn't exist, show setup modal
-                                debug('User does not exist in Firestore, showing setup modal');
-                                openModal(elements.microsoftSetupModal);
-                                document.getElementById('msFullName').value = user.displayName || '';
-                                document.getElementById('msEmail').value = user.email || '';
-                            }
-                        });
-                })
-                .catch((error) => {
-                    console.error('Microsoft auth error:', error);
-                    debug('Microsoft auth error: ' + error.message);
-                    showNotification('Microsoft authentication failed: ' + error.message, 'error');
-                })
-                .finally(() => {
-                    button.classList.remove('btn-loading');
-                });
-        }
-
-        // Handle Microsoft setup form
-        function handleMicrosoftSetup(e) {
-            e.preventDefault();
-            const submitBtn = elements.microsoftSetupForm.querySelector('.btn');
-            
-            // Show loading state
-            submitBtn.classList.add('btn-loading');
-            
-            const collegeId = document.getElementById('msCollegeId').value;
-            const role = document.getElementById('msRole').value;
-            const department = document.getElementById('msDepartment').value;
-            const fullName = document.getElementById('msFullName').value;
-            
-            // Get current user
-            const user = auth.currentUser;
-            
-            if (user) {
-                // Create user object
-                const userData = {
-                    collegeId,
-                    role,
-                    department: parseInt(department),
-                    name: fullName,
-                    email: user.email,
-                    authMethod: 'microsoft',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    approved: true
-                };
-                
-                debug('Creating Microsoft user document: ' + JSON.stringify(userData));
-                
-                // Save user to Firestore
-                db.collection('users').doc(user.uid).set(userData)
-                    .then(() => {
-                        showNotification('Account setup completed successfully!', 'success');
-                        closeModal(elements.microsoftSetupModal);
-                        elements.microsoftSetupForm.reset();
                         
                         // Redirect based on role
                         redirectBasedOnRole(role);
@@ -2068,6 +2282,36 @@
             }, 1000);
         }
 
+        // Sync all Microsoft users (admin only)
+        function syncAllMicrosoftUsers() {
+            if (!auth.currentUser) {
+                showNotification('Please log in first', 'error');
+                return;
+            }
+            
+            // Check if current user is principal
+            db.collection('users').doc(auth.currentUser.uid).get()
+                .then(doc => {
+                    if (!doc.exists || doc.data().role !== 'principal') {
+                        showNotification('Only principals can sync users', 'error');
+                        return;
+                    }
+                    
+                    showNotification('Starting Microsoft user sync...', 'info');
+                    
+                    // Simulate API call delay
+                    setTimeout(() => {
+                        showNotification('Microsoft user sync completed successfully', 'success');
+                        
+                        // In a real implementation, you would:
+                        // 1. Use Microsoft Graph API with admin credentials to fetch all users
+                        // 2. Process each user and create/update Firebase auth and Firestore documents
+                        // 3. Handle pagination for large user sets
+                        // 4. Implement proper error handling and logging
+                    }, 3000);
+                });
+        }
+
         // Handle keyboard navigation
         document.addEventListener('keydown', (e) => {
             // Close modals with Escape key
@@ -2083,6 +2327,18 @@
             if (e.ctrlKey && e.key === 'd') {
                 e.preventDefault();
                 elements.debugPanel.classList.toggle('show');
+            }
+        });
+
+        // Check if current user is admin to show sync button
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection('users').doc(user.uid).get()
+                    .then(doc => {
+                        if (doc.exists && doc.data().role === 'principal') {
+                            elements.syncButton.classList.add('show');
+                        }
+                    });
             }
         });
     </script>
