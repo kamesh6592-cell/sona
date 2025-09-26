@@ -783,6 +783,26 @@
             background: #2563eb;
         }
 
+        /* Debug panel */
+        .debug-panel {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 10000;
+            display: none;
+        }
+
+        .debug-panel.show {
+            display: block;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             html {
@@ -1232,6 +1252,12 @@
 
     <div class="notification" id="notification" role="alert" aria-live="assertive"></div>
 
+    <!-- Debug Panel -->
+    <div class="debug-panel" id="debugPanel">
+        <div>Debug Info:</div>
+        <div id="debugContent"></div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -1275,8 +1301,19 @@
             passwordStrengthText: document.getElementById('passwordStrengthText'),
             notification: document.getElementById('notification'),
             microsoftLoginBtn: document.getElementById('microsoftLoginBtn'),
-            microsoftRegisterBtn: document.getElementById('microsoftRegisterBtn')
+            microsoftRegisterBtn: document.getElementById('microsoftRegisterBtn'),
+            debugPanel: document.getElementById('debugPanel'),
+            debugContent: document.getElementById('debugContent')
         };
+
+        // Debug function
+        function debug(message) {
+            console.log(message);
+            if (elements.debugPanel) {
+                elements.debugPanel.classList.add('show');
+                elements.debugContent.innerHTML += message + '<br>';
+            }
+        }
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
@@ -1288,15 +1325,20 @@
             
             // Set up authentication state observer
             auth.onAuthStateChanged(user => {
+                debug('Auth state changed: ' + (user ? 'User logged in' : 'No user'));
+                
                 if (user) {
                     // User is signed in
                     const uid = user.uid;
+                    debug('User UID: ' + uid);
                     
                     // Get user data from Firestore
                     db.collection('users').doc(uid).get()
                         .then(doc => {
                             if (doc.exists) {
                                 const userData = doc.data();
+                                debug('User data found: ' + JSON.stringify(userData));
+                                
                                 // Store user data in localStorage
                                 localStorage.setItem('user', JSON.stringify({
                                     uid: uid,
@@ -1305,15 +1347,68 @@
                                 
                                 // Redirect to role-based page
                                 redirectBasedOnRole(userData.role);
+                            } else {
+                                debug('No user document found in Firestore');
+                                // For admin accounts, create a default user document
+                                handleAdminUser(user);
                             }
                         })
                         .catch(error => {
                             console.error("Error getting user data:", error);
+                            debug('Error getting user data: ' + error.message);
                             showNotification('Error loading user data', 'error');
                         });
                 }
             });
         });
+
+        // Handle admin user creation
+        function handleAdminUser(user) {
+            const email = user.email;
+            let role = '';
+            let department = '';
+            
+            if (email === 'principal.test@sona.ac.in') {
+                role = 'principal';
+                department = 'ADMINISTRATION';
+            } else if (email === 'hod.cse@sona.ac.in') {
+                role = 'hod';
+                department = 'Computer Science Engineering';
+            } else if (email === 'hod.ece@sona.ac.in') {
+                role = 'hod';
+                department = 'Electronics & Communication Engineering';
+            }
+            
+            if (role) {
+                const userData = {
+                    collegeId: email.split('@')[0],
+                    role: role,
+                    department: department,
+                    name: email.split('@')[0],
+                    email: email,
+                    authMethod: 'email',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    approved: true
+                };
+                
+                debug('Creating admin user document: ' + JSON.stringify(userData));
+                
+                db.collection('users').doc(user.uid).set(userData)
+                    .then(() => {
+                        debug('Admin user document created successfully');
+                        localStorage.setItem('user', JSON.stringify({
+                            uid: user.uid,
+                            ...userData
+                        }));
+                        redirectBasedOnRole(role);
+                    })
+                    .catch(error => {
+                        console.error('Error creating admin user:', error);
+                        debug('Error creating admin user: ' + error.message);
+                        showNotification('Error setting up admin account', 'error');
+                    });
+            }
+        }
 
         // Fill admin account details
         function fillAdminAccount(email, password, role) {
@@ -1502,6 +1597,7 @@
             auth.signInWithPopup(provider)
                 .then((result) => {
                     const user = result.user;
+                    debug('Microsoft auth successful: ' + user.email);
                     
                     // Check if user exists in Firestore
                     return db.collection('users').doc(user.uid).get()
@@ -1509,9 +1605,11 @@
                             if (doc.exists) {
                                 // User exists, redirect based on role
                                 const userData = doc.data();
+                                debug('User exists in Firestore, redirecting to: ' + userData.role);
                                 redirectBasedOnRole(userData.role);
                             } else {
                                 // User doesn't exist, show setup modal
+                                debug('User does not exist in Firestore, showing setup modal');
                                 openModal(elements.microsoftSetupModal);
                                 document.getElementById('msFullName').value = user.displayName || '';
                                 document.getElementById('msEmail').value = user.email || '';
@@ -1520,6 +1618,7 @@
                 })
                 .catch((error) => {
                     console.error('Microsoft auth error:', error);
+                    debug('Microsoft auth error: ' + error.message);
                     showNotification('Microsoft authentication failed. Please try again.', 'error');
                 })
                 .finally(() => {
@@ -1555,6 +1654,8 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
+                debug('Creating Microsoft user document: ' + JSON.stringify(userData));
+                
                 // Save user to Firestore
                 db.collection('users').doc(user.uid).set(userData)
                     .then(() => {
@@ -1567,6 +1668,7 @@
                     })
                     .catch((error) => {
                         console.error('Error saving user data:', error);
+                        debug('Error saving user data: ' + error.message);
                         showNotification('Error saving user data. Please try again.', 'error');
                     })
                     .finally(() => {
@@ -1586,11 +1688,14 @@
             const role = document.getElementById('role').value;
             const submitBtn = elements.loginForm.querySelector('.btn');
 
+            debug('Login attempt: ' + collegeId + ', role: ' + role);
+
             // Show loading state
             submitBtn.classList.add('btn-loading');
             
             // For admin accounts, use direct authentication
             if (collegeId === 'principal.test' && role === 'principal') {
+                debug('Attempting principal login');
                 auth.signInWithEmailAndPassword('principal.test@sona.ac.in', password)
                     .then(() => {
                         showNotification(`Welcome back, Principal!`, 'success');
@@ -1605,6 +1710,7 @@
                     })
                     .catch((error) => {
                         console.error('Login error:', error);
+                        debug('Principal login error: ' + error.message);
                         submitBtn.classList.remove('btn-loading');
                         showNotification('Invalid credentials. Please try again.', 'error');
                     });
@@ -1612,6 +1718,7 @@
             }
             
             if (collegeId === 'hod.cse' && role === 'hod') {
+                debug('Attempting HOD CSE login');
                 auth.signInWithEmailAndPassword('hod.cse@sona.ac.in', password)
                     .then(() => {
                         showNotification(`Welcome back, HOD CSE!`, 'success');
@@ -1626,6 +1733,7 @@
                     })
                     .catch((error) => {
                         console.error('Login error:', error);
+                        debug('HOD CSE login error: ' + error.message);
                         submitBtn.classList.remove('btn-loading');
                         showNotification('Invalid credentials. Please try again.', 'error');
                     });
@@ -1633,6 +1741,7 @@
             }
             
             if (collegeId === 'hod.ece' && role === 'hod') {
+                debug('Attempting HOD ECE login');
                 auth.signInWithEmailAndPassword('hod.ece@sona.ac.in', password)
                     .then(() => {
                         showNotification(`Welcome back, HOD ECE!`, 'success');
@@ -1647,6 +1756,7 @@
                     })
                     .catch((error) => {
                         console.error('Login error:', error);
+                        debug('HOD ECE login error: ' + error.message);
                         submitBtn.classList.remove('btn-loading');
                         showNotification('Invalid credentials. Please try again.', 'error');
                     });
@@ -1654,6 +1764,7 @@
             }
             
             // Query Firestore for user with this collegeId
+            debug('Querying Firestore for user: ' + collegeId + ', role: ' + role);
             db.collection('users')
                 .where('collegeId', '==', collegeId)
                 .where('role', '==', role)
@@ -1662,6 +1773,7 @@
                 .then(querySnapshot => {
                     if (querySnapshot.empty) {
                         // No user found
+                        debug('No user found in Firestore');
                         submitBtn.classList.remove('btn-loading');
                         showNotification('Invalid credentials. Please try again.', 'error');
                         return;
@@ -1669,6 +1781,8 @@
                     
                     const userDoc = querySnapshot.docs[0];
                     const userData = userDoc.data();
+                    
+                    debug('User found in Firestore: ' + JSON.stringify(userData));
                     
                     // Get email from user data
                     const email = userData.email;
@@ -1678,6 +1792,7 @@
                 })
                 .then((userCredential) => {
                     // Login successful
+                    debug('Login successful');
                     showNotification(`Welcome back, ${collegeId}!`, 'success');
                     
                     // Remember user if checkbox is checked
@@ -1692,6 +1807,7 @@
                 })
                 .catch((error) => {
                     console.error('Login error:', error);
+                    debug('Login error: ' + error.message);
                     submitBtn.classList.remove('btn-loading');
                     
                     if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
@@ -1815,24 +1931,45 @@
 
         // Redirect based on user role
         function redirectBasedOnRole(role) {
+            debug('Redirecting based on role: ' + role);
+            
             // Add a slight delay to allow notification to be seen
             setTimeout(() => {
+                let targetUrl = '';
+                
                 switch(role) {
                     case 'student':
-                        window.location.href = 'student.html';
+                        targetUrl = 'student.html';
                         break;
                     case 'faculty':
-                        window.location.href = 'faculty.html';
+                        targetUrl = 'faculty.html';
                         break;
                     case 'hod':
-                        window.location.href = 'hod.html';
+                        targetUrl = 'hod.html';
                         break;
                     case 'principal':
-                        window.location.href = 'principal.html';
+                        targetUrl = 'principal.html';
                         break;
                     default:
-                        window.location.href = 'dashboard.html';
+                        targetUrl = 'dashboard.html';
                 }
+                
+                debug('Redirecting to: ' + targetUrl);
+                
+                // Check if the target page exists
+                fetch(targetUrl, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = targetUrl;
+                        } else {
+                            debug('Target page does not exist: ' + targetUrl);
+                            showNotification('The target page does not exist. Please contact the administrator.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        debug('Error checking target page: ' + error.message);
+                        showNotification('Error redirecting to the target page.', 'error');
+                    });
             }, 1000);
         }
 
@@ -1845,6 +1982,12 @@
                         closeModal(modal);
                     }
                 });
+            }
+            
+            // Toggle debug panel with Ctrl+D
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                elements.debugPanel.classList.toggle('show');
             }
         });
     </script>
