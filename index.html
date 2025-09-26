@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Secure Hierarchical Communication Platform for Sona College of Technology">
     <meta name="theme-color" content="#1E3A8A">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiU29uYSBDb21tdW5pY2F0aW9uIiwic2hvcnRfbmFtZSI6IlNvbmFDb21tIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTE5MmYiLCJ0aGVtZV9jb2xvciI6IiMxRTNBOEEiLCJvcmllbnRhdGlvbiI6InBvcnRyYWl0In0=">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sona Communication">
+    
     <title>Sona College of Technology - Communication Platform</title>
     
     <!-- Preconnect to external domains for performance -->
@@ -426,17 +436,55 @@
             cursor: pointer;
             user-select: none;
             border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
         }
 
         .role-badge:hover {
             background: rgba(255, 255, 255, 0.1);
             border-color: var(--primary-yellow);
+            transform: translateY(-2px);
         }
 
         .role-badge.active {
             background: var(--primary-yellow);
             color: var(--primary-blue);
             border-color: var(--primary-yellow);
+            box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3);
+        }
+
+        .role-badge.active::before {
+            opacity: 1;
+        }
+
+        /* Role-specific styling */
+        .role-student.active {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+        }
+
+        .role-faculty.active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .role-hod.active {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .role-principal.active {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
         }
 
         /* Register link */
@@ -669,6 +717,72 @@
             100% { transform: scale(1); }
         }
 
+        /* Admin accounts section */
+        .admin-accounts {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--glass-border);
+        }
+
+        .admin-accounts h3 {
+            color: var(--primary-yellow);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .admin-account {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .admin-account:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .admin-account-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-account-role {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .admin-account-email {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .admin-account-dept {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .admin-account-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            background: var(--info);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .admin-account-btn:hover {
+            background: #2563eb;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             html {
@@ -898,10 +1012,18 @@
                 </div>
                 
                 <div class="role-badges" role="group" aria-label="Role selection">
-                    <button type="button" class="role-badge" data-role="student" aria-pressed="false">Student</button>
-                    <button type="button" class="role-badge" data-role="faculty" aria-pressed="false">Faculty</button>
-                    <button type="button" class="role-badge" data-role="hod" aria-pressed="false">HOD</button>
-                    <button type="button" class="role-badge" data-role="principal" aria-pressed="false">Principal</button>
+                    <button type="button" class="role-badge role-student" data-role="student" aria-pressed="false">
+                        <i class="fas fa-graduation-cap" aria-hidden="true"></i> Student
+                    </button>
+                    <button type="button" class="role-badge role-faculty" data-role="faculty" aria-pressed="false">
+                        <i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Faculty
+                    </button>
+                    <button type="button" class="role-badge role-hod" data-role="hod" aria-pressed="false">
+                        <i class="fas fa-user-tie" aria-hidden="true"></i> HOD
+                    </button>
+                    <button type="button" class="role-badge role-principal" data-role="principal" aria-pressed="false">
+                        <i class="fas fa-user-shield" aria-hidden="true"></i> Principal
+                    </button>
                 </div>
                 
                 <div class="form-options">
@@ -927,6 +1049,35 @@
             </button>
             
             <p class="register-link">New to Sona Communication? <a href="#" id="registerLink">Create an account</a></p>
+            
+            <!-- Administrative Accounts Section -->
+            <div class="admin-accounts">
+                <h3>Administrative Accounts</h3>
+                <div class="admin-account">
+                    <div class="admin-account-info">
+                        <div class="admin-account-role">Principal Account</div>
+                        <div class="admin-account-email">principal.test@sona.ac.in</div>
+                        <div class="admin-account-dept">Department: ADMINISTRATION</div>
+                    </div>
+                    <button class="admin-account-btn" onclick="fillAdminAccount('principal.test@sona.ac.in', 'SonaPrincipal@2025', 'principal')">Fill</button>
+                </div>
+                <div class="admin-account">
+                    <div class="admin-account-info">
+                        <div class="admin-account-role">HOD CSE Account</div>
+                        <div class="admin-account-email">hod.cse@sona.ac.in</div>
+                        <div class="admin-account-dept">Department: Computer Science Engineering</div>
+                    </div>
+                    <button class="admin-account-btn" onclick="fillAdminAccount('hod.cse@sona.ac.in', 'HodCSE@2025', 'hod')">Fill</button>
+                </div>
+                <div class="admin-account">
+                    <div class="admin-account-info">
+                        <div class="admin-account-role">HOD ECE Account</div>
+                        <div class="admin-account-email">hod.ece@sona.ac.in</div>
+                        <div class="admin-account-dept">Department: Electronics & Communication Engineering</div>
+                    </div>
+                    <button class="admin-account-btn" onclick="fillAdminAccount('hod.ece@sona.ac.in', 'HodECE@2025', 'hod')">Fill</button>
+                </div>
+            </div>
             
             <div class="security-notice">
                 <i class="fas fa-shield-alt" aria-hidden="true"></i>
@@ -1092,12 +1243,12 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyCf2xqZ6Xq7g0h8L6f4g7j5k4l3i2o1p0r8",
-            authDomain: "sona-college-comm-platform.firebaseapp.com",
-            projectId: "sona-college-comm-platform",
-            storageBucket: "sona-college-comm-platform.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcdef1234567890"
+            apiKey: "AIzaSyCWcis4jU3gVTWZyiIn5PF90R6nopEpAF0",
+            authDomain: "bhasha-rakshak-lite.firebaseapp.com",
+            projectId: "bhasha-rakshak-lite",
+            storageBucket: "bhasha-rakshak-lite.firebasestorage.app",
+            messagingSenderId: "996574989053",
+            appId: "1:996574989053:web:fb897ff8a7fb6182ae0c94"
         };
 
         // Initialize Firebase
@@ -1129,23 +1280,11 @@
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
+            // Check for remembered user
             checkRememberedUser();
-            setupEventListeners();
             
-            // Check for redirect result when page loads
-            auth.getRedirectResult().then((result) => {
-                if (result.credential) {
-                    // User successfully signed in
-                    const user = result.user;
-                    handleMicrosoftUser(user);
-                } else if (result.user) {
-                    // User is signed in but we need to check if they exist in Firestore
-                    handleMicrosoftUser(result.user);
-                }
-            }).catch((error) => {
-                console.error('Redirect result error:', error);
-                showNotification('Microsoft authentication failed. Please try again.', 'error');
-            });
+            // Setup event listeners
+            setupEventListeners();
             
             // Set up authentication state observer
             auth.onAuthStateChanged(user => {
@@ -1176,6 +1315,26 @@
             });
         });
 
+        // Fill admin account details
+        function fillAdminAccount(email, password, role) {
+            document.getElementById('collegeId').value = email.split('@')[0];
+            document.getElementById('password').value = password;
+            document.getElementById('role').value = role;
+            
+            // Update role badges
+            elements.roleBadges.forEach(badge => {
+                if (badge.getAttribute('data-role') === role) {
+                    badge.classList.add('active');
+                    badge.setAttribute('aria-pressed', 'true');
+                } else {
+                    badge.classList.remove('active');
+                    badge.setAttribute('aria-pressed', 'false');
+                }
+            });
+            
+            showNotification('Admin account details filled. Please click Login.', 'info');
+        }
+
         // Setup event listeners
         function setupEventListeners() {
             // Password visibility toggles
@@ -1185,6 +1344,21 @@
             // Role badge selection
             elements.roleBadges.forEach(badge => {
                 badge.addEventListener('click', () => selectRoleBadge(badge));
+            });
+
+            // Role select dropdown change
+            elements.roleSelect.addEventListener('change', () => {
+                // Update active badge based on dropdown selection
+                const selectedRole = elements.roleSelect.value;
+                elements.roleBadges.forEach(badge => {
+                    if (badge.getAttribute('data-role') === selectedRole) {
+                        badge.classList.add('active');
+                        badge.setAttribute('aria-pressed', 'true');
+                    } else {
+                        badge.classList.remove('active');
+                        badge.setAttribute('aria-pressed', 'false');
+                    }
+                });
             });
 
             // Password strength indicator
@@ -1251,6 +1425,12 @@
             badge.classList.add('active');
             badge.setAttribute('aria-pressed', 'true');
             elements.roleSelect.value = badge.getAttribute('data-role');
+            
+            // Add visual feedback
+            badge.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                badge.style.transform = '';
+            }, 100);
         }
 
         // Update password strength
@@ -1312,45 +1492,38 @@
             document.body.style.overflow = '';
         }
 
-        // Handle Microsoft authentication with redirect
+        // Handle Microsoft authentication
         function handleMicrosoftAuth(isLogin) {
             const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
             button.classList.add('btn-loading');
             
             const provider = new firebase.auth.OAuthProvider('microsoft.com');
             
-            // Use signInWithRedirect instead of signInWithPopup
-            auth.signInWithRedirect(provider)
-                .then(() => {
-                    // The redirect will happen automatically
-                    showNotification('Redirecting to Microsoft for authentication...', 'info');
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    
+                    // Check if user exists in Firestore
+                    return db.collection('users').doc(user.uid).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                // User exists, redirect based on role
+                                const userData = doc.data();
+                                redirectBasedOnRole(userData.role);
+                            } else {
+                                // User doesn't exist, show setup modal
+                                openModal(elements.microsoftSetupModal);
+                                document.getElementById('msFullName').value = user.displayName || '';
+                                document.getElementById('msEmail').value = user.email || '';
+                            }
+                        });
                 })
                 .catch((error) => {
                     console.error('Microsoft auth error:', error);
                     showNotification('Microsoft authentication failed. Please try again.', 'error');
-                    button.classList.remove('btn-loading');
-                });
-        }
-
-        // Handle Microsoft user after authentication
-        function handleMicrosoftUser(user) {
-            // Check if user exists in Firestore
-            db.collection('users').doc(user.uid).get()
-                .then(doc => {
-                    if (doc.exists) {
-                        // User exists, redirect based on role
-                        const userData = doc.data();
-                        redirectBasedOnRole(userData.role);
-                    } else {
-                        // User doesn't exist, show setup modal
-                        openModal(elements.microsoftSetupModal);
-                        document.getElementById('msFullName').value = user.displayName || '';
-                        document.getElementById('msEmail').value = user.email || '';
-                    }
                 })
-                .catch(error => {
-                    console.error('Error checking user existence:', error);
-                    showNotification('Error checking user data. Please try again.', 'error');
+                .finally(() => {
+                    button.classList.remove('btn-loading');
                 });
         }
 
@@ -1415,6 +1588,70 @@
 
             // Show loading state
             submitBtn.classList.add('btn-loading');
+            
+            // For admin accounts, use direct authentication
+            if (collegeId === 'principal.test' && role === 'principal') {
+                auth.signInWithEmailAndPassword('principal.test@sona.ac.in', password)
+                    .then(() => {
+                        showNotification(`Welcome back, Principal!`, 'success');
+                        
+                        // Remember user if checkbox is checked
+                        if (document.getElementById('rememberMe').checked) {
+                            localStorage.setItem('rememberedUser', JSON.stringify({
+                                collegeId,
+                                role
+                            }));
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Login error:', error);
+                        submitBtn.classList.remove('btn-loading');
+                        showNotification('Invalid credentials. Please try again.', 'error');
+                    });
+                return;
+            }
+            
+            if (collegeId === 'hod.cse' && role === 'hod') {
+                auth.signInWithEmailAndPassword('hod.cse@sona.ac.in', password)
+                    .then(() => {
+                        showNotification(`Welcome back, HOD CSE!`, 'success');
+                        
+                        // Remember user if checkbox is checked
+                        if (document.getElementById('rememberMe').checked) {
+                            localStorage.setItem('rememberedUser', JSON.stringify({
+                                collegeId,
+                                role
+                            }));
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Login error:', error);
+                        submitBtn.classList.remove('btn-loading');
+                        showNotification('Invalid credentials. Please try again.', 'error');
+                    });
+                return;
+            }
+            
+            if (collegeId === 'hod.ece' && role === 'hod') {
+                auth.signInWithEmailAndPassword('hod.ece@sona.ac.in', password)
+                    .then(() => {
+                        showNotification(`Welcome back, HOD ECE!`, 'success');
+                        
+                        // Remember user if checkbox is checked
+                        if (document.getElementById('rememberMe').checked) {
+                            localStorage.setItem('rememberedUser', JSON.stringify({
+                                collegeId,
+                                role
+                            }));
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Login error:', error);
+                        submitBtn.classList.remove('btn-loading');
+                        showNotification('Invalid credentials. Please try again.', 'error');
+                    });
+                return;
+            }
             
             // Query Firestore for user with this collegeId
             db.collection('users')
@@ -1578,22 +1815,25 @@
 
         // Redirect based on user role
         function redirectBasedOnRole(role) {
-            switch(role) {
-                case 'student':
-                    window.location.href = 'student.html';
-                    break;
-                case 'faculty':
-                    window.location.href = 'faculty.html';
-                    break;
-                case 'hod':
-                    window.location.href = 'hod.html';
-                    break;
-                case 'principal':
-                    window.location.href = 'principal.html';
-                    break;
-                default:
-                    window.location.href = 'dashboard.html';
-            }
+            // Add a slight delay to allow notification to be seen
+            setTimeout(() => {
+                switch(role) {
+                    case 'student':
+                        window.location.href = 'student.html';
+                        break;
+                    case 'faculty':
+                        window.location.href = 'faculty.html';
+                        break;
+                    case 'hod':
+                        window.location.href = 'hod.html';
+                        break;
+                    case 'principal':
+                        window.location.href = 'principal.html';
+                        break;
+                    default:
+                        window.location.href = 'dashboard.html';
+                }
+            }, 1000);
         }
 
         // Handle keyboard navigation
