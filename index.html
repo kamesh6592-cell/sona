@@ -1132,6 +1132,21 @@
             checkRememberedUser();
             setupEventListeners();
             
+            // Check for redirect result when page loads
+            auth.getRedirectResult().then((result) => {
+                if (result.credential) {
+                    // User successfully signed in
+                    const user = result.user;
+                    handleMicrosoftUser(user);
+                } else if (result.user) {
+                    // User is signed in but we need to check if they exist in Firestore
+                    handleMicrosoftUser(result.user);
+                }
+            }).catch((error) => {
+                console.error('Redirect result error:', error);
+                showNotification('Microsoft authentication failed. Please try again.', 'error');
+            });
+            
             // Set up authentication state observer
             auth.onAuthStateChanged(user => {
                 if (user) {
@@ -1297,38 +1312,45 @@
             document.body.style.overflow = '';
         }
 
-        // Handle Microsoft authentication
+        // Handle Microsoft authentication with redirect
         function handleMicrosoftAuth(isLogin) {
             const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
             button.classList.add('btn-loading');
             
             const provider = new firebase.auth.OAuthProvider('microsoft.com');
             
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    const user = result.user;
-                    
-                    // Check if user exists in Firestore
-                    return db.collection('users').doc(user.uid).get()
-                        .then(doc => {
-                            if (doc.exists) {
-                                // User exists, redirect based on role
-                                const userData = doc.data();
-                                redirectBasedOnRole(userData.role);
-                            } else {
-                                // User doesn't exist, show setup modal
-                                openModal(elements.microsoftSetupModal);
-                                document.getElementById('msFullName').value = user.displayName || '';
-                                document.getElementById('msEmail').value = user.email || '';
-                            }
-                        });
+            // Use signInWithRedirect instead of signInWithPopup
+            auth.signInWithRedirect(provider)
+                .then(() => {
+                    // The redirect will happen automatically
+                    showNotification('Redirecting to Microsoft for authentication...', 'info');
                 })
                 .catch((error) => {
                     console.error('Microsoft auth error:', error);
                     showNotification('Microsoft authentication failed. Please try again.', 'error');
-                })
-                .finally(() => {
                     button.classList.remove('btn-loading');
+                });
+        }
+
+        // Handle Microsoft user after authentication
+        function handleMicrosoftUser(user) {
+            // Check if user exists in Firestore
+            db.collection('users').doc(user.uid).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        // User exists, redirect based on role
+                        const userData = doc.data();
+                        redirectBasedOnRole(userData.role);
+                    } else {
+                        // User doesn't exist, show setup modal
+                        openModal(elements.microsoftSetupModal);
+                        document.getElementById('msFullName').value = user.displayName || '';
+                        document.getElementById('msEmail').value = user.email || '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking user existence:', error);
+                    showNotification('Error checking user data. Please try again.', 'error');
                 });
         }
 
