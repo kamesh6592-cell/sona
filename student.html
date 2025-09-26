@@ -260,6 +260,12 @@
             color: var(--text-secondary);
         }
         
+        .profile-details {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        
         .profile-dropdown {
             position: absolute;
             top: 100%;
@@ -796,6 +802,78 @@
         .priority-low {
             background: rgba(96, 165, 250, 0.2);
             color: var(--info);
+        }
+        
+        /* Messages List */
+        .messages-list {
+            margin-top: var(--spacing-md);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .message-item {
+            display: flex;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .message-item:last-child {
+            border-bottom: none;
+        }
+        
+        .message-item:hover {
+            background: rgba(241, 196, 15, 0.05);
+        }
+        
+        .message-item.unread {
+            background: rgba(241, 196, 15, 0.1);
+        }
+        
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: var(--spacing-md);
+            object-fit: cover;
+        }
+        
+        .message-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+        }
+        
+        .message-sender {
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+        }
+        
+        .message-time {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+        
+        .message-text {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .message-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--error);
+            margin-left: var(--spacing-md);
         }
         
         /* Right Panel */
@@ -1439,6 +1517,7 @@
                 <div class="profile-info">
                     <div class="profile-name" id="profileName">Loading...</div>
                     <div class="profile-role" id="profileRole">Student</div>
+                    <div class="profile-details" id="profileDetails">ID: - | Section: -</div>
                 </div>
                 <i class="fas fa-chevron-down"></i>
                 <div class="profile-dropdown" id="profileDropdown">
@@ -1533,6 +1612,26 @@
                             <div class="progress-bar">
                                 <div class="progress-fill" id="semesterProgressBar" style="width: 0%"></div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messages Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            Messages
+                        </h3>
+                        <div class="card-action">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="messages-list" id="messagesList">
+                            <!-- Messages will be dynamically loaded here -->
                         </div>
                     </div>
                 </div>
@@ -1749,6 +1848,7 @@
         const elements = {
             profileName: document.getElementById('profileName'),
             profileRole: document.getElementById('profileRole'),
+            profileDetails: document.getElementById('profileDetails'),
             profileAvatar: document.getElementById('profileAvatar'),
             welcomeMessage: document.getElementById('welcomeMessage'),
             gpaValue: document.getElementById('gpaValue'),
@@ -1766,6 +1866,7 @@
             skillsCount: document.getElementById('skillsCount'),
             notificationCount: document.getElementById('notificationCount'),
             assignmentsList: document.getElementById('assignmentsList'),
+            messagesList: document.getElementById('messagesList'),
             filesList: document.getElementById('filesList'),
             announcementsList: document.getElementById('announcementsList'),
             contactList: document.getElementById('contactList'),
@@ -1790,6 +1891,9 @@
                 // User is signed in
                 loadUserData(user.uid);
                 loadDashboardData(user.uid);
+                
+                // Set up real-time listeners
+                setupRealtimeListeners(user.uid);
             } else {
                 // User is signed out, redirect to login page
                 window.location.href = 'index.html';
@@ -1808,6 +1912,11 @@
                         elements.profileRole.textContent = userData.role || 'Student';
                         elements.welcomeMessage.textContent = `Welcome back, ${userData.name || 'Student'}! Here's your academic overview.`;
                         
+                        // Update student ID and section
+                        const studentId = userData.collegeId || '-';
+                        const studentSection = userData.section || '-';
+                        elements.profileDetails.textContent = `ID: ${studentId} | Section: ${studentSection}`;
+                        
                         // Update profile avatar if available
                         if (userData.photoURL) {
                             elements.profileAvatar.src = userData.photoURL;
@@ -1823,10 +1932,38 @@
                 });
         }
 
+        // Setup real-time listeners
+        function setupRealtimeListeners(userId) {
+            // Listen for new messages
+            db.collection('messages')
+                .where('receiverId', '==', userId)
+                .onSnapshot(snapshot => {
+                    loadMessages(userId);
+                    updateNotificationCount(userId);
+                });
+            
+            // Listen for new assignments
+            db.collection('assignments')
+                .where('assignedTo', '==', userId)
+                .onSnapshot(snapshot => {
+                    loadAssignments(userId);
+                });
+            
+            // Listen for new announcements
+            db.collection('announcements')
+                .where('targetRoles', 'array-contains', 'student')
+                .onSnapshot(snapshot => {
+                    loadAnnouncements(userId);
+                });
+        }
+
         // Load dashboard data
         function loadDashboardData(userId) {
             // Load academic overview
             loadAcademicOverview(userId);
+            
+            // Load messages
+            loadMessages(userId);
             
             // Load courses
             loadCourses(userId);
@@ -1853,635 +1990,919 @@
             loadAnnouncements(userId);
             
             // Load notifications
-            loadNotifications(userId);
+            updateNotificationCount(userId);
         }
 
         // Load academic overview
         function loadAcademicOverview(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
-            const gpa = '3.8';
-            const gpaChange = '0.2';
-            const semesterProgress = '68%';
+            // Get student data from Firestore
+            db.collection('users').doc(userId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        
+                        // For demo purposes, we'll use some data from the user document
+                        // In a real app, this might be stored in a separate academic records collection
+                        const gpa = userData.gpa || '3.8';
+                        const gpaChange = userData.gpaChange || '0.2';
+                        const semesterProgress = userData.semesterProgress || '68%';
+                        
+                        elements.gpaValue.textContent = gpa;
+                        elements.gpaChange.querySelector('span').textContent = `${gpaChange} from last semester`;
+                        elements.semesterProgress.textContent = semesterProgress;
+                        elements.semesterProgressBar.style.width = semesterProgress;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading academic overview:', error);
+                });
+        }
+
+        // Load messages
+        function loadMessages(userId) {
+            elements.messagesList.innerHTML = '<div class="loading-spinner"></div>';
             
-            elements.gpaValue.textContent = gpa;
-            elements.gpaChange.querySelector('span').textContent = `${gpaChange} from last semester`;
-            elements.semesterProgress.textContent = semesterProgress;
-            elements.semesterProgressBar.style.width = semesterProgress;
+            // Get messages where the current user is the receiver
+            db.collection('messages')
+                .where('receiverId', '==', userId)
+                .orderBy('timestamp', 'desc')
+                .limit(5)
+                .get()
+                .then(querySnapshot => {
+                    elements.messagesList.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        elements.messagesList.innerHTML = '<div class="text-center text-muted">No messages found</div>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach(doc => {
+                        const message = doc.data();
+                        const messageId = doc.id;
+                        
+                        // Get sender information
+                        db.collection('users').doc(message.senderId).get()
+                            .then(senderDoc => {
+                                if (senderDoc.exists) {
+                                    const senderData = senderDoc.data();
+                                    
+                                    const messageItem = document.createElement('div');
+                                    messageItem.className = `message-item ${!message.read ? 'unread' : ''}`;
+                                    messageItem.dataset.messageId = messageId;
+                                    
+                                    const avatar = document.createElement('img');
+                                    avatar.src = senderData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(senderData.name || 'User')}&background=f1c40f&color=0a192f&size=36&format=png`;
+                                    avatar.alt = 'Sender';
+                                    avatar.className = 'message-avatar';
+                                    
+                                    const content = document.createElement('div');
+                                    content.className = 'message-content';
+                                    
+                                    const header = document.createElement('div');
+                                    header.className = 'message-header';
+                                    
+                                    const sender = document.createElement('div');
+                                    sender.className = 'message-sender';
+                                    sender.textContent = senderData.name || 'Unknown';
+                                    
+                                    const time = document.createElement('div');
+                                    time.className = 'message-time';
+                                    
+                                    // Format timestamp
+                                    if (message.timestamp) {
+                                        const date = message.timestamp.toDate();
+                                        time.textContent = formatTimeAgo(date);
+                                    } else {
+                                        time.textContent = 'Unknown time';
+                                    }
+                                    
+                                    header.appendChild(sender);
+                                    header.appendChild(time);
+                                    
+                                    const text = document.createElement('div');
+                                    text.className = 'message-text';
+                                    text.textContent = message.content || 'No content';
+                                    
+                                    content.appendChild(header);
+                                    content.appendChild(text);
+                                    
+                                    messageItem.appendChild(avatar);
+                                    messageItem.appendChild(content);
+                                    
+                                    if (!message.read) {
+                                        const indicator = document.createElement('div');
+                                        indicator.className = 'message-indicator';
+                                        messageItem.appendChild(indicator);
+                                    }
+                                    
+                                    elements.messagesList.appendChild(messageItem);
+                                    
+                                    // Add click event to mark as read
+                                    messageItem.addEventListener('click', () => {
+                                        markMessageAsRead(messageId);
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error getting sender data:', error);
+                            });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading messages:', error);
+                    elements.messagesList.innerHTML = '<div class="text-center text-error">Error loading messages</div>';
+                });
+        }
+
+        // Mark message as read
+        function markMessageAsRead(messageId) {
+            db.collection('messages').doc(messageId).update({
+                read: true
+            })
+            .then(() => {
+                // Reload messages
+                const userId = auth.currentUser.uid;
+                loadMessages(userId);
+                updateNotificationCount(userId);
+            })
+            .catch(error => {
+                console.error('Error marking message as read:', error);
+            });
+        }
+
+        // Update notification count
+        function updateNotificationCount(userId) {
+            db.collection('messages')
+                .where('receiverId', '==', userId)
+                .where('read', '==', false)
+                .get()
+                .then(querySnapshot => {
+                    elements.notificationCount.textContent = querySnapshot.size;
+                })
+                .catch(error => {
+                    console.error('Error updating notification count:', error);
+                });
         }
 
         // Load courses
         function loadCourses(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
-            const courses = 5;
-            
-            elements.coursesCount.textContent = courses;
-            
-            // Initialize courses chart
-            const coursesCtx = document.getElementById('coursesChart').getContext('2d');
-            const coursesChart = new Chart(coursesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'In Progress', 'Not Started'],
-                    datasets: [{
-                        data: [2, 3, 1],
-                        backgroundColor: [
-                            'rgba(74, 222, 128, 0.8)',
-                            'rgba(241, 196, 15, 0.8)',
-                            'rgba(100, 116, 139, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(74, 222, 128, 1)',
-                            'rgba(241, 196, 15, 1)',
-                            'rgba(100, 116, 139, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: '#a8b2d1',
-                                font: {
-                                    size: 11
-                                },
-                                padding: 10
+            // Get student's courses
+            db.collection('enrollments')
+                .where('studentId', '==', userId)
+                .get()
+                .then(querySnapshot => {
+                    const courses = [];
+                    const completedCourses = [];
+                    const inProgressCourses = [];
+                    const notStartedCourses = [];
+                    
+                    querySnapshot.forEach(doc => {
+                        const enrollment = doc.data();
+                        courses.push(enrollment);
+                        
+                        if (enrollment.status === 'completed') {
+                            completedCourses.push(enrollment);
+                        } else if (enrollment.status === 'in-progress') {
+                            inProgressCourses.push(enrollment);
+                        } else {
+                            notStartedCourses.push(enrollment);
+                        }
+                    });
+                    
+                    elements.coursesCount.textContent = courses.length;
+                    
+                    // Initialize courses chart
+                    const coursesCtx = document.getElementById('coursesChart').getContext('2d');
+                    const coursesChart = new Chart(coursesCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Completed', 'In Progress', 'Not Started'],
+                            datasets: [{
+                                data: [
+                                    completedCourses.length,
+                                    inProgressCourses.length,
+                                    notStartedCourses.length
+                                ],
+                                backgroundColor: [
+                                    'rgba(74, 222, 128, 0.8)',
+                                    'rgba(241, 196, 15, 0.8)',
+                                    'rgba(100, 116, 139, 0.8)'
+                                ],
+                                borderColor: [
+                                    'rgba(74, 222, 128, 1)',
+                                    'rgba(241, 196, 15, 1)',
+                                    'rgba(100, 116, 139, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        color: '#a8b2d1',
+                                        font: {
+                                            size: 11
+                                        },
+                                        padding: 10
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-            });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading courses:', error);
+                });
         }
 
         // Load assignments
         function loadAssignments(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
-            const assignments = [
-                { id: 1, title: 'CS101 - Programming Project', dueDate: 'Due in 2 days', priority: 'high', completed: false },
-                { id: 2, title: 'MATH201 - Problem Set 5', dueDate: 'Due in 5 days', priority: 'medium', completed: false },
-                { id: 3, title: 'ENG102 - Essay Draft', dueDate: 'Completed', priority: 'low', completed: true }
-            ];
+            elements.assignmentsList.innerHTML = '<div class="loading-spinner"></div>';
             
-            elements.assignmentsList.innerHTML = '';
-            
-            assignments.forEach(assignment => {
-                const taskItem = document.createElement('div');
-                taskItem.className = 'task-item';
-                
-                const checkbox = document.createElement('div');
-                checkbox.className = `task-checkbox ${assignment.completed ? 'checked' : ''}`;
-                
-                const content = document.createElement('div');
-                content.className = 'task-content';
-                
-                const title = document.createElement('div');
-                title.className = 'task-title';
-                title.textContent = assignment.title;
-                
-                const meta = document.createElement('div');
-                meta.className = 'task-meta';
-                meta.textContent = assignment.dueDate;
-                
-                const priority = document.createElement('div');
-                priority.className = `task-priority priority-${assignment.priority}`;
-                priority.textContent = assignment.priority.charAt(0).toUpperCase() + assignment.priority.slice(1);
-                
-                content.appendChild(title);
-                content.appendChild(meta);
-                
-                taskItem.appendChild(checkbox);
-                taskItem.appendChild(content);
-                taskItem.appendChild(priority);
-                
-                elements.assignmentsList.appendChild(taskItem);
-                
-                // Add event listener to checkbox
-                checkbox.addEventListener('click', () => {
-                    checkbox.classList.toggle('checked');
-                    // In a real app, this would update the assignment status in Firestore
+            // Get assignments assigned to the student
+            db.collection('assignments')
+                .where('assignedTo', '==', userId)
+                .orderBy('dueDate', 'asc')
+                .get()
+                .then(querySnapshot => {
+                    elements.assignmentsList.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        elements.assignmentsList.innerHTML = '<div class="text-center text-muted">No assignments found</div>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach(doc => {
+                        const assignment = doc.data();
+                        const assignmentId = doc.id;
+                        
+                        const taskItem = document.createElement('div');
+                        taskItem.className = 'task-item';
+                        
+                        const checkbox = document.createElement('div');
+                        checkbox.className = `task-checkbox ${assignment.completed ? 'checked' : ''}`;
+                        
+                        const content = document.createElement('div');
+                        content.className = 'task-content';
+                        
+                        const title = document.createElement('div');
+                        title.className = 'task-title';
+                        title.textContent = assignment.title || 'Untitled Assignment';
+                        
+                        const meta = document.createElement('div');
+                        meta.className = 'task-meta';
+                        
+                        // Format due date
+                        if (assignment.dueDate) {
+                            const dueDate = assignment.dueDate.toDate();
+                            const now = new Date();
+                            const diffTime = dueDate - now;
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            if (diffDays < 0) {
+                                meta.textContent = 'Overdue';
+                            } else if (diffDays === 0) {
+                                meta.textContent = 'Due today';
+                            } else if (diffDays === 1) {
+                                meta.textContent = 'Due tomorrow';
+                            } else {
+                                meta.textContent = `Due in ${diffDays} days`;
+                            }
+                        } else {
+                            meta.textContent = 'No due date';
+                        }
+                        
+                        const priority = document.createElement('div');
+                        priority.className = `task-priority priority-${assignment.priority || 'medium'}`;
+                        priority.textContent = (assignment.priority || 'medium').charAt(0).toUpperCase() + (assignment.priority || 'medium').slice(1);
+                        
+                        content.appendChild(title);
+                        content.appendChild(meta);
+                        
+                        taskItem.appendChild(checkbox);
+                        taskItem.appendChild(content);
+                        taskItem.appendChild(priority);
+                        
+                        elements.assignmentsList.appendChild(taskItem);
+                        
+                        // Add event listener to checkbox
+                        checkbox.addEventListener('click', () => {
+                            const newStatus = !assignment.completed;
+                            
+                            // Update assignment in Firestore
+                            db.collection('assignments').doc(assignmentId).update({
+                                completed: newStatus
+                            })
+                            .then(() => {
+                                checkbox.classList.toggle('checked');
+                            })
+                            .catch(error => {
+                                console.error('Error updating assignment:', error);
+                            });
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading assignments:', error);
+                    elements.assignmentsList.innerHTML = '<div class="text-center text-error">Error loading assignments</div>';
                 });
-            });
         }
 
         // Load study time
         function loadStudyTime(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
-            const studyTime = '24h';
-            const studyTimeChange = '3h';
+            // Get study time records for the current week
+            const now = new Date();
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay());
+            startOfWeek.setHours(0, 0, 0, 0);
             
-            elements.studyTimeValue.textContent = studyTime;
-            elements.studyTimeChange.querySelector('span').textContent = `${studyTimeChange} from last week`;
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 7);
             
-            // Initialize study time chart
-            const studyTimeCtx = document.getElementById('studyTimeChart').getContext('2d');
-            const studyTimeChart = new Chart(studyTimeCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [{
-                        label: 'Hours',
-                        data: [3, 4, 2, 5, 3, 4, 3],
-                        backgroundColor: 'rgba(241, 196, 15, 0.6)',
-                        borderColor: 'rgba(241, 196, 15, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#a8b2d1',
-                                font: {
-                                    size: 10
-                                }
+            db.collection('studyTime')
+                .where('studentId', '==', userId)
+                .where('date', '>=', startOfWeek)
+                .where('date', '<', endOfWeek)
+                .get()
+                .then(querySnapshot => {
+                    let totalMinutes = 0;
+                    const dailyMinutes = [0, 0, 0, 0, 0, 0, 0]; // Mon-Sun
+                    
+                    querySnapshot.forEach(doc => {
+                        const studyRecord = doc.data();
+                        totalMinutes += studyRecord.minutes || 0;
+                        
+                        if (studyRecord.date) {
+                            const dayOfWeek = studyRecord.date.toDate().getDay();
+                            if (dayOfWeek >= 0 && dayOfWeek <= 6) {
+                                dailyMinutes[dayOfWeek] += studyRecord.minutes || 0;
                             }
+                        }
+                    });
+                    
+                    const totalHours = Math.round(totalMinutes / 60 * 10) / 10; // Round to 1 decimal place
+                    elements.studyTimeValue.textContent = `${totalHours}h`;
+                    
+                    // For demo purposes, we'll use a static change value
+                    // In a real app, this would compare with previous week
+                    elements.studyTimeChange.querySelector('span').textContent = '3h from last week';
+                    
+                    // Initialize study time chart
+                    const studyTimeCtx = document.getElementById('studyTimeChart').getContext('2d');
+                    const studyTimeChart = new Chart(studyTimeCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                            datasets: [{
+                                label: 'Hours',
+                                data: dailyMinutes.map(minutes => Math.round(minutes / 60 * 10) / 10),
+                                backgroundColor: 'rgba(241, 196, 15, 0.6)',
+                                borderColor: 'rgba(241, 196, 15, 1)',
+                                borderWidth: 1
+                            }]
                         },
-                        x: {
-                            grid: {
-                                display: false
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#a8b2d1',
+                                        font: {
+                                            size: 10
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        color: '#a8b2d1',
+                                        font: {
+                                            size: 10
+                                        }
+                                    }
+                                }
                             },
-                            ticks: {
-                                color: '#a8b2d1',
-                                font: {
-                                    size: 10
+                            plugins: {
+                                legend: {
+                                    display: false
                                 }
                             }
                         }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading study time:', error);
+                });
         }
 
         // Load resources
         function loadResources(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
-            const resources = 42;
-            const courseMaterialsProgress = '78%';
-            const practiceTestsProgress = '45%';
-            
-            elements.resourcesCount.textContent = resources;
-            elements.courseMaterialsProgress.textContent = courseMaterialsProgress;
-            elements.courseMaterialsProgressBar.style.width = courseMaterialsProgress;
-            elements.practiceTestsProgress.textContent = practiceTestsProgress;
-            elements.practiceTestsProgressBar.style.width = practiceTestsProgress;
+            // Get student's resources
+            db.collection('resources')
+                .where('studentId', '==', userId)
+                .get()
+                .then(querySnapshot => {
+                    let courseMaterialsCount = 0;
+                    let courseMaterialsCompleted = 0;
+                    let practiceTestsCount = 0;
+                    let practiceTestsCompleted = 0;
+                    
+                    querySnapshot.forEach(doc => {
+                        const resource = doc.data();
+                        
+                        if (resource.type === 'course-material') {
+                            courseMaterialsCount++;
+                            if (resource.completed) {
+                                courseMaterialsCompleted++;
+                            }
+                        } else if (resource.type === 'practice-test') {
+                            practiceTestsCount++;
+                            if (resource.completed) {
+                                practiceTestsCompleted++;
+                            }
+                        }
+                    });
+                    
+                    const totalResources = courseMaterialsCount + practiceTestsCount;
+                    elements.resourcesCount.textContent = totalResources;
+                    
+                    const courseMaterialsProgress = courseMaterialsCount > 0 
+                        ? Math.round((courseMaterialsCompleted / courseMaterialsCount) * 100) + '%'
+                        : '0%';
+                    
+                    const practiceTestsProgress = practiceTestsCount > 0
+                        ? Math.round((practiceTestsCompleted / practiceTestsCount) * 100) + '%'
+                        : '0%';
+                    
+                    elements.courseMaterialsProgress.textContent = courseMaterialsProgress;
+                    elements.courseMaterialsProgressBar.style.width = courseMaterialsProgress;
+                    elements.practiceTestsProgress.textContent = practiceTestsProgress;
+                    elements.practiceTestsProgressBar.style.width = practiceTestsProgress;
+                })
+                .catch(error => {
+                    console.error('Error loading resources:', error);
+                });
         }
 
         // Load skills
         function loadSkills(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
-            const skills = 12;
-            
-            elements.skillsCount.textContent = skills;
-            
-            // Initialize skills chart
-            const skillsCtx = document.getElementById('skillsChart').getContext('2d');
-            const skillsChart = new Chart(skillsCtx, {
-                type: 'radar',
-                data: {
-                    labels: ['Programming', 'Math', 'Writing', 'Research', 'Presentation', 'Teamwork'],
-                    datasets: [{
-                        label: 'Current Level',
-                        data: [85, 70, 65, 75, 60, 80],
-                        backgroundColor: 'rgba(241, 196, 15, 0.2)',
-                        borderColor: 'rgba(241, 196, 15, 1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: 'rgba(241, 196, 15, 1)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            pointLabels: {
-                                color: '#a8b2d1',
-                                font: {
-                                    size: 10
+            // Get student's skills
+            db.collection('skills')
+                .where('studentId', '==', userId)
+                .get()
+                .then(querySnapshot => {
+                    const skills = [];
+                    const skillLevels = {
+                        'Programming': 0,
+                        'Math': 0,
+                        'Writing': 0,
+                        'Research': 0,
+                        'Presentation': 0,
+                        'Teamwork': 0
+                    };
+                    
+                    querySnapshot.forEach(doc => {
+                        const skill = doc.data();
+                        skills.push(skill);
+                        
+                        if (skillLevels.hasOwnProperty(skill.name)) {
+                            skillLevels[skill.name] = skill.level || 0;
+                        }
+                    });
+                    
+                    elements.skillsCount.textContent = skills.length;
+                    
+                    // Initialize skills chart
+                    const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+                    const skillsChart = new Chart(skillsCtx, {
+                        type: 'radar',
+                        data: {
+                            labels: Object.keys(skillLevels),
+                            datasets: [{
+                                label: 'Current Level',
+                                data: Object.values(skillLevels),
+                                backgroundColor: 'rgba(241, 196, 15, 0.2)',
+                                borderColor: 'rgba(241, 196, 15, 1)',
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgba(241, 196, 15, 1)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    angleLines: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    },
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    },
+                                    pointLabels: {
+                                        color: '#a8b2d1',
+                                        font: {
+                                            size: 10
+                                        }
+                                    },
+                                    ticks: {
+                                        display: false,
+                                        backdropColor: 'transparent'
+                                    }
                                 }
                             },
-                            ticks: {
-                                display: false,
-                                backdropColor: 'transparent'
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
                             }
                         }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading skills:', error);
+                });
         }
 
         // Load contacts
         function loadContacts(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
+            // Get student's contacts
+            db.collection('contacts')
+                .where('studentId', '==', userId)
+                .get()
+                .then(querySnapshot => {
+                    const classes = [];
+                    const faculty = [];
+                    const studyGroups = [];
+                    
+                    querySnapshot.forEach(doc => {
+                        const contact = doc.data();
+                        
+                        if (contact.type === 'class') {
+                            classes.push(contact);
+                        } else if (contact.type === 'faculty') {
+                            faculty.push(contact);
+                        } else if (contact.type === 'study-group') {
+                            studyGroups.push(contact);
+                        }
+                    });
+                    
+                    // Clear existing contacts
+                    const existingCategories = elements.contactList.querySelectorAll('.contact-category');
+                    existingCategories.forEach(category => {
+                        const nextSibling = category.nextElementSibling;
+                        while (nextSibling && !nextSibling.classList.contains('contact-category')) {
+                            const toRemove = nextSibling;
+                            category.parentNode.removeChild(toRemove);
+                        }
+                    });
+                    
+                    // Add classes
+                    const classesCategory = document.createElement('div');
+                    classesCategory.className = 'contact-category';
+                    classesCategory.textContent = 'Classes';
+                    elements.contactList.appendChild(classesCategory);
+                    
+                    classes.forEach(classItem => {
+                        const contactItem = createContactItem(classItem, true);
+                        elements.contactList.appendChild(contactItem);
+                    });
+                    
+                    // Add faculty
+                    const facultyCategory = document.createElement('div');
+                    facultyCategory.className = 'contact-category';
+                    facultyCategory.textContent = 'Faculty';
+                    elements.contactList.appendChild(facultyCategory);
+                    
+                    faculty.forEach(facultyMember => {
+                        const contactItem = createContactItem(facultyMember, false);
+                        elements.contactList.appendChild(contactItem);
+                    });
+                    
+                    // Add study groups
+                    const studyGroupsCategory = document.createElement('div');
+                    studyGroupsCategory.className = 'contact-category';
+                    studyGroupsCategory.textContent = 'Study Groups';
+                    elements.contactList.appendChild(studyGroupsCategory);
+                    
+                    studyGroups.forEach(group => {
+                        const contactItem = createContactItem(group, false);
+                        elements.contactList.appendChild(contactItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading contacts:', error);
+                });
+        }
+
+        // Create contact item element
+        function createContactItem(contact, showBadge) {
+            const contactItem = document.createElement('div');
+            contactItem.className = 'contact-item';
             
-            // Clear existing contacts
-            const existingCategories = elements.contactList.querySelectorAll('.contact-category');
-            existingCategories.forEach(category => {
-                const nextSibling = category.nextElementSibling;
-                while (nextSibling && !nextSibling.classList.contains('contact-category')) {
-                    const toRemove = nextSibling;
-                    category.parentNode.removeChild(toRemove);
+            const avatar = document.createElement('img');
+            avatar.src = contact.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'Contact')}&background=f1c40f&color=0a192f&size=44&format=png`;
+            avatar.alt = 'Contact';
+            avatar.className = 'contact-avatar';
+            
+            const info = document.createElement('div');
+            info.className = 'contact-info';
+            
+            const name = document.createElement('div');
+            name.className = 'contact-name';
+            name.textContent = contact.name || 'Unknown';
+            
+            const status = document.createElement('div');
+            status.className = 'contact-status';
+            
+            const statusDot = document.createElement('span');
+            statusDot.className = `status-dot status-${contact.online ? 'online' : 'offline'}`;
+            
+            const statusText = document.createElement('span');
+            statusText.textContent = contact.online ? 'Online' : 'Offline';
+            
+            status.appendChild(statusDot);
+            status.appendChild(statusText);
+            
+            info.appendChild(name);
+            info.appendChild(status);
+            
+            contactItem.appendChild(avatar);
+            contactItem.appendChild(info);
+            
+            if (showBadge && contact.unreadCount && contact.unreadCount > 0) {
+                const badge = document.createElement('span');
+                badge.className = 'contact-badge';
+                badge.textContent = contact.unreadCount;
+                contactItem.appendChild(badge);
+            }
+            
+            // Add event listener
+            contactItem.addEventListener('click', () => {
+                document.querySelectorAll('.contact-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                contactItem.classList.add('active');
+                
+                // Load messages for this contact
+                if (contact.type === 'class' || contact.type === 'faculty') {
+                    loadMessagesForContact(contact.id);
                 }
             });
             
-            // Add classes
-            const classesCategory = document.createElement('div');
-            classesCategory.className = 'contact-category';
-            classesCategory.textContent = 'Classes';
-            elements.contactList.appendChild(classesCategory);
-            
-            const classes = [
-                { id: 1, name: 'CS101 - Intro to Programming', online: 24, time: '2:45 PM', unread: 3, active: true },
-                { id: 2, name: 'MATH201 - Calculus II', online: 18, time: 'Yesterday', unread: 0, active: false }
-            ];
-            
-            classes.forEach(classItem => {
-                const contactItem = document.createElement('div');
-                contactItem.className = `contact-item ${classItem.active ? 'active' : ''}`;
-                
-                const avatar = document.createElement('img');
-                avatar.src = `https://randomuser.me/api/portraits/${classItem.id % 2 === 0 ? 'men' : 'women'}/${classItem.id * 10}.jpg`;
-                avatar.alt = 'Class';
-                avatar.className = 'contact-avatar';
-                
-                const info = document.createElement('div');
-                info.className = 'contact-info';
-                
-                const name = document.createElement('div');
-                name.className = 'contact-name';
-                name.textContent = classItem.name;
-                
-                const status = document.createElement('div');
-                status.className = 'contact-status';
-                
-                const statusDot = document.createElement('span');
-                statusDot.className = 'status-dot status-online';
-                
-                const statusText = document.createElement('span');
-                statusText.textContent = `${classItem.online} online`;
-                
-                status.appendChild(statusDot);
-                status.appendChild(statusText);
-                
-                info.appendChild(name);
-                info.appendChild(status);
-                
-                const time = document.createElement('div');
-                time.className = 'contact-time';
-                time.textContent = classItem.time;
-                
-                contactItem.appendChild(avatar);
-                contactItem.appendChild(info);
-                contactItem.appendChild(time);
-                
-                if (classItem.unread > 0) {
-                    const badge = document.createElement('span');
-                    badge.className = 'contact-badge';
-                    badge.textContent = classItem.unread;
-                    contactItem.appendChild(badge);
-                }
-                
-                elements.contactList.appendChild(contactItem);
-                
-                // Add event listener
-                contactItem.addEventListener('click', () => {
-                    document.querySelectorAll('.contact-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    contactItem.classList.add('active');
-                });
-            });
-            
-            // Add faculty
-            const facultyCategory = document.createElement('div');
-            facultyCategory.className = 'contact-category';
-            facultyCategory.textContent = 'Faculty';
-            elements.contactList.appendChild(facultyCategory);
-            
-            const faculty = [
-                { id: 3, name: 'Dr. Sarah Williams', status: 'Available', online: true },
-                { id: 4, name: 'Prof. Michael Chen', status: 'In a meeting', online: false }
-            ];
-            
-            faculty.forEach(facultyMember => {
-                const contactItem = document.createElement('div');
-                contactItem.className = 'contact-item';
-                
-                const avatar = document.createElement('img');
-                avatar.src = `https://randomuser.me/api/portraits/${facultyMember.id % 2 === 0 ? 'men' : 'women'}/${facultyMember.id * 10}.jpg`;
-                avatar.alt = 'Faculty';
-                avatar.className = 'contact-avatar';
-                
-                const info = document.createElement('div');
-                info.className = 'contact-info';
-                
-                const name = document.createElement('div');
-                name.className = 'contact-name';
-                name.textContent = facultyMember.name;
-                
-                const status = document.createElement('div');
-                status.className = 'contact-status';
-                
-                const statusDot = document.createElement('span');
-                statusDot.className = `status-dot status-${facultyMember.online ? 'online' : 'away'}`;
-                
-                const statusText = document.createElement('span');
-                statusText.textContent = facultyMember.status;
-                
-                status.appendChild(statusDot);
-                status.appendChild(statusText);
-                
-                info.appendChild(name);
-                info.appendChild(status);
-                
-                contactItem.appendChild(avatar);
-                contactItem.appendChild(info);
-                
-                elements.contactList.appendChild(contactItem);
-                
-                // Add event listener
-                contactItem.addEventListener('click', () => {
-                    document.querySelectorAll('.contact-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    contactItem.classList.add('active');
-                });
-            });
-            
-            // Add study groups
-            const studyGroupsCategory = document.createElement('div');
-            studyGroupsCategory.className = 'contact-category';
-            studyGroupsCategory.textContent = 'Study Groups';
-            elements.contactList.appendChild(studyGroupsCategory);
-            
-            const studyGroups = [
-                { id: 5, name: 'Physics Study Group', online: 5, time: '1:30 PM' }
-            ];
-            
-            studyGroups.forEach(group => {
-                const contactItem = document.createElement('div');
-                contactItem.className = 'contact-item';
-                
-                const avatar = document.createElement('img');
-                avatar.src = `https://randomuser.me/api/portraits/${group.id % 2 === 0 ? 'men' : 'women'}/${group.id * 10}.jpg`;
-                avatar.alt = 'Group';
-                avatar.className = 'contact-avatar';
-                
-                const info = document.createElement('div');
-                info.className = 'contact-info';
-                
-                const name = document.createElement('div');
-                name.className = 'contact-name';
-                name.textContent = group.name;
-                
-                const status = document.createElement('div');
-                status.className = 'contact-status';
-                
-                const statusDot = document.createElement('span');
-                statusDot.className = 'status-dot status-online';
-                
-                const statusText = document.createElement('span');
-                statusText.textContent = `${group.online} online`;
-                
-                status.appendChild(statusDot);
-                status.appendChild(statusText);
-                
-                info.appendChild(name);
-                info.appendChild(status);
-                
-                const time = document.createElement('div');
-                time.className = 'contact-time';
-                time.textContent = group.time;
-                
-                contactItem.appendChild(avatar);
-                contactItem.appendChild(info);
-                contactItem.appendChild(time);
-                
-                elements.contactList.appendChild(contactItem);
-                
-                // Add event listener
-                contactItem.addEventListener('click', () => {
-                    document.querySelectorAll('.contact-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    contactItem.classList.add('active');
-                });
-            });
+            return contactItem;
+        }
+
+        // Load messages for a specific contact
+        function loadMessagesForContact(contactId) {
+            // This would open a chat interface with the contact
+            // For now, we'll just log to console
+            console.log('Loading messages for contact:', contactId);
         }
 
         // Load files
         function loadFiles(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
-            const files = [
-                { id: 1, name: 'Lecture_Notes_Week5.pdf', size: '2.4 MB', date: 'Today', type: 'pdf' },
-                { id: 2, name: 'Assignment_2_Template.docx', size: '1.1 MB', date: 'Yesterday', type: 'doc' },
-                { id: 3, name: 'Class_Diagram.png', size: '856 KB', date: 'Oct 12', type: 'img' },
-                { id: 4, name: 'Study_Guide_Midterm.pdf', size: '3.7 MB', date: 'Oct 10', type: 'pdf' }
-            ];
+            elements.filesList.innerHTML = '<div class="loading-spinner"></div>';
             
-            elements.filesList.innerHTML = '';
-            
-            files.forEach(file => {
-                const fileCard = document.createElement('div');
-                fileCard.className = 'file-card';
-                
-                const icon = document.createElement('div');
-                icon.className = `file-icon ${file.type}`;
-                
-                const iconInner = document.createElement('i');
-                if (file.type === 'pdf') {
-                    iconInner.className = 'fas fa-file-pdf';
-                } else if (file.type === 'doc') {
-                    iconInner.className = 'fas fa-file-word';
-                } else if (file.type === 'img') {
-                    iconInner.className = 'fas fa-file-image';
-                }
-                
-                icon.appendChild(iconInner);
-                
-                const info = document.createElement('div');
-                info.className = 'file-info';
-                
-                const name = document.createElement('div');
-                name.className = 'file-name';
-                name.textContent = file.name;
-                
-                const meta = document.createElement('div');
-                meta.className = 'file-meta';
-                
-                const size = document.createElement('span');
-                size.textContent = file.size;
-                
-                const date = document.createElement('span');
-                date.textContent = file.date;
-                
-                meta.appendChild(size);
-                meta.appendChild(date);
-                
-                info.appendChild(name);
-                info.appendChild(meta);
-                
-                const actions = document.createElement('div');
-                actions.className = 'file-actions';
-                
-                const download = document.createElement('div');
-                download.className = 'file-action tooltip';
-                download.setAttribute('data-tooltip', 'Download');
-                
-                const downloadIcon = document.createElement('i');
-                downloadIcon.className = 'fas fa-download';
-                
-                download.appendChild(downloadIcon);
-                
-                const share = document.createElement('div');
-                share.className = 'file-action tooltip';
-                share.setAttribute('data-tooltip', 'Share');
-                
-                const shareIcon = document.createElement('i');
-                shareIcon.className = 'fas fa-share-alt';
-                
-                share.appendChild(shareIcon);
-                
-                actions.appendChild(download);
-                actions.appendChild(share);
-                
-                fileCard.appendChild(icon);
-                fileCard.appendChild(info);
-                fileCard.appendChild(actions);
-                
-                elements.filesList.appendChild(fileCard);
-                
-                // Add event listeners
-                download.addEventListener('click', () => {
-                    // Simulate download
-                    downloadIcon.classList.remove('fa-download');
-                    downloadIcon.classList.add('fa-spinner', 'fa-spin');
+            // Get student's files
+            db.collection('files')
+                .where('uploadedBy', '==', userId)
+                .orderBy('uploadedAt', 'desc')
+                .get()
+                .then(querySnapshot => {
+                    elements.filesList.innerHTML = '';
                     
-                    setTimeout(() => {
-                        downloadIcon.classList.remove('fa-spinner', 'fa-spin');
-                        downloadIcon.classList.add('fa-check');
+                    if (querySnapshot.empty) {
+                        elements.filesList.innerHTML = '<div class="text-center text-muted">No files found</div>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach(doc => {
+                        const file = doc.data();
+                        const fileId = doc.id;
                         
-                        setTimeout(() => {
-                            downloadIcon.classList.remove('fa-check');
-                            downloadIcon.classList.add('fa-download');
-                        }, 2000);
-                    }, 1500);
+                        const fileCard = document.createElement('div');
+                        fileCard.className = 'file-card';
+                        
+                        const icon = document.createElement('div');
+                        icon.className = `file-icon ${file.type || 'doc'}`;
+                        
+                        const iconInner = document.createElement('i');
+                        if (file.type === 'pdf') {
+                            iconInner.className = 'fas fa-file-pdf';
+                        } else if (file.type === 'doc') {
+                            iconInner.className = 'fas fa-file-word';
+                        } else if (file.type === 'img') {
+                            iconInner.className = 'fas fa-file-image';
+                        } else {
+                            iconInner.className = 'fas fa-file';
+                        }
+                        
+                        icon.appendChild(iconInner);
+                        
+                        const info = document.createElement('div');
+                        info.className = 'file-info';
+                        
+                        const name = document.createElement('div');
+                        name.className = 'file-name';
+                        name.textContent = file.name || 'Unnamed File';
+                        
+                        const meta = document.createElement('div');
+                        meta.className = 'file-meta';
+                        
+                        const size = document.createElement('span');
+                        size.textContent = formatFileSize(file.size || 0);
+                        
+                        const date = document.createElement('span');
+                        date.textContent = file.uploadedAt ? formatDate(file.uploadedAt.toDate()) : 'Unknown date';
+                        
+                        meta.appendChild(size);
+                        meta.appendChild(date);
+                        
+                        info.appendChild(name);
+                        info.appendChild(meta);
+                        
+                        const actions = document.createElement('div');
+                        actions.className = 'file-actions';
+                        
+                        const download = document.createElement('div');
+                        download.className = 'file-action tooltip';
+                        download.setAttribute('data-tooltip', 'Download');
+                        
+                        const downloadIcon = document.createElement('i');
+                        downloadIcon.className = 'fas fa-download';
+                        
+                        download.appendChild(downloadIcon);
+                        
+                        const share = document.createElement('div');
+                        share.className = 'file-action tooltip';
+                        share.setAttribute('data-tooltip', 'Share');
+                        
+                        const shareIcon = document.createElement('i');
+                        shareIcon.className = 'fas fa-share-alt';
+                        
+                        share.appendChild(shareIcon);
+                        
+                        actions.appendChild(download);
+                        actions.appendChild(share);
+                        
+                        fileCard.appendChild(icon);
+                        fileCard.appendChild(info);
+                        fileCard.appendChild(actions);
+                        
+                        elements.filesList.appendChild(fileCard);
+                        
+                        // Add event listeners
+                        download.addEventListener('click', () => {
+                            // Simulate download
+                            downloadIcon.classList.remove('fa-download');
+                            downloadIcon.classList.add('fa-spinner', 'fa-spin');
+                            
+                            setTimeout(() => {
+                                downloadIcon.classList.remove('fa-spinner', 'fa-spin');
+                                downloadIcon.classList.add('fa-check');
+                                
+                                setTimeout(() => {
+                                    downloadIcon.classList.remove('fa-check');
+                                    downloadIcon.classList.add('fa-download');
+                                }, 2000);
+                            }, 1500);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading files:', error);
+                    elements.filesList.innerHTML = '<div class="text-center text-error">Error loading files</div>';
                 });
-            });
         }
 
         // Load announcements
         function loadAnnouncements(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
-            const announcements = [
-                { 
-                    id: 1, 
-                    title: 'Midterm Exam Schedule', 
-                    date: 'Oct 15, 2023', 
-                    text: 'The midterm exam for CS101 will be held on October 25th from 2:00 PM to 4:00 PM in Room 205. Please arrive 15 minutes early.',
-                    urgent: true,
-                    actions: ['Read More', 'Set Reminder']
-                },
-                { 
-                    id: 2, 
-                    title: 'New Study Resources', 
-                    date: 'Oct 10, 2023', 
-                    text: 'Additional practice problems and video tutorials have been added to the course materials section.',
-                    urgent: false,
-                    actions: ['View Resources']
-                },
-                { 
-                    id: 3, 
-                    title: 'Office Hours Update', 
-                    date: 'Oct 5, 2023', 
-                    text: 'Dr. Williams\' office hours have been changed to Tuesdays and Thursdays from 3:00 PM to 5:00 PM.',
-                    urgent: false,
-                    actions: ['Add to Calendar']
-                }
-            ];
+            elements.announcementsList.innerHTML = '<div class="loading-spinner"></div>';
             
-            elements.announcementsList.innerHTML = '';
-            
-            announcements.forEach(announcement => {
-                const announcementCard = document.createElement('div');
-                announcementCard.className = `announcement-card ${announcement.urgent ? 'urgent' : ''}`;
-                
-                const header = document.createElement('div');
-                header.className = 'announcement-header';
-                
-                const title = document.createElement('div');
-                title.className = 'announcement-title';
-                title.textContent = announcement.title;
-                
-                const date = document.createElement('div');
-                date.className = 'announcement-date';
-                date.textContent = announcement.date;
-                
-                header.appendChild(title);
-                header.appendChild(date);
-                
-                const text = document.createElement('div');
-                text.className = 'announcement-text';
-                text.textContent = announcement.text;
-                
-                const actions = document.createElement('div');
-                actions.className = 'announcement-actions';
-                
-                announcement.actions.forEach(actionText => {
-                    const button = document.createElement('button');
-                    button.className = 'announcement-btn';
-                    button.textContent = actionText;
-                    actions.appendChild(button);
+            // Get announcements targeted at students
+            db.collection('announcements')
+                .where('targetRoles', 'array-contains', 'student')
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then(querySnapshot => {
+                    elements.announcementsList.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        elements.announcementsList.innerHTML = '<div class="text-center text-muted">No announcements found</div>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach(doc => {
+                        const announcement = doc.data();
+                        
+                        const announcementCard = document.createElement('div');
+                        announcementCard.className = `announcement-card ${announcement.urgent ? 'urgent' : ''}`;
+                        
+                        const header = document.createElement('div');
+                        header.className = 'announcement-header';
+                        
+                        const title = document.createElement('div');
+                        title.className = 'announcement-title';
+                        title.textContent = announcement.title || 'Untitled Announcement';
+                        
+                        const date = document.createElement('div');
+                        date.className = 'announcement-date';
+                        date.textContent = announcement.createdAt ? formatDate(announcement.createdAt.toDate()) : 'Unknown date';
+                        
+                        header.appendChild(title);
+                        header.appendChild(date);
+                        
+                        const text = document.createElement('div');
+                        text.className = 'announcement-text';
+                        text.textContent = announcement.content || 'No content';
+                        
+                        const actions = document.createElement('div');
+                        actions.className = 'announcement-actions';
+                        
+                        // Add default actions
+                        const readMoreBtn = document.createElement('button');
+                        readMoreBtn.className = 'announcement-btn';
+                        readMoreBtn.textContent = 'Read More';
+                        actions.appendChild(readMoreBtn);
+                        
+                        if (announcement.urgent) {
+                            const setReminderBtn = document.createElement('button');
+                            setReminderBtn.className = 'announcement-btn';
+                            setReminderBtn.textContent = 'Set Reminder';
+                            actions.appendChild(setReminderBtn);
+                        }
+                        
+                        announcementCard.appendChild(header);
+                        announcementCard.appendChild(text);
+                        announcementCard.appendChild(actions);
+                        
+                        elements.announcementsList.appendChild(announcementCard);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading announcements:', error);
+                    elements.announcementsList.innerHTML = '<div class="text-center text-error">Error loading announcements</div>';
                 });
-                
-                announcementCard.appendChild(header);
-                announcementCard.appendChild(text);
-                announcementCard.appendChild(actions);
-                
-                elements.announcementsList.appendChild(announcementCard);
-            });
         }
 
-        // Load notifications
-        function loadNotifications(userId) {
-            // For demo purposes, we'll use static data
-            // In a real app, this would come from Firestore
-            const notificationCount = 5;
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
             
-            elements.notificationCount.textContent = notificationCount;
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Format date
+        function formatDate(date) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString(undefined, options);
+        }
+
+        // Format time ago
+        function formatTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            let interval = Math.floor(seconds / 31536000);
+            if (interval >= 1) {
+                return interval + " year" + (interval > 1 ? "s" : "") + " ago";
+            }
+            
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) {
+                return interval + " month" + (interval > 1 ? "s" : "") + " ago";
+            }
+            
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) {
+                return interval + " day" + (interval > 1 ? "s" : "") + " ago";
+            }
+            
+            interval = Math.floor(seconds / 3600);
+            if (interval >= 1) {
+                return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
+            }
+            
+            interval = Math.floor(seconds / 60);
+            if (interval >= 1) {
+                return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
+            }
+            
+            return "Just now";
         }
 
         // Mobile menu toggle
@@ -2600,11 +3021,6 @@
 
         // Simulate real-time updates
         setInterval(() => {
-            // Update notification badge randomly
-            const currentCount = parseInt(elements.notificationCount.textContent);
-            const change = Math.random() > 0.7 ? 1 : 0;
-            elements.notificationCount.textContent = currentCount + change;
-            
             // Update online status randomly
             const statusDots = document.querySelectorAll('.status-dot');
             statusDots.forEach(dot => {
