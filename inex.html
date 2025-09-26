@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Secure Hierarchical Communication Platform for Sona College of Technology">
+    <meta name="theme-color" content="#1E3A8A">
+    <title>Sona College of Technology - Communication Platform</title>
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/tonsky/FiraCode@4/distr/fira_code.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- JavaScript -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --primary-blue: #0a192f;
+            --secondary-blue: #172a45;
+            --accent-blue: #233554;
+            --primary-yellow: #f1c40f;
+            --secondary-yellow: #f9e79f;
+            --accent-yellow: #ffd700;
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2d1;
+            --text-muted: #64748b;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --font-family: 'Inter', sans-serif;
+            --mono-font: 'Fira Code', monospace;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --input-padding: 0.875rem;
+            --button-padding: 0.875rem 1.5rem;
+        }
+
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background pattern */
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .header-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .header-link:hover {
+            color: var(--primary-yellow);
+        }
+
+        .header-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-yellow);
+            transition: var(--transition);
+        }
+
+        .header-link:hover::after {
+            width: 100%;
+        }
+
+        /* Main container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 500px;
+            animation: fadeInUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Logo and title */
+        .app-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-secondary);
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        input, select {
+            width: 100%;
+            padding: var(--input-padding);
+            padding-left: 3rem;
+            border: 2px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a8b2d1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-yellow);
+            box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.15);
+            outline: none;
+        }
+
+        input:focus + .input-icon, select:focus + .input-icon {
+            color: var(--primary-yellow);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-primary);
+            background: var(--glass-bg);
+        }
+
+        /* Form options */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-group input {
+            width: auto;
+            margin-right: 0.5rem;
+            accent-color: var(--primary-yellow);
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            font-size: 0.875rem;
+            color: var(--info);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            color: var(--primary-yellow);
+            text-decoration: underline;
+        }
+
+        /* Buttons */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: var(--button-padding);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-blue);
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-microsoft {
+            background: var(--info);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-microsoft:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-loading .btn-text {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: var(--white);
+            border-radius: 50%;
+            animation: button-loading-spinner 1s ease infinite;
+        }
+
+        @keyframes button-loading-spinner {
+            from { transform: rotate(0turn); }
+            to { transform: rotate(1turn); }
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        .divider span {
+            padding: 0 1rem;
+        }
+
+        /* Role badges */
+        .role-badges {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .role-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            transition: var(--transition);
+            cursor: pointer;
+            user-select: none;
+            border: 1px solid var(--glass-border);
+        }
+
+        .role-badge:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-yellow);
+        }
+
+        .role-badge.active {
+            background: var(--primary-yellow);
+            color: var(--primary-blue);
+            border-color: var(--primary-yellow);
+        }
+
+        /* Register link */
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .register-link a {
+            color: var(--info);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .register-link a:hover {
+            color: var(--primary-yellow);
+            text-decoration: underline;
+        }
+
+        /* Security notice */
+        .security-notice {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(241, 196, 15, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-left: 4px solid var(--primary-yellow);
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--glass-border);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+            background: var(--glass-bg);
+        }
+
+        .modal h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-yellow);
+            font-size: 1.5rem;
+        }
+
+        /* Password strength */
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--glass-border);
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: var(--transition);
+        }
+
+        .password-strength.weak .password-strength-bar {
+            width: 33%;
+            background: var(--error);
+        }
+
+        .password-strength.medium .password-strength-bar {
+            width: 66%;
+            background: var(--warning);
+        }
+
+        .password-strength.strong .password-strength-bar {
+            width: 100%;
+            background: var(--success);
+        }
+
+        .password-strength-text {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            color: var(--text-secondary);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            color: var(--white);
+            font-weight: 500;
+            box-shadow: var(--card-shadow);
+            z-index: 1100;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            max-width: 90%;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: var(--error);
+        }
+
+        .notification.info {
+            background: var(--info);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--secondary-blue);
+            color: var(--white);
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.875rem;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-heart {
+            color: #e74c3c;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .logo-text {
+                display: none;
+            }
+            
+            .header-nav {
+                display: none;
+            }
+            
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .modal-content {
+                padding: 2rem 1.5rem;
+            }
+            
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .notification {
+                right: 0.75rem;
+                left: 0.75rem;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            html {
+                font-size: 13px;
+            }
+            
+            .login-container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .modal-content {
+                padding: 1.5rem 1rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        @media (max-width: 320px) {
+            html {
+                font-size: 12px;
+            }
+            
+            .login-container {
+                padding: 1rem;
+            }
+            
+            .modal-content {
+                padding: 1rem;
+            }
+            
+            .role-badges {
+                gap: 0.5rem;
+            }
+            
+            .role-badge {
+                padding: 0.25rem 0.75rem;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-blue: #000080;
+                --secondary-blue: #0066CC;
+                --primary-yellow: #FF8C00;
+                --secondary-yellow: #FFF8DC;
+                --glass-bg: rgba(255, 255, 255, 0.1);
+                --glass-border: rgba(255, 255, 255, 0.3);
+                --text-secondary: #E0E0E0;
+                --text-muted: #B0B0B0;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            
+            .login-container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+
+        /* Accessibility improvements */
+        :focus-visible {
+            outline: 2px solid var(--primary-yellow);
+            outline-offset: 2px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-blue);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-yellow);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-yellow);
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" alt="Sona College of Technology Logo" class="logo">
+            <span class="logo-text">Sona College of Technology</span>
+        </div>
+        <nav class="header-nav">
+            <a href="#" class="header-link">Home</a>
+            <a href="#" class="header-link">About</a>
+            <a href="#" class="header-link">Academics</a>
+            <a href="#" class="header-link">Contact</a>
+        </nav>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="login-container">
+            <div class="app-title">
+                <h1>Communication Platform</h1>
+                <p class="subtitle">Secure Hierarchical Communication System</p>
+            </div>
+            
+            <form id="loginForm" aria-label="Login form">
+                <div class="form-group">
+                    <label for="collegeId">College ID</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
+                        <input type="text" id="collegeId" required aria-required="true" placeholder="Enter your College ID" autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon" aria-hidden="true"></i>
+                        <input type="password" id="password" required aria-required="true" placeholder="Enter your password" autocomplete="current-password">
+                        <button type="button" class="password-toggle tooltip" id="passwordToggle" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                            <span class="tooltiptext">Toggle password visibility</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <div class="input-container">
+                        <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
+                        <select id="role" required aria-required="true">
+                            <option value="">Select Your Role</option>
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="hod">Head of Department</option>
+                            <option value="principal">Principal</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="role-badges" role="group" aria-label="Role selection">
+                    <button type="button" class="role-badge" data-role="student" aria-pressed="false">Student</button>
+                    <button type="button" class="role-badge" data-role="faculty" aria-pressed="false">Faculty</button>
+                    <button type="button" class="role-badge" data-role="hod" aria-pressed="false">HOD</button>
+                    <button type="button" class="role-badge" data-role="principal" aria-pressed="false">Principal</button>
+                </div>
+                
+                <div class="form-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <label for="rememberMe">Remember Me</label>
+                    </div>
+                    <a href="#" class="forgot-link" id="forgotPassword">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" aria-live="polite">
+                    <span class="btn-text">Login to Platform</span>
+                </button>
+            </form>
+            
+            <div class="divider">
+                <span>OR</span>
+            </div>
+            
+            <button type="button" class="btn btn-microsoft" id="microsoftLoginBtn" aria-live="polite">
+                <i class="fab fa-microsoft" aria-hidden="true"></i>
+                <span class="btn-text">Login with Microsoft</span>
+            </button>
+            
+            <p class="register-link">New to Sona Communication? <a href="#" id="registerLink">Create an account</a></p>
+            
+            <div class="security-notice">
+                <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                <span>All communications are end-to-end encrypted</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="modal" id="registerModal" role="dialog" aria-labelledby="registerModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <button class="close-btn" id="closeRegister" aria-label="Close registration modal">&times;</button>
+            <h2 id="registerModalTitle">Register New User</h2>
+            <form id="registerForm" aria-label="Registration form">
+                <div class="form-group">
+                    <label for="regCollegeId">College ID</label>
+                    <div class="input-container">
+                        <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
+                        <input type="text" id="regCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email Address</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
+                        <input type="email" id="regEmail" required pattern=".+@sonatech\.ac\.in" placeholder="name@sonatech.ac.in" autocomplete="email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon" aria-hidden="true"></i>
+                        <input type="password" id="regPassword" required placeholder="Create a strong password" autocomplete="new-password">
+                        <button type="button" class="password-toggle tooltip" id="regPasswordToggle" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                            <span class="tooltiptext">Toggle password visibility</span>
+                        </button>
+                    </div>
+                    <div class="password-strength" id="passwordStrength" aria-hidden="true">
+                        <div class="password-strength-bar"></div>
+                    </div>
+                    <div class="password-strength-text" id="passwordStrengthText" aria-live="polite">Password strength</div>
+                </div>
+                <div class="form-group">
+                    <label for="regRole">Role</label>
+                    <div class="input-container">
+                        <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
+                        <select id="regRole" required>
+                            <option value="">Select Your Role</option>
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regDepartment">Department ID</label>
+                    <div class="input-container">
+                        <i class="fas fa-building input-icon" aria-hidden="true"></i>
+                        <input type="number" id="regDepartment" required placeholder="e.g., 101">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regFullName">Full Name</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
+                        <input type="text" id="regFullName" required placeholder="Enter your full name" autocomplete="name">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" aria-live="polite">
+                    <span class="btn-text">Submit for Approval</span>
+                </button>
+            </form>
+            
+            <div class="divider">
+                <span>OR</span>
+            </div>
+            
+            <button type="button" class="btn btn-microsoft" id="microsoftRegisterBtn" aria-live="polite">
+                <i class="fab fa-microsoft" aria-hidden="true"></i>
+                <span class="btn-text">Register with Microsoft</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgotModal" role="dialog" aria-labelledby="forgotModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <button class="close-btn" id="closeForgot" aria-label="Close forgot password modal">&times;</button>
+            <h2 id="forgotModalTitle">Reset Your Password</h2>
+            <form id="forgotForm" aria-label="Password reset form">
+                <div class="form-group">
+                    <label for="forgotEmail">Email Address</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
+                        <input type="email" id="forgotEmail" required placeholder="Enter your registered email" autocomplete="email">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" aria-live="polite">
+                    <span class="btn-text">Send Reset Link</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Microsoft Account Setup Modal -->
+    <div class="modal" id="microsoftSetupModal" role="dialog" aria-labelledby="microsoftSetupModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <button class="close-btn" id="closeMicrosoftSetup" aria-label="Close Microsoft setup modal">&times;</button>
+            <h2 id="microsoftSetupModalTitle">Complete Your Profile</h2>
+            <p class="subtitle" style="margin-bottom: 1.5rem;">Please provide additional information to complete your account setup</p>
+            <form id="microsoftSetupForm" aria-label="Microsoft account setup form">
+                <div class="form-group">
+                    <label for="msCollegeId">College ID</label>
+                    <div class="input-container">
+                        <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
+                        <input type="text" id="msCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="msRole">Role</label>
+                    <div class="input-container">
+                        <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
+                        <select id="msRole" required>
+                            <option value="">Select Your Role</option>
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="hod">Head of Department</option>
+                            <option value="principal">Principal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="msDepartment">Department ID</label>
+                    <div class="input-container">
+                        <i class="fas fa-building input-icon" aria-hidden="true"></i>
+                        <input type="number" id="msDepartment" required placeholder="e.g., 101">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="msFullName">Full Name</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
+                        <input type="text" id="msFullName" required placeholder="Enter your full name" autocomplete="name">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" aria-live="polite">
+                    <span class="btn-text">Complete Setup</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="notification" id="notification" role="alert" aria-live="assertive"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Sona College of Technology. All rights reserved.</p>
+            <p>Made with <i class="fas fa-heart footer-heart"></i> by Krishna</p>
+        </div>
+    </footer>
+
+    <script>
+        // Test accounts for demonstration
+        const testAccounts = {
+            'PRIN2024001': { password: 'Principal@123', role: 'principal', name: 'Principal', department: 'Administration' },
+            'HOD2024001': { password: 'HOD@123', role: 'hod', name: 'HOD Computer Science', department: 'CSE' },
+            'FAC2024001': { password: 'Faculty@123', role: 'faculty', name: 'Dr. John Smith', department: 'CSE' },
+            'STU2024001': { password: 'Student@123', role: 'student', name: 'Rahul Kumar', department: 'CSE' }
+        };
+
+        // Mock Microsoft accounts
+        const microsoftAccounts = {
+            'microsoft.user1@sonatech.ac.in': { 
+                name: 'Microsoft User', 
+                role: 'faculty', 
+                department: 'CSE',
+                needsSetup: true
+            },
+            'microsoft.user2@sonatech.ac.in': { 
+                name: 'Microsoft Admin', 
+                role: 'principal', 
+                department: 'Administration',
+                needsSetup: false
+            }
+        };
+
+        // DOM Elements
+        const elements = {
+            loginForm: document.getElementById('loginForm'),
+            registerForm: document.getElementById('registerForm'),
+            forgotForm: document.getElementById('forgotForm'),
+            microsoftSetupForm: document.getElementById('microsoftSetupForm'),
+            registerModal: document.getElementById('registerModal'),
+            forgotModal: document.getElementById('forgotModal'),
+            microsoftSetupModal: document.getElementById('microsoftSetupModal'),
+            passwordToggle: document.getElementById('passwordToggle'),
+            regPasswordToggle: document.getElementById('regPasswordToggle'),
+            passwordField: document.getElementById('password'),
+            regPasswordField: document.getElementById('regPassword'),
+            roleBadges: document.querySelectorAll('.role-badge'),
+            roleSelect: document.getElementById('role'),
+            passwordStrength: document.getElementById('passwordStrength'),
+            passwordStrengthText: document.getElementById('passwordStrengthText'),
+            notification: document.getElementById('notification'),
+            microsoftLoginBtn: document.getElementById('microsoftLoginBtn'),
+            microsoftRegisterBtn: document.getElementById('microsoftRegisterBtn')
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            checkRememberedUser();
+            setupEventListeners();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Password visibility toggles
+            elements.passwordToggle.addEventListener('click', () => togglePasswordVisibility(elements.passwordField, elements.passwordToggle));
+            elements.regPasswordToggle.addEventListener('click', () => togglePasswordVisibility(elements.regPasswordField, elements.regPasswordToggle));
+
+            // Role badge selection
+            elements.roleBadges.forEach(badge => {
+                badge.addEventListener('click', () => selectRoleBadge(badge));
+            });
+
+            // Password strength indicator
+            elements.regPasswordField.addEventListener('input', updatePasswordStrength);
+
+            // Modal handlers
+            document.getElementById('registerLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal(elements.registerModal);
+            });
+
+            document.getElementById('closeRegister').addEventListener('click', () => {
+                closeModal(elements.registerModal);
+            });
+
+            document.getElementById('forgotPassword').addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal(elements.forgotModal);
+            });
+
+            document.getElementById('closeForgot').addEventListener('click', () => {
+                closeModal(elements.forgotModal);
+            });
+
+            document.getElementById('closeMicrosoftSetup').addEventListener('click', () => {
+                closeModal(elements.microsoftSetupModal);
+            });
+
+            // Close modals when clicking outside
+            [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal].forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+
+            // Form submissions
+            elements.loginForm.addEventListener('submit', handleLogin);
+            elements.registerForm.addEventListener('submit', handleRegister);
+            elements.forgotForm.addEventListener('submit', handleForgotPassword);
+            elements.microsoftSetupForm.addEventListener('submit', handleMicrosoftSetup);
+
+            // Microsoft authentication buttons
+            elements.microsoftLoginBtn.addEventListener('click', () => handleMicrosoftAuth(true));
+            elements.microsoftRegisterBtn.addEventListener('click', () => handleMicrosoftAuth(false));
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility(passwordField, toggleButton) {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            toggleButton.innerHTML = type === 'password' ? 
+                '<i class="fas fa-eye" aria-hidden="true"></i>' : 
+                '<i class="fas fa-eye-slash" aria-hidden="true"></i>';
+        }
+
+        // Select role badge
+        function selectRoleBadge(badge) {
+            elements.roleBadges.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-pressed', 'false');
+            });
+            badge.classList.add('active');
+            badge.setAttribute('aria-pressed', 'true');
+            elements.roleSelect.value = badge.getAttribute('data-role');
+        }
+
+        // Update password strength
+        function updatePasswordStrength() {
+            const password = elements.regPasswordField.value;
+            let strength = 0;
+            let text = '';
+            
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/\d/)) strength++;
+            if (password.match(/[^a-zA-Z\d]/)) strength++;
+            
+            elements.passwordStrength.className = 'password-strength';
+            
+            if (password.length > 0) {
+                if (strength < 2) {
+                    elements.passwordStrength.classList.add('weak');
+                    text = 'Weak password';
+                } else if (strength < 4) {
+                    elements.passwordStrength.classList.add('medium');
+                    text = 'Medium strength password';
+                } else {
+                    elements.passwordStrength.classList.add('strong');
+                    text = 'Strong password';
+                }
+            } else {
+                text = 'Password strength';
+            }
+            
+            elements.passwordStrengthText.textContent = text;
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            elements.notification.textContent = message;
+            elements.notification.className = `notification ${type}`;
+            elements.notification.classList.add('show');
+            
+            setTimeout(() => {
+                elements.notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Modal functions
+        function openModal(modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Focus on first input
+            const firstInput = modal.querySelector('input');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+        }
+
+        function closeModal(modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // Microsoft Authentication (simulated)
+        function simulateMicrosoftAuth(isLogin = true) {
+            return new Promise((resolve, reject) => {
+                // Simulate Microsoft authentication flow
+                setTimeout(() => {
+                    // For demo purposes, we'll randomly succeed or fail
+                    const isSuccess = Math.random() > 0.2; // 80% success rate
+                    
+                    if (isSuccess) {
+                        // Return a mock Microsoft user
+                        const emails = Object.keys(microsoftAccounts);
+                        const randomEmail = emails[Math.floor(Math.random() * emails.length)];
+                        const account = microsoftAccounts[randomEmail];
+                        
+                        resolve({
+                            email: randomEmail,
+                            name: account.name,
+                            needsSetup: account.needsSetup
+                        });
+                    } else {
+                        reject(new Error("Microsoft authentication failed"));
+                    }
+                }, 1500);
+            });
+        }
+
+        // Handle Microsoft authentication
+        async function handleMicrosoftAuth(isLogin) {
+            const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
+            button.classList.add('btn-loading');
+            
+            try {
+                const microsoftUser = await simulateMicrosoftAuth(isLogin);
+                
+                if (microsoftUser.needsSetup) {
+                    // User needs to complete setup
+                    openModal(elements.microsoftSetupModal);
+                    document.getElementById('msFullName').value = microsoftUser.name;
+                } else {
+                    // User is already set up, log them in
+                    showNotification(`Welcome back, ${microsoftUser.name}!`, 'success');
+                    
+                    // Simulate key generation
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // In a real app, you would generate and store keys here
+                    localStorage.setItem('user', JSON.stringify(microsoftUser));
+                    
+                    // Redirect to dashboard (simulated)
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                }
+            } catch (error) {
+                showNotification('Microsoft authentication failed. Please try again.', 'error');
+            } finally {
+                button.classList.remove('btn-loading');
+            }
+        }
+
+        // Handle Microsoft setup form
+        async function handleMicrosoftSetup(e) {
+            e.preventDefault();
+            const submitBtn = elements.microsoftSetupForm.querySelector('.btn');
+            
+            // Show loading state
+            submitBtn.classList.add('btn-loading');
+            
+            // Simulate API call
+            setTimeout(() => {
+                submitBtn.classList.remove('btn-loading');
+                
+                const collegeId = document.getElementById('msCollegeId').value;
+                const role = document.getElementById('msRole').value;
+                const department = document.getElementById('msDepartment').value;
+                const fullName = document.getElementById('msFullName').value;
+                
+                // Create user object
+                const user = {
+                    collegeId,
+                    role,
+                    department,
+                    name: fullName,
+                    authMethod: 'microsoft'
+                };
+                
+                // Store user
+                localStorage.setItem('user', JSON.stringify(user));
+                
+                showNotification('Account setup completed successfully!', 'success');
+                closeModal(elements.microsoftSetupModal);
+                elements.microsoftSetupForm.reset();
+                
+                // Redirect to dashboard (simulated)
+                setTimeout(() => {
+                    window.location.href = `${role}.html`;
+                }, 1000);
+            }, 1500);
+        }
+
+        // Handle login form submission
+        async function handleLogin(e) {
+            e.preventDefault();
+            const collegeId = document.getElementById('collegeId').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const submitBtn = elements.loginForm.querySelector('.btn');
+
+            // Show loading state
+            submitBtn.classList.add('btn-loading');
+            
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const account = testAccounts[collegeId];
+            if (account && account.password === password && account.role === role) {
+                showNotification(`Welcome back, ${account.name}!`, 'success');
+                
+                // Simulate key generation
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // In a real app, you would generate and store keys here
+                localStorage.setItem('user', JSON.stringify(account));
+                
+                if (document.getElementById('rememberMe').checked) {
+                    localStorage.setItem('rememberedUser', JSON.stringify(account));
+                }
+                
+                // Redirect to dashboard (simulated)
+                setTimeout(() => {
+                    window.location.href = `${role}.html`;
+                }, 1000);
+            } else {
+                submitBtn.classList.remove('btn-loading');
+                showNotification('Invalid credentials. Please try again.', 'error');
+            }
+        }
+
+        // Handle registration form submission
+        function handleRegister(e) {
+            e.preventDefault();
+            const submitBtn = elements.registerForm.querySelector('.btn');
+            
+            // Show loading state
+            submitBtn.classList.add('btn-loading');
+            
+            // Simulate API call
+            setTimeout(() => {
+                submitBtn.classList.remove('btn-loading');
+                showNotification('Registration submitted for approval. You will receive an email once approved.', 'success');
+                closeModal(elements.registerModal);
+                elements.registerForm.reset();
+                elements.passwordStrength.className = 'password-strength';
+                elements.passwordStrengthText.textContent = 'Password strength';
+            }, 1500);
+        }
+
+        // Handle forgot password form submission
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            const submitBtn = elements.forgotForm.querySelector('.btn');
+            
+            // Show loading state
+            submitBtn.classList.add('btn-loading');
+            
+            // Simulate API call
+            setTimeout(() => {
+                submitBtn.classList.remove('btn-loading');
+                showNotification('Password reset link sent to your email.', 'info');
+                closeModal(elements.forgotModal);
+                elements.forgotForm.reset();
+            }, 1500);
+        }
+
+        // Check for remembered user
+        function checkRememberedUser() {
+            const rememberedUser = localStorage.getItem('rememberedUser');
+            if (rememberedUser) {
+                const user = JSON.parse(rememberedUser);
+                document.getElementById('collegeId').value = Object.keys(testAccounts).find(key => testAccounts[key].name === user.name);
+                document.getElementById('role').value = user.role;
+                document.getElementById('rememberMe').checked = true;
+                
+                // Activate the corresponding role badge
+                elements.roleBadges.forEach(badge => {
+                    if (badge.getAttribute('data-role') === user.role) {
+                        badge.classList.add('active');
+                        badge.setAttribute('aria-pressed', 'true');
+                    }
+                });
+            }
+        }
+
+        // Handle keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            // Close modals with Escape key
+            if (e.key === 'Escape') {
+                [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal].forEach(modal => {
+                    if (modal.style.display === 'flex') {
+                        closeModal(modal);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
