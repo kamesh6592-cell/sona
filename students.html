@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Sona College of Technology</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Premium Dark Blue & Yellow Theme */
+            --primary-dark: #0a192f;
+            --secondary-dark: #172a45;
+            --accent-blue: #233554;
+            --primary-yellow: #f1c40f;
+            --secondary-yellow: #f9e79f;
+            --accent-yellow: #ffd700;
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2d1;
+            --text-muted: #64748b;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            
+            /* Typography */
+            --font-family: 'Inter', sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* Layout */
+            --sidebar-width: 280px;
+            --right-panel-width: 340px;
+            --header-height: 80px;
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            background-color: var(--primary-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-yellow);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-yellow);
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            border-bottom: 1px solid var(--glass-border);
+            height: var(--header-height);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            transition: var(--transition);
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .header-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .header-link:hover {
+            color: var(--primary-yellow);
+        }
+        
+        .header-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-yellow);
+            transition: var(--transition);
+        }
+        
+        .header-link:hover::after {
+            width: 100%;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .header-action {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .header-action:hover {
+            background: var(--accent-blue);
+            color: var(--primary-yellow);
+            transform: translateY(-2px);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 20px;
+            height: 20px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        
+        .profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .profile-menu:hover {
+            background: var(--accent-blue);
+            border-color: var(--primary-yellow);
+        }
+        
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-yellow);
+        }
+        
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .profile-name {
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+        }
+        
+        .profile-role {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+        }
+        
+        /* App Container */
+        .app-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(23, 42, 69, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - var(--header-height));
+            transition: var(--transition);
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .sidebar-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--text-primary);
+        }
+        
+        .contact-search {
+            position: relative;
+        }
+        
+        .contact-search input {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) var(--spacing-xl);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            transition: var(--transition);
+        }
+        
+        .contact-search input:focus {
+            outline: none;
+            border-color: var(--primary-yellow);
+            background: var(--accent-blue);
+        }
+        
+        .contact-search i {
+            position: absolute;
+            left: var(--spacing-sm);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        
+        .contact-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md) 0;
+        }
+        
+        .contact-category {
+            padding: var(--spacing-md) var(--spacing-lg) var(--spacing-xs);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .contact-item:hover {
+            background: rgba(241, 196, 15, 0.1);
+        }
+        
+        .contact-item.active {
+            background: rgba(241, 196, 15, 0.2);
+            border-left: 3px solid var(--primary-yellow);
+        }
+        
+        .contact-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--primary-yellow);
+        }
+        
+        .contact-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin-right: var(--spacing-md);
+            object-fit: cover;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+        
+        .contact-item.active .contact-avatar {
+            border-color: var(--primary-yellow);
+        }
+        
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .contact-name {
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .contact-status {
+            display: flex;
+            align-items: center;
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: var(--spacing-xs);
+        }
+        
+        .status-online {
+            background: var(--success);
+            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3);
+        }
+        
+        .status-away {
+            background: var(--warning);
+            box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.3);
+        }
+        
+        .status-offline {
+            background: var(--text-muted);
+        }
+        
+        .contact-time {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        
+        .contact-badge {
+            background: var(--error);
+            color: white;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: var(--spacing-sm);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--primary-dark);
+        }
+        
+        .content-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .content-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .content-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+        
+        .content-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--accent-blue);
+            border-color: var(--primary-yellow);
+        }
+        
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            height: calc(100vh - var(--header-height) - 120px);
+        }
+        
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .card-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius-sm);
+            background: rgba(241, 196, 15, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-yellow);
+            font-size: var(--font-size-lg);
+        }
+        
+        .card-action {
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .card-action:hover {
+            color: var(--primary-yellow);
+        }
+        
+        .card-body {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+        }
+        
+        .stat-value {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin: var(--spacing-md) 0;
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+        
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .stat-change.positive {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--success);
+        }
+        
+        .stat-change.negative {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--error);
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin-top: var(--spacing-md);
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xs);
+            font-size: var(--font-size-xs);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--glass-border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-yellow), var(--accent-yellow));
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin-top: var(--spacing-md);
+        }
+        
+        /* Task List */
+        .task-list {
+            margin-top: var(--spacing-md);
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .task-item:last-child {
+            border-bottom: none;
+        }
+        
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid var(--glass-border);
+            margin-right: var(--spacing-md);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .task-checkbox.checked {
+            background: var(--primary-yellow);
+            border-color: var(--primary-yellow);
+        }
+        
+        .task-checkbox.checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary-dark);
+            font-size: var(--font-size-xs);
+        }
+        
+        .task-content {
+            flex: 1;
+        }
+        
+        .task-title {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .task-meta {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+        
+        .task-priority {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+        }
+        
+        .priority-high {
+            background: rgba(248, 113, 113, 0.2);
+            color: var(--error);
+        }
+        
+        .priority-medium {
+            background: rgba(251, 191, 36, 0.2);
+            color: var(--warning);
+        }
+        
+        .priority-low {
+            background: rgba(96, 165, 250, 0.2);
+            color: var(--info);
+        }
+        
+        /* Right Panel */
+        .right-panel {
+            width: var(--right-panel-width);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - var(--header-height));
+            transition: var(--transition);
+            overflow: hidden;
+        }
+        
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .panel-tab {
+            flex: 1;
+            padding: var(--spacing-md);
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .panel-tab:hover {
+            color: var(--text-primary);
+        }
+        
+        .panel-tab.active {
+            color: var(--primary-yellow);
+        }
+        
+        .panel-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-yellow);
+        }
+        
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-lg);
+        }
+        
+        /* Announcement Card */
+        .announcement-card {
+            background: var(--accent-blue);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            border-left: 4px solid var(--primary-yellow);
+            transition: var(--transition);
+        }
+        
+        .announcement-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .announcement-card.urgent {
+            border-left-color: var(--error);
+        }
+        
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .announcement-title {
+            font-weight: 600;
+            font-size: var(--font-size-base);
+        }
+        
+        .announcement-date {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        
+        .announcement-text {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.5;
+        }
+        
+        .announcement-actions {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .announcement-btn {
+            background: none;
+            border: none;
+            color: var(--primary-yellow);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .announcement-btn:hover {
+            text-decoration: underline;
+        }
+        
+        /* File Card */
+        .file-card {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            background: var(--accent-blue);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-md);
+            transition: var(--transition);
+        }
+        
+        .file-card:hover {
+            background: var(--glass-border);
+            transform: translateX(5px);
+        }
+        
+        .file-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            font-size: var(--font-size-xl);
+        }
+        
+        .file-icon.pdf {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .file-icon.doc {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .file-icon.img {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .file-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+        
+        .file-meta {
+            display: flex;
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+        
+        .file-meta span {
+            margin-right: var(--spacing-md);
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .file-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .file-action:hover {
+            background: var(--accent-blue);
+            color: var(--primary-yellow);
+            border-color: var(--primary-yellow);
+        }
+        
+        /* AI Assistant */
+        .ai-assistant {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(241, 196, 15, 0.4);
+            cursor: pointer;
+            z-index: 50;
+            transition: var(--transition);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .ai-assistant:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 35px rgba(241, 196, 15, 0.5);
+        }
+        
+        .ai-assistant i {
+            font-size: 24px;
+        }
+        
+        .ai-chat-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 380px;
+            height: 500px;
+            background: var(--secondary-dark);
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 50;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .ai-chat-header {
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+            color: var(--primary-dark);
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ai-chat-title {
+            font-weight: 700;
+            font-size: var(--font-size-lg);
+        }
+        
+        .ai-chat-close {
+            background: none;
+            border: none;
+            color: var(--primary-dark);
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .ai-chat-close:hover {
+            transform: rotate(90deg);
+        }
+        
+        .ai-chat-messages {
+            flex: 1;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .ai-message {
+            max-width: 80%;
+        }
+        
+        .ai-message.user {
+            align-self: flex-end;
+        }
+        
+        .ai-message-bubble {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-sm);
+            line-height: 1.5;
+        }
+        
+        .ai-message.bot .ai-message-bubble {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-top-left-radius: 0;
+        }
+        
+        .ai-message.user .ai-message-bubble {
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+            color: var(--primary-dark);
+            border-top-right-radius: 0;
+        }
+        
+        .ai-chat-input {
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .ai-chat-input input {
+            flex: 1;
+            padding: var(--spacing-md);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        .ai-chat-input input:focus {
+            border-color: var(--primary-yellow);
+        }
+        
+        .ai-chat-send {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+            border: none;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .ai-chat-send:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: var(--header-height);
+                height: calc(100vh - var(--header-height));
+                z-index: 200;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .right-panel {
+                position: fixed;
+                right: 0;
+                top: var(--header-height);
+                height: calc(100vh - var(--header-height));
+                z-index: 200;
+                transform: translateX(100%);
+            }
+            
+            .right-panel.open {
+                transform: translateX(0);
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .header-nav {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .logo-text {
+                display: none;
+            }
+            
+            .profile-info {
+                display: none;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                padding: var(--spacing-md);
+            }
+            
+            .ai-chat-window {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .content-header {
+                padding: var(--spacing-md);
+            }
+            
+            .dashboard-grid {
+                padding: var(--spacing-sm);
+            }
+            
+            .card {
+                padding: var(--spacing-md);
+            }
+            
+            .logo {
+                height: 40px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            html {
+                font-size: 12px;
+            }
+            
+            .card {
+                padding: var(--spacing-sm);
+            }
+            
+            .role-badges {
+                gap: 0.5rem;
+            }
+            
+            .role-badge {
+                padding: 0.25rem 0.75rem;
+                font-size: 0.7rem;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-blue: #000080;
+                --secondary-blue: #0066CC;
+                --primary-yellow: #FF8C00;
+                --secondary-yellow: #FFF8DC;
+                --glass-bg: rgba(255, 255, 255, 0.1);
+                --glass-border: rgba(255, 255, 255, 0.3);
+                --text-secondary: #E0E0E0;
+                --text-muted: #B0B0B0;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            
+            .app-container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+        
+        /* Accessibility improvements */
+        :focus-visible {
+            outline: 2px solid var(--primary-yellow);
+            outline-offset: 2px;
+        }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-yellow);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-yellow);
+        }
+        
+        /* Footer */
+        .footer {
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.875rem;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .footer-heart {
+            color: #e74c3c;
+            animation: heartbeat 1.2s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" alt="Sona College of Technology Logo" class="logo">
+            <span class="logo-text">Sona College of Technology</span>
+        </div>
+        <nav class="header-nav">
+            <a href="#" class="header-link">Dashboard</a>
+            <a href="#" class="header-link">Courses</a>
+            <a href="#" class="header-link">Resources</a>
+            <a href="#" class="header-link">Calendar</a>
+        </nav>
+        <div class="header-actions">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-action tooltip" data-tooltip="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">5</span>
+            </div>
+            <div class="header-action tooltip" data-tooltip="Calendar">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="header-action tooltip" data-tooltip="Settings">
+                <i class="fas fa-cog"></i>
+            </div>
+            <div class="profile-menu">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-avatar">
+                <div class="profile-info">
+                    <div class="profile-name">KANISH SJ</div>
+                    <div class="profile-role">Student</div>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </header>
+    
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3 class="sidebar-title">Contacts</h3>
+                <div class="contact-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search contacts...">
+                </div>
+            </div>
+            
+            <div class="contact-list">
+                <div class="contact-category">Classes</div>
+                <div class="contact-item active">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Class" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">CS101 - Intro to Programming</div>
+                        <div class="contact-status">
+                            <span class="status-dot status-online"></span>
+                            <span>24 online</span>
+                        </div>
+                    </div>
+                    <div class="contact-time">2:45 PM</div>
+                    <span class="contact-badge">3</span>
+                </div>
+                
+                <div class="contact-item">
+                    <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Class" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">MATH201 - Calculus II</div>
+                        <div class="contact-status">
+                            <span class="status-dot status-away"></span>
+                            <span>18 online</span>
+                        </div>
+                    </div>
+                    <div class="contact-time">Yesterday</div>
+                </div>
+                
+                <div class="contact-category">Faculty</div>
+                <div class="contact-item">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Faculty" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">Dr. Sarah Williams</div>
+                        <div class="contact-status">
+                            <span class="status-dot status-online"></span>
+                            <span>Available</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Faculty" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">Prof. Michael Chen</div>
+                        <div class="contact-status">
+                            <span class="status-dot status-away"></span>
+                            <span>In a meeting</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-category">Study Groups</div>
+                <div class="contact-item">
+                    <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Group" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">Physics Study Group</div>
+                        <div class="contact-status">
+                            <span class="status-dot status-online"></span>
+                            <span>5 online</span>
+                        </div>
+                    </div>
+                    <div class="contact-time">1:30 PM</div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <div>
+                    <h1 class="content-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Student Dashboard
+                    </h1>
+                    <p class="content-subtitle">Welcome back, Alex! Here's your academic overview.</p>
+                </div>
+                <div class="content-actions">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-filter"></i>
+                        Filter
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        New Assignment
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Overview Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            Academic Overview
+                        </h3>
+                        <div class="card-action">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-value">3.8</div>
+                        <div class="stat-label">Current GPA</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>0.2 from last semester</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Semester Progress</span>
+                                <span>68%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 68%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Courses Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            Active Courses
+                        </h3>
+                        <div class="card-action">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Courses this semester</div>
+                        <div class="chart-container">
+                            <canvas id="coursesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Assignments Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            Upcoming Assignments
+                        </h3>
+                        <div class="card-action">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="task-list">
+                            <div class="task-item">
+                                <div class="task-checkbox"></div>
+                                <div class="task-content">
+                                    <div class="task-title">CS101 - Programming Project</div>
+                                    <div class="task-meta">Due in 2 days</div>
+                                </div>
+                                <div class="task-priority priority-high">High</div>
+                            </div>
+                            <div class="task-item">
+                                <div class="task-checkbox"></div>
+                                <div class="task-content">
+                                    <div class="task-title">MATH201 - Problem Set 5</div>
+                                    <div class="task-meta">Due in 5 days</div>
+                                </div>
+                                <div class="task-priority priority-medium">Medium</div>
+                            </div>
+                            <div class="task-item">
+                                <div class="task-checkbox checked"></div>
+                                <div class="task-content">
+                                    <div class="task-title">ENG102 - Essay Draft</div>
+                                    <div class="task-meta">Completed</div>
+                                </div>
+                                <div class="task-priority priority-low">Low</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Study Time Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            Study Time
+                        </h3>
+                        <div class="card-action">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-value">24h</div>
+                        <div class="stat-label">This week</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>3h from last week</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="studyTimeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resources Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-folder-open"></i>
+                            </div>
+                            Learning Resources
+                        </h3>
+                        <div class="card-action">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-value">42</div>
+                        <div class="stat-label">Resources available</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Course Materials</span>
+                                <span>78%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Practice Tests</span>
+                                <span>45%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 45%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skills Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            Skill Development
+                        </h3>
+                        <div class="card-action">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Skills in progress</div>
+                        <div class="chart-container">
+                            <canvas id="skillsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Right Panel -->
+        <aside class="right-panel" id="rightPanel">
+            <div class="panel-tabs">
+                <div class="panel-tab active" data-tab="files">Files</div>
+                <div class="panel-tab" data-tab="announcements">Announcements</div>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Files Tab -->
+                <div class="tab-content" id="files-tab">
+                    <div class="file-card">
+                        <div class="file-icon pdf">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">Lecture_Notes_Week5.pdf</div>
+                            <div class="file-meta">
+                                <span>2.4 MB</span>
+                                <span>Today</span>
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action tooltip" data-tooltip="Download">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="file-action tooltip" data-tooltip="Share">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="file-card">
+                        <div class="file-icon doc">
+                            <i class="fas fa-file-word"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">Assignment_2_Template.docx</div>
+                            <div class="file-meta">
+                                <span>1.1 MB</span>
+                                <span>Yesterday</span>
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action tooltip" data-tooltip="Download">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="file-action tooltip" data-tooltip="Share">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="file-card">
+                        <div class="file-icon img">
+                            <i class="fas fa-file-image"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">Class_Diagram.png</div>
+                            <div class="file-meta">
+                                <span>856 KB</span>
+                                <span>Oct 12</span>
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action tooltip" data-tooltip="Download">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="file-action tooltip" data-tooltip="Share">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="file-card">
+                        <div class="file-icon pdf">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">Study_Guide_Midterm.pdf</div>
+                            <div class="file-meta">
+                                <span>3.7 MB</span>
+                                <span>Oct 10</span>
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action tooltip" data-tooltip="Download">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="file-action tooltip" data-tooltip="Share">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Announcements Tab -->
+                <div class="tab-content" id="announcements-tab" style="display: none;">
+                    <div class="announcement-card urgent">
+                        <div class="announcement-header">
+                            <div class="announcement-title">Midterm Exam Schedule</div>
+                            <div class="announcement-date">Oct 15, 2023</div>
+                        </div>
+                        <div class="announcement-text">
+                            The midterm exam for CS101 will be held on October 25th from 2:00 PM to 4:00 PM in Room 205. Please arrive 15 minutes early.
+                        </div>
+                        <div class="announcement-actions">
+                            <button class="announcement-btn">Read More</button>
+                            <button class="announcement-btn">Set Reminder</button>
+                        </div>
+                    </div>
+                    
+                    <div class="announcement-card">
+                        <div class="announcement-header">
+                            <div class="announcement-title">New Study Resources</div>
+                            <div class="announcement-date">Oct 10, 2023</div>
+                        </div>
+                        <div class="announcement-text">
+                            Additional practice problems and video tutorials have been added to the course materials section.
+                        </div>
+                        <div class="announcement-actions">
+                            <button class="announcement-btn">View Resources</button>
+                        </div>
+                    </div>
+                    
+                    <div class="announcement-card">
+                        <div class="announcement-header">
+                            <div class="announcement-title">Office Hours Update</div>
+                            <div class="announcement-date">Oct 5, 2023</div>
+                        </div>
+                        <div class="announcement-text">
+                            Dr. Williams' office hours have been changed to Tuesdays and Thursdays from 3:00 PM to 5:00 PM.
+                        </div>
+                        <div class="announcement-actions">
+                            <button class="announcement-btn">Add to Calendar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- AI Assistant -->
+    <div class="ai-assistant" id="aiAssistant">
+        <i class="fas fa-robot"></i>
+    </div>
+    
+    <div class="ai-chat-window" id="aiChatWindow">
+        <div class="ai-chat-header">
+            <div class="ai-chat-title">Study Assistant</div>
+            <button class="ai-chat-close" id="aiChatClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="ai-chat-messages">
+            <div class="ai-message bot">
+                <div class="ai-message-bubble">
+                    Hello! I'm your AI study assistant. How can I help you today?
+                </div>
+            </div>
+        </div>
+        <div class="ai-chat-input">
+            <input type="text" placeholder="Ask a question..." id="aiChatInput">
+            <button class="ai-chat-send" id="aiChatSend">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Sona College of Technology. All rights reserved.</p>
+            <p>Made with <i class="fas fa-heart footer-heart"></i> by Krishna</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const rightPanel = document.getElementById('rightPanel');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            rightPanel.classList.remove('open');
+        });
+        
+        // Panel tabs
+        const panelTabs = document.querySelectorAll('.panel-tab');
+        const filesTab = document.getElementById('files-tab');
+        const announcementsTab = document.getElementById('announcements-tab');
+        
+        panelTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                panelTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                if (tab.dataset.tab === 'files') {
+                    filesTab.style.display = 'block';
+                    announcementsTab.style.display = 'none';
+                } else {
+                    filesTab.style.display = 'none';
+                    announcementsTab.style.display = 'block';
+                }
+            });
+        });
+        
+        // Contact selection
+        const contactItems = document.querySelectorAll('.contact-item');
+        contactItems.forEach(item => {
+            item.addEventListener('click', () => {
+                contactItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Close mobile menu if open
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('open');
+                }
+            });
+        });
+        
+        // Task checkboxes
+        const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+        taskCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('click', () => {
+                checkbox.classList.toggle('checked');
+            });
+        });
+        
+        // AI Assistant
+        const aiAssistant = document.getElementById('aiAssistant');
+        const aiChatWindow = document.getElementById('aiChatWindow');
+        const aiChatClose = document.getElementById('aiChatClose');
+        const aiChatInput = document.getElementById('aiChatInput');
+        const aiChatSend = document.getElementById('aiChatSend');
+        const aiChatMessages = document.querySelector('.ai-chat-messages');
+        
+        aiAssistant.addEventListener('click', () => {
+            aiChatWindow.style.display = 'flex';
+        });
+        
+        aiChatClose.addEventListener('click', () => {
+            aiChatWindow.style.display = 'none';
+        });
+        
+        function sendAiMessage() {
+            const message = aiChatInput.value.trim();
+            if (message) {
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'ai-message user';
+                userMessage.innerHTML = `<div class="ai-message-bubble">${message}</div>`;
+                aiChatMessages.appendChild(userMessage);
+                
+                // Clear input
+                aiChatInput.value = '';
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    const botMessage = document.createElement('div');
+                    botMessage.className = 'ai-message bot';
+                    botMessage.innerHTML = `<div class="ai-message-bubble">I'm processing your question about "${message}". Let me find the best resources for you.</div>`;
+                    aiChatMessages.appendChild(botMessage);
+                    aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+                }, 1000);
+                
+                aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+            }
+        }
+        
+        aiChatSend.addEventListener('click', sendAiMessage);
+        aiChatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendAiMessage();
+            }
+        });
+        
+        // Initialize Charts
+        // Courses Chart
+        const coursesCtx = document.getElementById('coursesChart').getContext('2d');
+        const coursesChart = new Chart(coursesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'In Progress', 'Not Started'],
+                datasets: [{
+                    data: [2, 3, 1],
+                    backgroundColor: [
+                        'rgba(74, 222, 128, 0.8)',
+                        'rgba(241, 196, 15, 0.8)',
+                        'rgba(100, 116, 139, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(74, 222, 128, 1)',
+                        'rgba(241, 196, 15, 1)',
+                        'rgba(100, 116, 139, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#a8b2d1',
+                            font: {
+                                size: 11
+                            },
+                            padding: 10
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Study Time Chart
+        const studyTimeCtx = document.getElementById('studyTimeChart').getContext('2d');
+        const studyTimeChart = new Chart(studyTimeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Hours',
+                    data: [3, 4, 2, 5, 3, 4, 3],
+                    backgroundColor: 'rgba(241, 196, 15, 0.6)',
+                    borderColor: 'rgba(241, 196, 15, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#a8b2d1',
+                            font: {
+                                size: 10
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#a8b2d1',
+                            font: {
+                                size: 10
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // Skills Chart
+        const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+        const skillsChart = new Chart(skillsCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Programming', 'Math', 'Writing', 'Research', 'Presentation', 'Teamwork'],
+                datasets: [{
+                    label: 'Current Level',
+                    data: [85, 70, 65, 75, 60, 80],
+                    backgroundColor: 'rgba(241, 196, 15, 0.2)',
+                    borderColor: 'rgba(241, 196, 15, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(241, 196, 15, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        pointLabels: {
+                            color: '#a8b2d1',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        ticks: {
+                            display: false,
+                            backdropColor: 'transparent'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update notification badge randomly
+            const notificationBadge = document.querySelector('.notification-badge');
+            const currentCount = parseInt(notificationBadge.textContent);
+            const change = Math.random() > 0.7 ? 1 : 0;
+            notificationBadge.textContent = currentCount + change;
+            
+            // Update online status randomly
+            const statusDots = document.querySelectorAll('.status-dot');
+            statusDots.forEach(dot => {
+                if (Math.random() > 0.9) {
+                    if (dot.classList.contains('status-online')) {
+                        dot.classList.remove('status-online');
+                        dot.classList.add('status-away');
+                    } else if (dot.classList.contains('status-away')) {
+                        dot.classList.remove('status-away');
+                        dot.classList.add('status-offline');
+                    } else if (dot.classList.contains('status-offline')) {
+                        dot.classList.remove('status-offline');
+                        dot.classList.add('status-online');
+                    }
+                }
+            });
+        }, 5000);
+        
+        // File download simulation
+        const downloadButtons = document.querySelectorAll('.file-action');
+        downloadButtons.forEach(button => {
+            if (button.querySelector('.fa-download')) {
+                button.addEventListener('click', () => {
+                    const icon = button.querySelector('i');
+                    icon.classList.remove('fa-download');
+                    icon.classList.add('fa-spinner', 'fa-spin');
+                    
+                    setTimeout(() => {
+                        icon.classList.remove('fa-spinner', 'fa-spin');
+                        icon.classList.add('fa-check');
+                        
+                        setTimeout(() => {
+                            icon.classList.remove('fa-check');
+                            icon.classList.add('fa-download');
+                        }, 2000);
+                    }, 1500);
+                });
+            }
+        });
+        
+        // Animate progress bars on load
+        window.addEventListener('load', () => {
+            const progressFills = document.querySelectorAll('.progress-fill');
+            progressFills.forEach(fill => {
+                const width = fill.style.width;
+                fill.style.width = '0';
+                
+                setTimeout(() => {
+                    fill.style.width = width;
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>
