@@ -482,7 +482,6 @@
             opacity: 1;
         }
 
-        /* Role-specific styling */
         .role-student.active {
             background: linear-gradient(135deg, #4ade80, #22c55e);
         }
@@ -1397,12 +1396,14 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyCWcis4jU3gVTWZyiIn5PF90R6nopEpAF0",
-            authDomain: "bhasha-rakshak-lite.firebaseapp.com",
-            projectId: "bhasha-rakshak-lite",
-            storageBucket: "bhasha-rakshak-lite.firebasestorage.app",
-            messagingSenderId: "996574989053",
-            appId: "1:996574989053:web:fb897ff8a7fb6182ae0c94"
+            apiKey: "AIzaSyAUmR-p_bJ970GK9CevtzgfAm99nvLvSaE",
+            authDomain: "sona-da878.firebaseapp.com",
+            databaseURL: "https://sona-da878-default-rtdb.firebaseio.com",
+            projectId: "sona-da878",
+            storageBucket: "sona-da878.firebasestorage.app",
+            messagingSenderId: "963825066019",
+            appId: "1:963825066019:web:c1a095c0972a8874195196",
+            measurementId: "G-ED8CHJSJGH"
         };
 
         // Initialize Firebase
@@ -1499,21 +1500,41 @@
             const email = user.email;
             let role = '';
             let department = '';
+            let collegeId = '';
             
             if (email === 'principal.test@sona.ac.in') {
                 role = 'principal';
                 department = 'ADMINISTRATION';
+                collegeId = 'principal.test';
             } else if (email === 'hod.cse@sona.ac.in') {
                 role = 'hod';
                 department = 'Computer Science Engineering';
+                collegeId = 'hod.cse';
             } else if (email === 'hod.ece@sona.ac.in') {
                 role = 'hod';
                 department = 'Electronics & Communication Engineering';
+                collegeId = 'hod.ece';
+            } else if (email === 'faculty.cse01@sona.ac.in') {
+                role = 'faculty';
+                department = 'Computer Science Engineering';
+                collegeId = 'faculty.cse01';
+            } else if (email === 'faculty.ece01@sona.ac.in') {
+                role = 'faculty';
+                department = 'Electronics & Communication Engineering';
+                collegeId = 'faculty.ece01';
+            } else if (email === 'student.cse.2023e01@sona.ac.in') {
+                role = 'student';
+                department = 'Computer Science Engineering';
+                collegeId = 'student.cse.2023e01';
+            } else if (email === 'student.ece.2023001@sona.ac.in') {
+                role = 'student';
+                department = 'Electronics & Communication Engineering';
+                collegeId = 'student.ece.2023001';
             }
             
             if (role) {
                 const userData = {
-                    collegeId: email.split('@')[0],
+                    collegeId: collegeId,
                     role: role,
                     department: department,
                     name: email.split('@')[0],
@@ -1737,6 +1758,11 @@
             provider.addScope('profile');
             provider.addScope('email');
             
+            // Set custom parameters for better UX
+            provider.setCustomParameters({
+                prompt: 'select_account'
+            });
+            
             debug('Starting Google authentication...');
             
             auth.signInWithPopup(provider)
@@ -1764,7 +1790,7 @@
                 .catch((error) => {
                     console.error('Google auth error:', error);
                     debug('Google auth error: ' + error.message);
-                    showNotification('Google authentication failed. Please try again.', 'error');
+                    showNotification('Google authentication failed: ' + error.message, 'error');
                 })
                 .finally(() => {
                     button.classList.remove('btn-loading');
@@ -1796,7 +1822,8 @@
                     name: fullName,
                     email: user.email,
                     authMethod: 'google',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    approved: true
                 };
                 
                 debug('Creating Google user document: ' + JSON.stringify(userData));
@@ -1837,6 +1864,12 @@
             provider.addScope('profile');
             provider.addScope('email');
             
+            // Set custom parameters
+            provider.setCustomParameters({
+                prompt: 'select_account',
+                tenant: 'common' // Use 'common' for multi-tenant
+            });
+            
             debug('Starting Microsoft authentication...');
             
             auth.signInWithPopup(provider)
@@ -1864,7 +1897,7 @@
                 .catch((error) => {
                     console.error('Microsoft auth error:', error);
                     debug('Microsoft auth error: ' + error.message);
-                    showNotification('Microsoft authentication failed. Please try again.', 'error');
+                    showNotification('Microsoft authentication failed: ' + error.message, 'error');
                 })
                 .finally(() => {
                     button.classList.remove('btn-loading');
@@ -1896,7 +1929,8 @@
                     name: fullName,
                     email: user.email,
                     authMethod: 'microsoft',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    approved: true
                 };
                 
                 debug('Creating Microsoft user document: ' + JSON.stringify(userData));
