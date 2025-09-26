@@ -15,6 +15,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <style>
         :root {
             /* Premium Dark Blue & Yellow Theme */
@@ -1491,7 +1493,7 @@
                     <div class="user-profile">
                         <div class="user-avatar" id="userAvatar">JD</div>
                         <div class="user-info">
-                            <div class="user-name" id="userName">Dr. Senthil kumar SSR</div>
+                            <div class="user-name" id="userName">Dr. John Doe</div>
                             <div class="user-role" id="userRole">Principal</div>
                         </div>
                     </div>
@@ -1943,14 +1945,16 @@
     </footer>
 
     <script>
-        // Firebase Configuration
+        // Your Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyB6k5pX6j5eXf8f8f8f8f8f8f8f8f8f8f8",
-            authDomain: "sona-college-dashboard.firebaseapp.com",
-            projectId: "sona-college-dashboard",
-            storageBucket: "sona-college-dashboard.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+            apiKey: "AIzaSyAUmR-p_bJ970GK9CevtzgfAm99nvLvSaE",
+            authDomain: "sona-da878.firebaseapp.com",
+            databaseURL: "https://sona-da878-default-rtdb.firebaseio.com",
+            projectId: "sona-da878",
+            storageBucket: "sona-da878.firebasestorage.app",
+            messagingSenderId: "963825066019",
+            appId: "1:963825066019:web:c1a095c0972a8874195196",
+            measurementId: "G-ED8CHJSJGH"
         };
 
         // Initialize Firebase
@@ -1958,6 +1962,8 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
         const messaging = firebase.messaging();
+        const analytics = firebase.analytics();
+        const database = firebase.database();
 
         // API Configuration
         const API_BASE = 'http://localhost:3000/api';
@@ -1981,6 +1987,12 @@
         document.getElementById('userName').textContent = user.name;
         document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
         document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('');
+        
+        // Log analytics event
+        analytics.logEvent('dashboard_loaded', {
+            user_role: user.role,
+            user_id: user.id
+        });
         
         // DOM Elements
         const sidebar = document.getElementById('sidebar');
@@ -2017,11 +2029,21 @@
             const icon = toggleSidebarBtn.querySelector('i');
             icon.classList.toggle('fa-angle-left');
             icon.classList.toggle('fa-angle-right');
+            
+            // Log analytics event
+            analytics.logEvent('sidebar_toggle', {
+                collapsed: sidebar.classList.contains('collapsed')
+            });
         });
         
         // Mobile Menu Toggle
         mobileMenuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('open');
+            
+            // Log analytics event
+            analytics.logEvent('mobile_menu_toggle', {
+                opened: sidebar.classList.contains('open')
+            });
         });
         
         // Navigation
@@ -2035,6 +2057,11 @@
                 if (window.innerWidth <= 1024) {
                     sidebar.classList.remove('open');
                 }
+                
+                // Log analytics event
+                analytics.logEvent('navigation_click', {
+                    section: item.dataset.section
+                });
                 
                 // In a real app, this would load different sections
                 const section = item.dataset.section;
@@ -2135,6 +2162,12 @@
                 }
             } catch (error) {
                 console.error('Error loading contacts:', error);
+                
+                // Log analytics event
+                analytics.logEvent('error', {
+                    error_type: 'load_contacts',
+                    error_message: error.message
+                });
             }
         }
         
@@ -2230,6 +2263,13 @@
                     });
                 }, 2000);
                 
+                // Log analytics event
+                analytics.logEvent('message_sent', {
+                    recipients: recipients,
+                    priority: priority,
+                    message_count: messageIds.length
+                });
+                
                 // Send real-time notification via socket
                 recipients.forEach(recipient => {
                     socket.emit('new-message', {
@@ -2247,6 +2287,12 @@
                 messageStatus.querySelector('.status-indicator').className = 'status-indicator';
                 messageStatus.querySelector('span').textContent = 'Failed to send';
                 showToast('Error sending message', 'error');
+                
+                // Log analytics event
+                analytics.logEvent('error', {
+                    error_type: 'send_message',
+                    error_message: error.message
+                });
             }
         });
         
@@ -2331,6 +2377,12 @@
                     showToast('Emergency alert sent successfully!', 'success', 'Success');
                     emergencyForm.reset();
                     
+                    // Log analytics event
+                    analytics.logEvent('emergency_alert_sent', {
+                        alert_type: alertType,
+                        severity: severity
+                    });
+                    
                     // Send real-time notification via socket
                     socket.emit('emergency-alert', {
                         type: alertType,
@@ -2341,6 +2393,12 @@
                 } catch (error) {
                     console.error('Error sending emergency alert:', error);
                     showToast('Error sending emergency alert', 'error');
+                    
+                    // Log analytics event
+                    analytics.logEvent('error', {
+                        error_type: 'send_emergency_alert',
+                        error_message: error.message
+                    });
                 }
             }
         });
@@ -2359,20 +2417,32 @@
             document.querySelector('.recipient-option input[value="all"]').parentElement.classList.add('selected');
             
             document.querySelector('.message-form').scrollIntoView({ behavior: 'smooth' });
+            
+            // Log analytics event
+            analytics.logEvent('new_announcement_click');
         });
         
         document.getElementById('newPolicyBtn').addEventListener('click', () => {
             showToast('Opening policy creation form...', 'info');
             // In a real app, this would navigate to a policy creation form
+            
+            // Log analytics event
+            analytics.logEvent('new_policy_click');
         });
         
         document.getElementById('emergencyAlertBtn').addEventListener('click', () => {
             document.querySelector('.emergency-form').scrollIntoView({ behavior: 'smooth' });
+            
+            // Log analytics event
+            analytics.logEvent('emergency_alert_click');
         });
         
         document.getElementById('scheduleMeetingBtn').addEventListener('click', () => {
             showToast('Opening meeting scheduler...', 'info');
             // In a real app, this would open a meeting scheduler
+            
+            // Log analytics event
+            analytics.logEvent('schedule_meeting_click');
         });
         
         // Toast Notification System
@@ -2428,6 +2498,9 @@
         notifications.addEventListener('click', () => {
             showToast('You have new notifications', 'info');
             // In a real app, this would open a notifications panel
+            
+            // Log analytics event
+            analytics.logEvent('notifications_click');
         });
         
         // Load messages from Firebase with real-time status updates
@@ -2609,6 +2682,12 @@
                             if (statusIconEl) {
                                 statusIconEl.className = 'fas fa-check-double status-icon read';
                             }
+                            
+                            // Log analytics event
+                            analytics.logEvent('message_read', {
+                                message_id: message.id,
+                                sender_id: message.senderId
+                            });
                         }
                         
                         // Open message thread view
@@ -2623,6 +2702,12 @@
             }, error => {
                 console.error('Error loading messages:', error);
                 messageInbox.innerHTML = '<div class="error-loading">Error loading messages</div>';
+                
+                // Log analytics event
+                analytics.logEvent('error', {
+                    error_type: 'load_messages',
+                    error_message: error.message
+                });
             });
         }
         
@@ -2678,12 +2763,20 @@
             // Store current message context
             threadInput.dataset.messageId = message.id;
             threadInput.dataset.recipient = message.senderId;
+            
+            // Log analytics event
+            analytics.logEvent('message_thread_opened', {
+                message_id: message.id
+            });
         }
         
         // Close message thread
         closeThread.addEventListener('click', () => {
             messageThread.classList.remove('show');
             threadInput.value = '';
+            
+            // Log analytics event
+            analytics.logEvent('message_thread_closed');
         });
         
         // Send message in thread
@@ -2732,6 +2825,12 @@
             
             // Show success toast
             showToast('Reply sent successfully!', 'success', 'Success');
+            
+            // Log analytics event
+            analytics.logEvent('message_reply_sent', {
+                message_id: messageId,
+                recipient_id: recipient
+            });
             
             // Send real-time notification
             socket.emit('message-reply', {
@@ -2783,6 +2882,9 @@
             if (user.department) {
                 socket.emit('join-room', user.department);
             }
+            
+            // Log analytics event
+            analytics.logEvent('socket_connected');
         });
         
         socket.on('new-message', (data) => {
@@ -2803,6 +2905,12 @@
                 // Reload messages
                 const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
                 loadMessages(activeFilter);
+                
+                // Log analytics event
+                analytics.logEvent('new_message_received', {
+                    sender: data.message.sender,
+                    recipient: data.recipient
+                });
             }
         });
         
@@ -2826,6 +2934,12 @@
                 
                 // Show success toast
                 showToast('New reply received!', 'info', 'New Reply');
+                
+                // Log analytics event
+                analytics.logEvent('message_reply_received', {
+                    message_id: data.messageId,
+                    sender: data.reply.sender
+                });
             }
         });
         
@@ -2836,6 +2950,12 @@
             // Play alert sound if available
             const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
             audio.play().catch(e => console.log('Audio play failed:', e));
+            
+            // Log analytics event
+            analytics.logEvent('emergency_alert_received', {
+                sender: data.sender,
+                alert_type: data.type
+            });
         });
         
         // Initialize Dashboard
@@ -2895,10 +3015,22 @@
                         })
                         .catch(error => {
                             console.error('Error getting FCM token:', error);
+                            
+                            // Log analytics event
+                            analytics.logEvent('error', {
+                                error_type: 'fcm_token',
+                                error_message: error.message
+                            });
                         });
                 })
                 .catch(error => {
                     console.error('Service Worker registration failed:', error);
+                    
+                    // Log analytics event
+                    analytics.logEvent('error', {
+                        error_type: 'service_worker',
+                        error_message: error.message
+                    });
                 });
         }
         
@@ -2918,6 +3050,17 @@
             // Reload messages
             const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
             loadMessages(activeFilter);
+            
+            // Log analytics event
+            analytics.logEvent('foreground_notification_received', {
+                title: title
+            });
+        });
+        
+        // Set user properties in analytics
+        analytics.setUserProperties({
+            role: user.role,
+            department: user.department || 'N/A'
         });
     </script>
 </body>
