@@ -14,6 +14,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
     
+    <!-- Favicon and Logo -->
+    <link rel="icon" href="https://z-cdn-media.chatglm.cn/files/0417f210-0786-4d74-ab38-1ead8b99662a_sona.jpg?auth_key=1790441152-f2aec946ff9d4b149ef02205ea2477c0-0-02de8c0835221472a62e0ac407802f5a" type="image/jpeg">
+    
     <style>
         :root {
             /* Premium Dark Blue & Yellow Theme */
@@ -1263,6 +1266,391 @@
             to { transform: rotate(360deg); }
         }
         
+        /* Calendar Styles */
+        .calendar-container {
+            margin-top: var(--spacing-md);
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .calendar-month {
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .calendar-nav button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .calendar-nav button:hover {
+            background: var(--accent-blue);
+            color: var(--primary-yellow);
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: var(--spacing-xs);
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: var(--spacing-sm) 0;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .calendar-day:hover {
+            background: var(--glass-bg);
+        }
+        
+        .calendar-day.today {
+            background: rgba(241, 196, 15, 0.2);
+            color: var(--primary-yellow);
+            font-weight: 600;
+        }
+        
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--primary-yellow);
+        }
+        
+        .calendar-day.other-month {
+            color: var(--text-muted);
+        }
+        
+        /* Course Details */
+        .course-details {
+            margin-top: var(--spacing-md);
+            display: none;
+        }
+        
+        .course-details.show {
+            display: block;
+        }
+        
+        .course-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .course-item:last-child {
+            border-bottom: none;
+        }
+        
+        .course-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--border-radius-sm);
+            background: rgba(241, 196, 15, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-yellow);
+            margin-right: var(--spacing-md);
+        }
+        
+        .course-info {
+            flex: 1;
+        }
+        
+        .course-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .course-meta {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+        
+        /* Resource Details */
+        .resource-details {
+            margin-top: var(--spacing-md);
+            display: none;
+        }
+        
+        .resource-details.show {
+            display: block;
+        }
+        
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .resource-item:last-child {
+            border-bottom: none;
+        }
+        
+        .resource-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+        }
+        
+        .resource-icon.pdf {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .resource-icon.video {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .resource-icon.link {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .resource-info {
+            flex: 1;
+        }
+        
+        .resource-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .resource-meta {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+        
+        /* Notification Panel */
+        .notification-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            max-height: 400px;
+            background: var(--secondary-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .notification-panel.show {
+            display: flex;
+        }
+        
+        .notification-header {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+        }
+        
+        .notification-clear {
+            background: none;
+            border: none;
+            color: var(--primary-yellow);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .notification-clear:hover {
+            text-decoration: underline;
+        }
+        
+        .notification-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+        }
+        
+        .notification-item {
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: var(--spacing-sm);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .notification-item:hover {
+            background: var(--accent-blue);
+            border-color: var(--primary-yellow);
+        }
+        
+        .notification-item.unread {
+            border-left: 3px solid var(--primary-yellow);
+        }
+        
+        .notification-content {
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .notification-time {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+        
+        /* Settings Panel */
+        .settings-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            max-height: 500px;
+            background: var(--secondary-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .settings-panel.show {
+            display: flex;
+        }
+        
+        .settings-header {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .settings-title {
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+        }
+        
+        .settings-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+        }
+        
+        .settings-section {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .settings-section-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-base);
+        }
+        
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-label {
+            font-size: var(--font-size-sm);
+        }
+        
+        .settings-control {
+            display: flex;
+            align-items: center;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .toggle-switch.active {
+            background: var(--primary-yellow);
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+        
         /* Responsive Design */
         @media (max-width: 1200px) {
             .dashboard-grid {
@@ -1304,6 +1692,11 @@
             .header-nav {
                 display: none;
             }
+            
+            .notification-panel, .settings-panel {
+                width: 90%;
+                max-width: 350px;
+            }
         }
         
         @media (max-width: 768px) {
@@ -1329,6 +1722,10 @@
                 right: 20px;
                 left: 20px;
             }
+            
+            .card {
+                padding: var(--spacing-md);
+            }
         }
         
         @media (max-width: 480px) {
@@ -1344,10 +1741,6 @@
                 padding: var(--spacing-sm);
             }
             
-            .card {
-                padding: var(--spacing-md);
-            }
-            
             .logo {
                 height: 40px;
             }
@@ -1358,6 +1751,10 @@
             
             .btn {
                 padding: 0.75rem 1rem;
+            }
+            
+            .notification-panel, .settings-panel {
+                width: 95%;
             }
         }
         
@@ -1489,28 +1886,74 @@
     <!-- Header -->
     <header class="header">
         <div class="logo-container">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Sona_College_of_Technology_logo.jpg" alt="Sona College of Technology Logo" class="logo">
+            <img src="https://z-cdn-media.chatglm.cn/files/0417f210-0786-4d74-ab38-1ead8b99662a_sona.jpg?auth_key=1790441152-f2aec946ff9d4b149ef02205ea2477c0-0-02de8c0835221472a62e0ac407802f5a" alt="Sona College of Technology Logo" class="logo">
             <span class="logo-text">Sona College of Technology</span>
         </div>
         <nav class="header-nav">
-            <a href="#" class="header-link">Dashboard</a>
-            <a href="#" class="header-link">Courses</a>
-            <a href="#" class="header-link">Resources</a>
-            <a href="#" class="header-link">Calendar</a>
+            <a href="#dashboard" class="header-link">Dashboard</a>
+            <a href="#courses" class="header-link">Courses</a>
+            <a href="#resources" class="header-link">Resources</a>
+            <a href="#calendar" class="header-link">Calendar</a>
         </nav>
         <div class="header-actions">
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="header-action tooltip" data-tooltip="Notifications">
+            <div class="header-action tooltip" data-tooltip="Notifications" id="notificationBtn">
                 <i class="fas fa-bell"></i>
                 <span class="notification-badge" id="notificationCount">0</span>
+                <div class="notification-panel" id="notificationPanel">
+                    <div class="notification-header">
+                        <div class="notification-title">Notifications</div>
+                        <button class="notification-clear">Clear All</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <!-- Notifications will be dynamically loaded here -->
+                    </div>
+                </div>
             </div>
-            <div class="header-action tooltip" data-tooltip="Calendar">
+            <div class="header-action tooltip" data-tooltip="Calendar" id="calendarBtn">
                 <i class="fas fa-calendar-alt"></i>
             </div>
-            <div class="header-action tooltip" data-tooltip="Settings">
+            <div class="header-action tooltip" data-tooltip="Settings" id="settingsBtn">
                 <i class="fas fa-cog"></i>
+                <div class="settings-panel" id="settingsPanel">
+                    <div class="settings-header">
+                        <div class="settings-title">Settings</div>
+                    </div>
+                    <div class="settings-content">
+                        <div class="settings-section">
+                            <div class="settings-section-title">Account</div>
+                            <div class="settings-item">
+                                <div class="settings-label">Email Notifications</div>
+                                <div class="settings-control">
+                                    <div class="toggle-switch active" id="emailNotificationsToggle"></div>
+                                </div>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-label">Push Notifications</div>
+                                <div class="settings-control">
+                                    <div class="toggle-switch active" id="pushNotificationsToggle"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <div class="settings-section-title">Appearance</div>
+                            <div class="settings-item">
+                                <div class="settings-label">Dark Mode</div>
+                                <div class="settings-control">
+                                    <div class="toggle-switch active" id="darkModeToggle"></div>
+                                </div>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-label">Compact View</div>
+                                <div class="settings-control">
+                                    <div class="toggle-switch" id="compactViewToggle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="profile-menu" id="profileMenu">
                 <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-avatar" id="profileAvatar">
@@ -1562,7 +2005,7 @@
         </aside>
         
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main-content" id="dashboard">
             <div class="content-header">
                 <div>
                     <h1 class="content-title">
@@ -1585,7 +2028,7 @@
             
             <div class="dashboard-grid">
                 <!-- Overview Card -->
-                <div class="card">
+                <div class="card" id="academicOverviewCard">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -1617,7 +2060,7 @@
                 </div>
                 
                 <!-- Messages Card -->
-                <div class="card">
+                <div class="card" id="messagesCard">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -1637,7 +2080,7 @@
                 </div>
                 
                 <!-- Courses Card -->
-                <div class="card">
+                <div class="card" id="coursesCard">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -1646,7 +2089,7 @@
                             Active Courses
                         </h3>
                         <div class="card-action">
-                            <i class="fas fa-ellipsis-h"></i>
+                            <i class="fas fa-chevron-down" id="coursesToggle"></i>
                         </div>
                     </div>
                     <div class="card-body">
@@ -1655,11 +2098,14 @@
                         <div class="chart-container">
                             <canvas id="coursesChart"></canvas>
                         </div>
+                        <div class="course-details" id="courseDetails">
+                            <!-- Course details will be dynamically loaded here -->
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Assignments Card -->
-                <div class="card">
+                <div class="card" id="assignmentsCard">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -1679,7 +2125,7 @@
                 </div>
                 
                 <!-- Study Time Card -->
-                <div class="card">
+                <div class="card" id="studyTimeCard">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -1705,7 +2151,7 @@
                 </div>
                 
                 <!-- Resources Card -->
-                <div class="card">
+                <div class="card" id="resourcesCard">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -1714,7 +2160,7 @@
                             Learning Resources
                         </h3>
                         <div class="card-action">
-                            <i class="fas fa-plus"></i>
+                            <i class="fas fa-chevron-down" id="resourcesToggle"></i>
                         </div>
                     </div>
                     <div class="card-body">
@@ -1738,11 +2184,14 @@
                                 <div class="progress-fill" id="practiceTestsProgressBar" style="width: 0%"></div>
                             </div>
                         </div>
+                        <div class="resource-details" id="resourceDetails">
+                            <!-- Resource details will be dynamically loaded here -->
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Skills Card -->
-                <div class="card">
+                <div class="card" id="skillsCard">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -1759,6 +2208,36 @@
                         <div class="stat-label">Skills in progress</div>
                         <div class="chart-container">
                             <canvas id="skillsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calendar Card -->
+                <div class="card" id="calendarCard">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            Calendar
+                        </h3>
+                        <div class="card-action">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <div class="calendar-month" id="calendarMonth">June 2023</div>
+                                <div class="calendar-nav">
+                                    <button id="calendarPrev"><i class="fas fa-chevron-left"></i></button>
+                                    <button id="calendarToday">Today</button>
+                                    <button id="calendarNext"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="calendar-grid" id="calendarGrid">
+                                <!-- Calendar will be dynamically generated here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1882,7 +2361,25 @@
             aiChatClose: document.getElementById('aiChatClose'),
             aiChatInput: document.getElementById('aiChatInput'),
             aiChatSend: document.getElementById('aiChatSend'),
-            aiChatMessages: document.querySelector('.ai-chat-messages')
+            aiChatMessages: document.querySelector('.ai-chat-messages'),
+            notificationBtn: document.getElementById('notificationBtn'),
+            notificationPanel: document.getElementById('notificationPanel'),
+            notificationList: document.getElementById('notificationList'),
+            settingsBtn: document.getElementById('settingsBtn'),
+            settingsPanel: document.getElementById('settingsPanel'),
+            calendarBtn: document.getElementById('calendarBtn'),
+            calendarCard: document.getElementById('calendarCard'),
+            coursesCard: document.getElementById('coursesCard'),
+            resourcesCard: document.getElementById('resourcesCard'),
+            coursesToggle: document.getElementById('coursesToggle'),
+            resourcesToggle: document.getElementById('resourcesToggle'),
+            courseDetails: document.getElementById('courseDetails'),
+            resourceDetails: document.getElementById('resourceDetails'),
+            calendarMonth: document.getElementById('calendarMonth'),
+            calendarGrid: document.getElementById('calendarGrid'),
+            calendarPrev: document.getElementById('calendarPrev'),
+            calendarToday: document.getElementById('calendarToday'),
+            calendarNext: document.getElementById('calendarNext')
         };
 
         // Check if user is logged in
@@ -1894,6 +2391,9 @@
                 
                 // Set up real-time listeners
                 setupRealtimeListeners(user.uid);
+                
+                // Initialize calendar
+                initializeCalendar();
             } else {
                 // User is signed out, redirect to login page
                 window.location.href = 'index.html';
@@ -1955,6 +2455,13 @@
                 .onSnapshot(snapshot => {
                     loadAnnouncements(userId);
                 });
+                
+            // Listen for new events
+            db.collection('events')
+                .where('participants', 'array-contains', userId)
+                .onSnapshot(snapshot => {
+                    updateCalendarEvents();
+                });
         }
 
         // Load dashboard data
@@ -1991,6 +2498,9 @@
             
             // Load notifications
             updateNotificationCount(userId);
+            
+            // Load calendar events
+            loadCalendarEvents(userId);
         }
 
         // Load academic overview
@@ -2138,9 +2648,60 @@
                 .get()
                 .then(querySnapshot => {
                     elements.notificationCount.textContent = querySnapshot.size;
+                    
+                    // Also update notification panel
+                    updateNotificationPanel(userId);
                 })
                 .catch(error => {
                     console.error('Error updating notification count:', error);
+                });
+        }
+
+        // Update notification panel
+        function updateNotificationPanel(userId) {
+            elements.notificationList.innerHTML = '<div class="loading-spinner"></div>';
+            
+            db.collection('messages')
+                .where('receiverId', '==', userId)
+                .orderBy('timestamp', 'desc')
+                .get()
+                .then(querySnapshot => {
+                    elements.notificationList.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        elements.notificationList.innerHTML = '<div class="text-center text-muted">No notifications</div>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach(doc => {
+                        const message = doc.data();
+                        
+                        const notificationItem = document.createElement('div');
+                        notificationItem.className = `notification-item ${!message.read ? 'unread' : ''}`;
+                        
+                        const content = document.createElement('div');
+                        content.className = 'notification-content';
+                        content.textContent = message.content || 'No content';
+                        
+                        const time = document.createElement('div');
+                        time.className = 'notification-time';
+                        
+                        if (message.timestamp) {
+                            const date = message.timestamp.toDate();
+                            time.textContent = formatTimeAgo(date);
+                        } else {
+                            time.textContent = 'Unknown time';
+                        }
+                        
+                        notificationItem.appendChild(content);
+                        notificationItem.appendChild(time);
+                        
+                        elements.notificationList.appendChild(notificationItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading notifications:', error);
+                    elements.notificationList.innerHTML = '<div class="text-center text-error">Error loading notifications</div>';
                 });
         }
 
@@ -2213,10 +2774,54 @@
                             }
                         }
                     });
+                    
+                    // Load course details
+                    loadCourseDetails(courses);
                 })
                 .catch(error => {
                     console.error('Error loading courses:', error);
                 });
+        }
+
+        // Load course details
+        function loadCourseDetails(courses) {
+            elements.courseDetails.innerHTML = '';
+            
+            if (courses.length === 0) {
+                elements.courseDetails.innerHTML = '<div class="text-center text-muted">No courses found</div>';
+                return;
+            }
+            
+            courses.forEach(course => {
+                const courseItem = document.createElement('div');
+                courseItem.className = 'course-item';
+                
+                const icon = document.createElement('div');
+                icon.className = 'course-icon';
+                
+                const iconInner = document.createElement('i');
+                iconInner.className = 'fas fa-book';
+                icon.appendChild(iconInner);
+                
+                const info = document.createElement('div');
+                info.className = 'course-info';
+                
+                const name = document.createElement('div');
+                name.className = 'course-name';
+                name.textContent = course.courseName || 'Unknown Course';
+                
+                const meta = document.createElement('div');
+                meta.className = 'course-meta';
+                meta.textContent = course.instructor || 'Unknown Instructor';
+                
+                info.appendChild(name);
+                info.appendChild(meta);
+                
+                courseItem.appendChild(icon);
+                courseItem.appendChild(info);
+                
+                elements.courseDetails.appendChild(courseItem);
+            });
         }
 
         // Load assignments
@@ -2417,9 +3022,11 @@
                     let courseMaterialsCompleted = 0;
                     let practiceTestsCount = 0;
                     let practiceTestsCompleted = 0;
+                    const resources = [];
                     
                     querySnapshot.forEach(doc => {
                         const resource = doc.data();
+                        resources.push(resource);
                         
                         if (resource.type === 'course-material') {
                             courseMaterialsCount++;
@@ -2449,10 +3056,60 @@
                     elements.courseMaterialsProgressBar.style.width = courseMaterialsProgress;
                     elements.practiceTestsProgress.textContent = practiceTestsProgress;
                     elements.practiceTestsProgressBar.style.width = practiceTestsProgress;
+                    
+                    // Load resource details
+                    loadResourceDetails(resources);
                 })
                 .catch(error => {
                     console.error('Error loading resources:', error);
                 });
+        }
+
+        // Load resource details
+        function loadResourceDetails(resources) {
+            elements.resourceDetails.innerHTML = '';
+            
+            if (resources.length === 0) {
+                elements.resourceDetails.innerHTML = '<div class="text-center text-muted">No resources found</div>';
+                return;
+            }
+            
+            resources.forEach(resource => {
+                const resourceItem = document.createElement('div');
+                resourceItem.className = 'resource-item';
+                
+                const icon = document.createElement('div');
+                icon.className = `resource-icon ${resource.type || 'link'}`;
+                
+                const iconInner = document.createElement('i');
+                if (resource.type === 'pdf') {
+                    iconInner.className = 'fas fa-file-pdf';
+                } else if (resource.type === 'video') {
+                    iconInner.className = 'fas fa-video';
+                } else {
+                    iconInner.className = 'fas fa-link';
+                }
+                icon.appendChild(iconInner);
+                
+                const info = document.createElement('div');
+                info.className = 'resource-info';
+                
+                const name = document.createElement('div');
+                name.className = 'resource-name';
+                name.textContent = resource.name || 'Unknown Resource';
+                
+                const meta = document.createElement('div');
+                meta.className = 'resource-meta';
+                meta.textContent = resource.category || 'Uncategorized';
+                
+                info.appendChild(name);
+                info.appendChild(meta);
+                
+                resourceItem.appendChild(icon);
+                resourceItem.appendChild(info);
+                
+                elements.resourceDetails.appendChild(resourceItem);
+            });
         }
 
         // Load skills
@@ -2856,6 +3513,118 @@
                 });
         }
 
+        // Load calendar events
+        function loadCalendarEvents(userId) {
+            // Get events for the current month
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            
+            db.collection('events')
+                .where('participants', 'array-contains', userId)
+                .where('date', '>=', startOfMonth)
+                .where('date', '<=', endOfMonth)
+                .get()
+                .then(querySnapshot => {
+                    const events = [];
+                    querySnapshot.forEach(doc => {
+                        events.push(doc.data());
+                    });
+                    
+                    // Update calendar with events
+                    updateCalendarEvents(events);
+                })
+                .catch(error => {
+                    console.error('Error loading calendar events:', error);
+                });
+        }
+
+        // Initialize calendar
+        function initializeCalendar() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            
+            renderCalendar(year, month);
+            
+            // Add event listeners
+            elements.calendarPrev.addEventListener('click', () => {
+                const currentDate = new Date(elements.calendarMonth.textContent);
+                const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+                renderCalendar(newDate.getFullYear(), newDate.getMonth());
+            });
+            
+            elements.calendarNext.addEventListener('click', () => {
+                const currentDate = new Date(elements.calendarMonth.textContent);
+                const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+                renderCalendar(newDate.getFullYear(), newDate.getMonth());
+            });
+            
+            elements.calendarToday.addEventListener('click', () => {
+                const today = new Date();
+                renderCalendar(today.getFullYear(), today.getMonth());
+            });
+        }
+
+        // Render calendar
+        function renderCalendar(year, month) {
+            // Update month display
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            elements.calendarMonth.textContent = `${monthNames[month]} ${year}`;
+            
+            // Clear calendar grid
+            elements.calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayNames.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day-header';
+                dayHeader.textContent = day;
+                elements.calendarGrid.appendChild(dayHeader);
+            });
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day other-month';
+                elements.calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Add days of the month
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                // Check if this is today
+                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // Add event listener
+                dayElement.addEventListener('click', () => {
+                    // Handle day click
+                    console.log(`Day clicked: ${day} ${monthNames[month]} ${year}`);
+                });
+                
+                elements.calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        // Update calendar events
+        function updateCalendarEvents(events) {
+            // This would update the calendar to show events
+            // For now, we'll just log the events
+            console.log('Calendar events:', events);
+        }
+
         // Format file size
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
@@ -2920,6 +3689,8 @@
         // Close profile dropdown when clicking outside
         document.addEventListener('click', () => {
             elements.profileDropdown.classList.remove('show');
+            elements.notificationPanel.classList.remove('show');
+            elements.settingsPanel.classList.remove('show');
         });
 
         // Logout
@@ -2976,6 +3747,104 @@
             if (e.target.classList.contains('task-checkbox')) {
                 e.target.classList.toggle('checked');
             }
+        });
+
+        // Notification panel
+        elements.notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            elements.notificationPanel.classList.toggle('show');
+            elements.settingsPanel.classList.remove('show');
+        });
+
+        // Settings panel
+        elements.settingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            elements.settingsPanel.classList.toggle('show');
+            elements.notificationPanel.classList.remove('show');
+        });
+
+        // Settings toggles
+        document.getElementById('emailNotificationsToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        document.getElementById('pushNotificationsToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        document.getElementById('compactViewToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        // Calendar button
+        elements.calendarBtn.addEventListener('click', () => {
+            elements.calendarCard.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Courses toggle
+        elements.coursesToggle.addEventListener('click', () => {
+            elements.courseDetails.classList.toggle('show');
+            
+            if (elements.courseDetails.classList.contains('show')) {
+                elements.coursesToggle.classList.remove('fa-chevron-down');
+                elements.coursesToggle.classList.add('fa-chevron-up');
+            } else {
+                elements.coursesToggle.classList.remove('fa-chevron-up');
+                elements.coursesToggle.classList.add('fa-chevron-down');
+            }
+        });
+
+        // Resources toggle
+        elements.resourcesToggle.addEventListener('click', () => {
+            elements.resourceDetails.classList.toggle('show');
+            
+            if (elements.resourceDetails.classList.contains('show')) {
+                elements.resourcesToggle.classList.remove('fa-chevron-down');
+                elements.resourcesToggle.classList.add('fa-chevron-up');
+            } else {
+                elements.resourcesToggle.classList.remove('fa-chevron-up');
+                elements.resourcesToggle.classList.add('fa-chevron-down');
+            }
+        });
+
+        // Header navigation
+        document.querySelectorAll('.header-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                const targetId = link.getAttribute('href').substring(1);
+                let targetElement;
+                
+                switch(targetId) {
+                    case 'dashboard':
+                        targetElement = document.getElementById('dashboard');
+                        break;
+                    case 'courses':
+                        targetElement = document.getElementById('coursesCard');
+                        break;
+                    case 'resources':
+                        targetElement = document.getElementById('resourcesCard');
+                        break;
+                    case 'calendar':
+                        targetElement = document.getElementById('calendarCard');
+                        break;
+                }
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // If it's courses or resources, expand the details
+                    if (targetId === 'courses' && !elements.courseDetails.classList.contains('show')) {
+                        elements.coursesToggle.click();
+                    } else if (targetId === 'resources' && !elements.resourceDetails.classList.contains('show')) {
+                        elements.resourcesToggle.click();
+                    }
+                }
+            });
         });
 
         // AI Assistant
