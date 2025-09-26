@@ -18,8 +18,9 @@
     <link rel="icon" href="https://z-cdn-media.chatglm.cn/files/0417f210-0786-4d74-ab38-1ead8b99662a_sona.jpg?auth_key=1790441152-f2aec946ff9d4b149ef02205ea2477c0-0-02de8c0835221472a62e0ac407802f5a" type="image/jpeg">
     
     <style>
+        /* CSS Variables for Light and Dark Themes */
         :root {
-            /* Premium Dark Blue & Yellow Theme */
+            /* Dark Theme */
             --primary-dark: #0a192f;
             --secondary-dark: #172a45;
             --accent-blue: #233554;
@@ -35,6 +36,8 @@
             --info: #3b82f6;
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(23, 42, 69, 0.95);
+            --modal-bg: rgba(10, 25, 47, 0.95);
             
             /* Typography */
             --font-family: 'Inter', sans-serif;
@@ -64,6 +67,27 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
+        /* Light Theme */
+        [data-theme="light"] {
+            --primary-dark: #f8fafc;
+            --secondary-dark: #e2e8f0;
+            --accent-blue: #cbd5e1;
+            --primary-yellow: #f59e0b;
+            --secondary-yellow: #fcd34d;
+            --accent-yellow: #fbbf24;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --modal-bg: rgba(248, 250, 252, 0.95);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -79,6 +103,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         /* Scrollbar Styling */
@@ -112,6 +137,12 @@
             z-index: 100;
             border-bottom: 1px solid var(--glass-border);
             height: var(--header-height);
+            transition: background-color 0.3s ease;
+        }
+        
+        [data-theme="light"] .header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         
         .logo-container {
@@ -277,11 +308,16 @@
             border: 1px solid var(--glass-border);
             border-radius: var(--border-radius);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            width: 200px;
+            width: 220px;
             z-index: 1000;
             display: none;
             flex-direction: column;
             margin-top: 0.5rem;
+        }
+        
+        [data-theme="light"] .profile-dropdown {
+            background: var(--card-bg);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         
         .profile-dropdown.show {
@@ -326,7 +362,7 @@
         /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
-            background: rgba(23, 42, 69, 0.95);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-right: 1px solid var(--glass-border);
@@ -583,7 +619,7 @@
         }
         
         .card {
-            background: var(--glass-bg);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
@@ -882,7 +918,7 @@
         /* Right Panel */
         .right-panel {
             width: var(--right-panel-width);
-            background: var(--glass-bg);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-left: 1px solid var(--glass-border);
@@ -1484,6 +1520,11 @@
             overflow: hidden;
         }
         
+        [data-theme="light"] .notification-panel {
+            background: var(--card-bg);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
         .notification-panel.show {
             display: flex;
         }
@@ -1565,6 +1606,11 @@
             flex-direction: column;
             margin-top: 0.5rem;
             overflow: hidden;
+        }
+        
+        [data-theme="light"] .settings-panel {
+            background: var(--card-bg);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         
         .settings-panel.show {
@@ -1671,7 +1717,7 @@
         }
         
         .message-modal-content {
-            background: var(--secondary-dark);
+            background: var(--modal-bg);
             border-radius: var(--border-radius);
             width: 90%;
             max-width: 600px;
@@ -1795,7 +1841,7 @@
         }
         
         .event-modal-content {
-            background: var(--secondary-dark);
+            background: var(--modal-bg);
             border-radius: var(--border-radius);
             width: 90%;
             max-width: 600px;
@@ -1924,6 +1970,247 @@
             justify-content: flex-end;
         }
         
+        /* Profile Page */
+        .profile-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+        
+        .profile-page.show {
+            display: flex;
+        }
+        
+        .profile-content {
+            background: var(--modal-bg);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+            color: var(--primary-dark);
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .profile-title {
+            font-weight: 700;
+            font-size: var(--font-size-2xl);
+        }
+        
+        .profile-close {
+            background: none;
+            border: none;
+            color: var(--primary-dark);
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .profile-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        .profile-body {
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .profile-info-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-right: var(--spacing-lg);
+            object-fit: cover;
+            border: 4px solid var(--primary-yellow);
+        }
+        
+        .profile-details {
+            flex: 1;
+        }
+        
+        .profile-name-large {
+            font-weight: 700;
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .profile-role-large {
+            font-size: var(--font-size-lg);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .profile-id {
+            font-size: var(--font-size-base);
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+        
+        .profile-stat {
+            text-align: center;
+        }
+        
+        .profile-stat-value {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--primary-yellow);
+        }
+        
+        .profile-stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+        
+        .profile-section {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .profile-section-title {
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .profile-section-title i {
+            color: var(--primary-yellow);
+        }
+        
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+        }
+        
+        .profile-info-item {
+            background: var(--glass-bg);
+            border-radius: var(--border-radius-sm);
+            padding: var(--spacing-md);
+        }
+        
+        .profile-info-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .profile-info-value {
+            font-weight: 500;
+        }
+        
+        .profile-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+            justify-content: flex-end;
+        }
+        
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--secondary-dark);
+            color: var(--text-primary);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 3000;
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .notification-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .notification-toast.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .notification-toast.error {
+            border-left: 4px solid var(--error);
+        }
+        
+        .notification-toast.info {
+            border-left: 4px solid var(--info);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 100px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            z-index: 50;
+            transition: var(--transition);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--accent-blue);
+            color: var(--primary-yellow);
+            transform: translateY(-2px);
+        }
+        
+        .theme-toggle i {
+            font-size: 24px;
+        }
+        
         /* Responsive Design */
         @media (max-width: 1200px) {
             .dashboard-grid {
@@ -1971,7 +2258,7 @@
                 max-width: 350px;
             }
             
-            .message-modal-content, .event-modal-content {
+            .message-modal-content, .event-modal-content, .profile-content {
                 width: 95%;
                 max-width: 500px;
             }
@@ -2005,19 +2292,18 @@
                 padding: var(--spacing-md);
             }
             
-            .message-modal-content, .event-modal-content {
-                width: 95%;
-                max-width: 400px;
-            }
-            
-            .message-modal-info {
+            .profile-info-section {
                 flex-direction: column;
                 text-align: center;
             }
             
-            .message-modal-avatar {
+            .profile-avatar-large {
                 margin-right: 0;
                 margin-bottom: var(--spacing-md);
+            }
+            
+            .profile-stats {
+                justify-content: center;
             }
         }
         
@@ -2050,9 +2336,13 @@
                 width: 95%;
             }
             
-            .message-modal-content, .event-modal-content {
+            .message-modal-content, .event-modal-content, .profile-content {
                 width: 95%;
                 max-width: 350px;
+            }
+            
+            .profile-info-grid {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -2074,7 +2364,7 @@
                 font-size: 0.7rem;
             }
             
-            .message-modal-content, .event-modal-content {
+            .message-modal-content, .event-modal-content, .profile-content {
                 width: 95%;
                 max-width: 300px;
             }
@@ -2267,7 +2557,7 @@
                 </div>
                 <i class="fas fa-chevron-down"></i>
                 <div class="profile-dropdown" id="profileDropdown">
-                    <a href="#" class="profile-dropdown-item">
+                    <a href="#" class="profile-dropdown-item" id="viewProfileBtn">
                         <i class="fas fa-user"></i>
                         <span>My Profile</span>
                     </a>
@@ -2652,6 +2942,88 @@
         </div>
     </div>
     
+    <!-- Profile Page -->
+    <div class="profile-page" id="profilePage">
+        <div class="profile-content">
+            <div class="profile-header">
+                <div class="profile-title">My Profile</div>
+                <button class="profile-close" id="profileClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="profile-body">
+                <div class="profile-info-section">
+                    <img src="" alt="Profile" class="profile-avatar-large" id="profileAvatarLarge">
+                    <div class="profile-details">
+                        <div class="profile-name-large" id="profileNameLarge">-</div>
+                        <div class="profile-role-large" id="profileRoleLarge">-</div>
+                        <div class="profile-id" id="profileIdLarge">-</div>
+                        <div class="profile-stats">
+                            <div class="profile-stat">
+                                <div class="profile-stat-value" id="profileGPA">-</div>
+                                <div class="profile-stat-label">GPA</div>
+                            </div>
+                            <div class="profile-stat">
+                                <div class="profile-stat-value" id="profileCredits">-</div>
+                                <div class="profile-stat-label">Credits</div>
+                            </div>
+                            <div class="profile-stat">
+                                <div class="profile-stat-value" id="profileRank">-</div>
+                                <div class="profile-stat-label">Rank</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <div class="profile-section-title">
+                        <i class="fas fa-user"></i>
+                        Personal Information
+                    </div>
+                    <div class="profile-info-grid" id="personalInfoGrid">
+                        <!-- Personal information will be dynamically loaded here -->
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <div class="profile-section-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        Academic Information
+                    </div>
+                    <div class="profile-info-grid" id="academicInfoGrid">
+                        <!-- Academic information will be dynamically loaded here -->
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <div class="profile-section-title">
+                        <i class="fas fa-chart-line"></i>
+                        Performance
+                    </div>
+                    <div class="profile-info-grid" id="performanceInfoGrid">
+                        <!-- Performance information will be dynamically loaded here -->
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-edit"></i>
+                        Edit Profile
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-download"></i>
+                        Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </div>
+    
     <!-- AI Assistant -->
     <div class="ai-assistant" id="aiAssistant">
         <i class="fas fa-robot"></i>
@@ -2783,7 +3155,25 @@
             eventModalDescription: document.getElementById('eventModalDescription'),
             eventModalParticipants: document.getElementById('eventModalParticipants'),
             eventModalAccept: document.getElementById('eventModalAccept'),
-            eventModalDecline: document.getElementById('eventModalDecline')
+            eventModalDecline: document.getElementById('eventModalDecline'),
+            // Profile Page Elements
+            profilePage: document.getElementById('profilePage'),
+            profileClose: document.getElementById('profileClose'),
+            profileAvatarLarge: document.getElementById('profileAvatarLarge'),
+            profileNameLarge: document.getElementById('profileNameLarge'),
+            profileRoleLarge: document.getElementById('profileRoleLarge'),
+            profileIdLarge: document.getElementById('profileIdLarge'),
+            profileGPA: document.getElementById('profileGPA'),
+            profileCredits: document.getElementById('profileCredits'),
+            profileRank: document.getElementById('profileRank'),
+            personalInfoGrid: document.getElementById('personalInfoGrid'),
+            academicInfoGrid: document.getElementById('academicInfoGrid'),
+            performanceInfoGrid: document.getElementById('performanceInfoGrid'),
+            viewProfileBtn: document.getElementById('viewProfileBtn'),
+            // Theme Toggle Elements
+            themeToggle: document.getElementById('themeToggle'),
+            themeIcon: document.getElementById('themeIcon'),
+            darkModeToggle: document.getElementById('darkModeToggle')
         };
 
         // Check if user is logged in
@@ -2801,6 +3191,9 @@
                 
                 // Load user settings
                 loadUserSettings(user.uid);
+                
+                // Apply theme preference
+                applyThemePreference();
             } else {
                 // User is signed out, redirect to login page
                 window.location.href = 'index.html';
@@ -3068,9 +3461,13 @@
                     
                     // Close modal
                     elements.messageModal.classList.remove('show');
+                    
+                    // Show success notification
+                    showNotification('Message marked as read', 'success');
                 })
                 .catch(error => {
                     console.error('Error marking message as read:', error);
+                    showNotification('Error marking message as read', 'error');
                 });
             }
         });
@@ -3082,7 +3479,7 @@
             elements.messageModal.classList.remove('show');
             
             // In a real app, this would open a compose message interface
-            alert('Reply functionality would be implemented here');
+            showNotification('Reply functionality would be implemented here', 'info');
         });
 
         // Update notification count
@@ -3284,6 +3681,7 @@
                 courseItem.addEventListener('click', () => {
                     // In a real app, this would navigate to the course page
                     console.log('Viewing course:', course.courseName);
+                    showNotification(`Viewing course: ${course.courseName}`, 'info');
                 });
                 
                 elements.courseDetails.appendChild(courseItem);
@@ -3370,9 +3768,11 @@
                             })
                             .then(() => {
                                 checkbox.classList.toggle('checked');
+                                showNotification(`Assignment ${newStatus ? 'completed' : 'marked as incomplete'}`, 'success');
                             })
                             .catch(error => {
                                 console.error('Error updating assignment:', error);
+                                showNotification('Error updating assignment', 'error');
                             });
                         });
                         
@@ -3380,6 +3780,7 @@
                         title.addEventListener('click', () => {
                             // In a real app, this would open the assignment details
                             console.log('Viewing assignment:', assignment.title);
+                            showNotification(`Viewing assignment: ${assignment.title}`, 'info');
                         });
                     });
                 })
@@ -3584,6 +3985,7 @@
                 resourceItem.addEventListener('click', () => {
                     // In a real app, this would open the resource
                     console.log('Viewing resource:', resource.name);
+                    showNotification(`Viewing resource: ${resource.name}`, 'info');
                 });
                 
                 elements.resourceDetails.appendChild(resourceItem);
@@ -3803,6 +4205,7 @@
             // This would open a chat interface with the contact
             // For now, we'll just log to console
             console.log('Loading messages for contact:', contactId);
+            showNotification(`Loading messages for contact: ${contactId}`, 'info');
         }
 
         // Load files
@@ -3918,6 +4321,7 @@
                         name.addEventListener('click', () => {
                             // In a real app, this would open the file
                             console.log('Viewing file:', file.name);
+                            showNotification(`Viewing file: ${file.name}`, 'info');
                         });
                     });
                 })
@@ -3994,6 +4398,7 @@
                         readMoreBtn.addEventListener('click', () => {
                             // In a real app, this would open the full announcement
                             console.log('Reading announcement:', announcement.title);
+                            showNotification(`Reading announcement: ${announcement.title}`, 'info');
                         });
                     });
                 })
@@ -4170,6 +4575,8 @@
                     // If there are events, show the first one in a modal
                     if (events.length > 0) {
                         openEventModal(events[0]);
+                    } else {
+                        showNotification('No events for this day', 'info');
                     }
                 })
                 .catch(error => {
@@ -4329,8 +4736,12 @@
                             const darkModeToggle = document.getElementById('darkModeToggle');
                             if (settings.darkMode) {
                                 darkModeToggle.classList.add('active');
+                                document.documentElement.setAttribute('data-theme', 'dark');
+                                elements.themeIcon.className = 'fas fa-moon';
                             } else {
                                 darkModeToggle.classList.remove('active');
+                                document.documentElement.setAttribute('data-theme', 'light');
+                                elements.themeIcon.className = 'fas fa-sun';
                             }
                         }
                         
@@ -4358,9 +4769,11 @@
             }, { merge: true })
             .then(() => {
                 console.log(`Setting ${settingName} saved successfully`);
+                showNotification(`Setting ${settingName} updated successfully`, 'success');
             })
             .catch(error => {
                 console.error(`Error saving setting ${settingName}:`, error);
+                showNotification(`Error saving setting ${settingName}`, 'error');
             });
         }
 
@@ -4375,15 +4788,58 @@
             saveUserSettings('pushNotifications', this.classList.contains('active'));
         });
 
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
+        elements.darkModeToggle.addEventListener('click', function() {
             this.classList.toggle('active');
-            saveUserSettings('darkMode', this.classList.contains('active'));
+            const isDarkMode = this.classList.contains('active');
+            saveUserSettings('darkMode', isDarkMode);
+            
+            // Apply theme immediately
+            if (isDarkMode) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                elements.themeIcon.className = 'fas fa-moon';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                elements.themeIcon.className = 'fas fa-sun';
+            }
         });
 
         document.getElementById('compactViewToggle').addEventListener('click', function() {
             this.classList.toggle('active');
             saveUserSettings('compactView', this.classList.contains('active'));
         });
+
+        // Theme toggle
+        elements.themeToggle.addEventListener('click', () => {
+            const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            if (isDarkMode) {
+                document.documentElement.setAttribute('data-theme', 'light');
+                elements.themeIcon.className = 'fas fa-sun';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                elements.themeIcon.className = 'fas fa-moon';
+            }
+            
+            // Save preference
+            saveUserSettings('darkMode', !isDarkMode);
+            
+            // Update toggle
+            elements.darkModeToggle.classList.toggle('active');
+        });
+
+        // Apply theme preference on page load
+        function applyThemePreference() {
+            const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme === 'dark' || (savedTheme === null && prefersDarkMode)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                elements.themeIcon.className = 'fas fa-moon';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                elements.themeIcon.className = 'fas fa-sun';
+            }
+        }
 
         // Calendar button
         elements.calendarBtn.addEventListener('click', () => {
@@ -4462,6 +4918,14 @@
         elements.profileMenu.addEventListener('click', (e) => {
             e.stopPropagation();
             elements.profileDropdown.classList.toggle('show');
+        });
+
+        // View profile button
+        elements.viewProfileBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadProfilePage();
+            elements.profilePage.classList.add('show');
+            elements.profileDropdown.classList.remove('show');
         });
 
         // Close profile dropdown when clicking outside
@@ -4582,6 +5046,148 @@
             }
         });
 
+        // Load profile page
+        function loadProfilePage() {
+            const userId = auth.currentUser.uid;
+            
+            // Get user data
+            db.collection('users').doc(userId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        
+                        // Update profile information
+                        elements.profileNameLarge.textContent = userData.name || 'Student';
+                        elements.profileRoleLarge.textContent = userData.role || 'Student';
+                        elements.profileIdLarge.textContent = `ID: ${userData.collegeId || '-'} | Section: ${userData.section || '-'}`;
+                        elements.profileGPA.textContent = userData.gpa || '-';
+                        elements.profileCredits.textContent = userData.credits || '-';
+                        elements.profileRank.textContent = userData.rank || '-';
+                        
+                        // Update avatar
+                        if (userData.photoURL) {
+                            elements.profileAvatarLarge.src = userData.photoURL;
+                        } else {
+                            const initials = (userData.name || 'Student').split(' ').map(n => n[0]).join('').toUpperCase();
+                            elements.profileAvatarLarge.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || 'Student')}&background=f1c40f&color=0a192f&size=100&format=png`;
+                        }
+                        
+                        // Load personal information
+                        loadPersonalInfo(userData);
+                        
+                        // Load academic information
+                        loadAcademicInfo(userData);
+                        
+                        // Load performance information
+                        loadPerformanceInfo(userData);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user data for profile:', error);
+                });
+        }
+
+        // Load personal information
+        function loadPersonalInfo(userData) {
+            elements.personalInfoGrid.innerHTML = '';
+            
+            const personalInfo = [
+                { label: 'Email', value: userData.email || '-' },
+                { label: 'Phone', value: userData.phone || '-' },
+                { label: 'Address', value: userData.address || '-' },
+                { label: 'Date of Birth', value: userData.dateOfBirth ? formatDate(userData.dateOfBirth.toDate()) : '-' },
+                { label: 'Gender', value: userData.gender || '-' },
+                { label: 'Blood Group', value: userData.bloodGroup || '-' }
+            ];
+            
+            personalInfo.forEach(info => {
+                const infoItem = document.createElement('div');
+                infoItem.className = 'profile-info-item';
+                
+                const label = document.createElement('div');
+                label.className = 'profile-info-label';
+                label.textContent = info.label;
+                
+                const value = document.createElement('div');
+                value.className = 'profile-info-value';
+                value.textContent = info.value;
+                
+                infoItem.appendChild(label);
+                infoItem.appendChild(value);
+                
+                elements.personalInfoGrid.appendChild(infoItem);
+            });
+        }
+
+        // Load academic information
+        function loadAcademicInfo(userData) {
+            elements.academicInfoGrid.innerHTML = '';
+            
+            const academicInfo = [
+                { label: 'Department', value: userData.department || '-' },
+                { label: 'Batch', value: userData.batch || '-' },
+                { label: 'Semester', value: userData.semester || '-' },
+                { label: 'Academic Year', value: userData.academicYear || '-' },
+                { label: 'Admission Date', value: userData.admissionDate ? formatDate(userData.admissionDate.toDate()) : '-' },
+                { label: 'Expected Graduation', value: userData.expectedGraduation ? formatDate(userData.expectedGraduation.toDate()) : '-' }
+            ];
+            
+            academicInfo.forEach(info => {
+                const infoItem = document.createElement('div');
+                infoItem.className = 'profile-info-item';
+                
+                const label = document.createElement('div');
+                label.className = 'profile-info-label';
+                label.textContent = info.label;
+                
+                const value = document.createElement('div');
+                value.className = 'profile-info-value';
+                value.textContent = info.value;
+                
+                infoItem.appendChild(label);
+                infoItem.appendChild(value);
+                
+                elements.academicInfoGrid.appendChild(infoItem);
+            });
+        }
+
+        // Load performance information
+        function loadPerformanceInfo(userData) {
+            elements.performanceInfoGrid.innerHTML = '';
+            
+            const performanceInfo = [
+                { label: 'Attendance', value: `${userData.attendance || '-'}%` },
+                { label: 'Assignments Completed', value: `${userData.assignmentsCompleted || '-'}/${userData.totalAssignments || '-'}` },
+                { label: 'Projects Completed', value: `${userData.projectsCompleted || '-'}/${userData.totalProjects || '-'}` },
+                { label: 'Exams Attended', value: `${userData.examsAttended || '-'}/${userData.totalExams || '-'}` },
+                { label: 'Average Score', value: `${userData.averageScore || '-'}%` },
+                { label: 'Rank in Class', value: userData.rankInClass || '-' }
+            ];
+            
+            performanceInfo.forEach(info => {
+                const infoItem = document.createElement('div');
+                infoItem.className = 'profile-info-item';
+                
+                const label = document.createElement('div');
+                label.className = 'profile-info-label';
+                label.textContent = info.label;
+                
+                const value = document.createElement('div');
+                value.className = 'profile-info-value';
+                value.textContent = info.value;
+                
+                infoItem.appendChild(label);
+                infoItem.appendChild(value);
+                
+                elements.performanceInfoGrid.appendChild(infoItem);
+            });
+        }
+
+        // Close profile page
+        elements.profileClose.addEventListener('click', () => {
+            elements.profilePage.classList.remove('show');
+        });
+
         // Show notification
         function showNotification(message, type = 'info') {
             // Create notification element
@@ -4648,6 +5254,10 @@
             
             if (e.target === elements.eventModal) {
                 elements.eventModal.classList.remove('show');
+            }
+            
+            if (e.target === elements.profilePage) {
+                elements.profilePage.classList.remove('show');
             }
         });
     </script>
