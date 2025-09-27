@@ -634,7 +634,7 @@
             transition: var(--transition);
             position: relative;
             overflow: hidden;
-            aspect-ratio: 1 / 1; /* Makes cards square */
+            aspect-ratio: 1 / 1;
             display: flex;
             flex-direction: column;
             cursor: pointer;
@@ -702,8 +702,10 @@
             color: var(--text-secondary);
             font-size: var(--font-size-sm);
             line-height: 1.6;
-            overflow-y: auto;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .stat-value {
@@ -778,8 +780,8 @@
         /* Task List */
         .task-list {
             margin-top: var(--spacing-md);
-            max-height: 150px;
             overflow-y: auto;
+            max-height: 150px;
         }
         
         .task-item {
@@ -823,15 +825,11 @@
         
         .task-content {
             flex: 1;
-            min-width: 0;
         }
         
         .task-title {
             font-weight: 500;
             margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         
         .task-meta {
@@ -2327,86 +2325,6 @@
             justify-content: flex-end;
         }
         
-        /* Section Modals */
-        .section-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            backdrop-filter: blur(5px);
-        }
-        
-        .section-modal.show {
-            display: flex;
-        }
-        
-        .section-modal-content {
-            background: var(--modal-bg);
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-        
-        .section-modal-header {
-            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
-            color: var(--primary-dark);
-            padding: var(--spacing-lg);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .section-modal-title {
-            font-weight: 700;
-            font-size: var(--font-size-xl);
-        }
-        
-        .section-modal-close {
-            background: none;
-            border: none;
-            color: var(--primary-dark);
-            font-size: var(--font-size-xl);
-            cursor: pointer;
-            transition: var(--transition);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .section-modal-close:hover {
-            background: rgba(0, 0, 0, 0.1);
-            transform: rotate(90deg);
-        }
-        
-        .section-modal-body {
-            padding: var(--spacing-lg);
-            overflow-y: auto;
-            flex: 1;
-        }
-        
-        .section-modal-actions {
-            display: flex;
-            gap: var(--spacing-md);
-            justify-content: flex-end;
-            padding: var(--spacing-lg);
-            border-top: 1px solid var(--glass-border);
-        }
-        
         /* Notification Toast */
         .notification-toast {
             position: fixed;
@@ -2440,9 +2358,34 @@
             border-left: 4px solid var(--info);
         }
         
-        /* Theme Toggle in Header */
-        .theme-toggle-header {
-            position: relative;
+        /* Theme Toggle - Improved placement */
+        .theme-toggle {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            z-index: 50;
+            transition: var(--transition);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--accent-blue);
+            color: var(--primary-yellow);
+            transform: translateY(-2px);
+        }
+        
+        .theme-toggle i {
+            font-size: 20px;
         }
         
         /* Footer */
@@ -2524,7 +2467,7 @@
                 max-width: 350px;
             }
             
-            .message-modal-content, .event-modal-content, .profile-content, .whatsapp-container, .section-modal-content {
+            .message-modal-content, .event-modal-content, .profile-content, .whatsapp-container {
                 width: 95%;
                 max-width: 500px;
             }
@@ -2588,6 +2531,13 @@
             .whatsapp-status {
                 display: none;
             }
+            
+            .theme-toggle {
+                top: 80px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -2619,7 +2569,7 @@
                 width: 95%;
             }
             
-            .message-modal-content, .event-modal-content, .profile-content, .whatsapp-container, .section-modal-content {
+            .message-modal-content, .event-modal-content, .profile-content, .whatsapp-container {
                 width: 95%;
                 max-width: 350px;
             }
@@ -2660,7 +2610,7 @@
                 font-size: 0.7rem;
             }
             
-            .message-modal-content, .event-modal-content, .profile-content, .whatsapp-container, .section-modal-content {
+            .message-modal-content, .event-modal-content, .profile-content, .whatsapp-container {
                 width: 95%;
                 max-width: 300px;
             }
@@ -2718,6 +2668,119 @@
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border-width: 0;
+        }
+        
+        /* Modal for Courses, Resources, and Calendar */
+        .special-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+        
+        .special-modal.show {
+            display: flex;
+        }
+        
+        .special-modal-content {
+            background: var(--modal-bg);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .special-modal-header {
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+            color: var(--primary-dark);
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .special-modal-title {
+            font-weight: 700;
+            font-size: var(--font-size-2xl);
+        }
+        
+        .special-modal-close {
+            background: none;
+            border: none;
+            color: var(--primary-dark);
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .special-modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        .special-modal-body {
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .special-modal-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .special-modal-tab {
+            padding: var(--spacing-md) var(--spacing-lg);
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+        
+        .special-modal-tab:hover {
+            color: var(--text-primary);
+        }
+        
+        .special-modal-tab.active {
+            color: var(--primary-yellow);
+            border-bottom-color: var(--primary-yellow);
+        }
+        
+        .special-modal-tab-content {
+            display: none;
+        }
+        
+        .special-modal-tab-content.active {
+            display: block;
+        }
+        
+        .special-modal-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--glass-border);
         }
     </style>
 </head>
@@ -2793,9 +2856,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-action theme-toggle-header tooltip" data-tooltip="Toggle Theme" id="themeToggleHeader">
-                <i class="fas fa-moon" id="themeIconHeader"></i>
             </div>
             <div class="profile-menu" id="profileMenu">
                 <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-avatar" id="profileAvatar">
@@ -2921,8 +2981,8 @@
                     </div>
                 </div>
                 
-                <!-- Courses Card -->
-                <div class="card" id="coursesCard">
+                <!-- Active Courses Card -->
+                <div class="card" id="coursesCard" data-card-type="courses">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -2931,7 +2991,7 @@
                             Active Courses
                         </h3>
                         <div class="card-action">
-                            <i class="fas fa-ellipsis-h"></i>
+                            <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                     <div class="card-body">
@@ -2943,7 +3003,7 @@
                     </div>
                 </div>
                 
-                <!-- Assignments Card -->
+                <!-- Upcoming Assignments Card -->
                 <div class="card" id="assignmentsCard">
                     <div class="card-header">
                         <h3 class="card-title">
@@ -2953,7 +3013,7 @@
                             Upcoming Assignments
                         </h3>
                         <div class="card-action">
-                            <i class="fas fa-ellipsis-h"></i>
+                            <i class="fas fa-plus"></i>
                         </div>
                     </div>
                     <div class="card-body">
@@ -2989,8 +3049,8 @@
                     </div>
                 </div>
                 
-                <!-- Resources Card -->
-                <div class="card" id="resourcesCard">
+                <!-- Learning Resources Card -->
+                <div class="card" id="resourcesCard" data-card-type="resources">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -2999,7 +3059,7 @@
                             Learning Resources
                         </h3>
                         <div class="card-action">
-                            <i class="fas fa-ellipsis-h"></i>
+                            <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                     <div class="card-body">
@@ -3026,7 +3086,7 @@
                     </div>
                 </div>
                 
-                <!-- Skills Card -->
+                <!-- Skill Development Card -->
                 <div class="card" id="skillsCard">
                     <div class="card-header">
                         <h3 class="card-title">
@@ -3049,7 +3109,7 @@
                 </div>
                 
                 <!-- Calendar Card -->
-                <div class="card" id="calendarCard">
+                <div class="card" id="calendarCard" data-card-type="calendar">
                     <div class="card-header">
                         <h3 class="card-title">
                             <div class="card-icon">
@@ -3058,7 +3118,7 @@
                             Calendar
                         </h3>
                         <div class="card-action">
-                            <i class="fas fa-ellipsis-h"></i>
+                            <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                     <div class="card-body">
@@ -3105,357 +3165,26 @@
         </aside>
     </div>
     
-    <!-- Academic Overview Modal -->
-    <div class="section-modal" id="academicOverviewModal">
-        <div class="section-modal-content">
-            <div class="section-modal-header">
-                <div class="section-modal-title">Academic Overview</div>
-                <button class="section-modal-close" id="academicOverviewModalClose">
+    <!-- Special Modal for Courses, Resources, and Calendar -->
+    <div class="special-modal" id="specialModal">
+        <div class="special-modal-content">
+            <div class="special-modal-header">
+                <div class="special-modal-title" id="specialModalTitle">Details</div>
+                <button class="special-modal-close" id="specialModalClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="section-modal-body">
-                <div class="profile-info-grid">
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">Current GPA</div>
-                        <div class="profile-info-value" id="modalGpaValue">-</div>
-                    </div>
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">Semester Progress</div>
-                        <div class="profile-info-value" id="modalSemesterProgress">-</div>
-                    </div>
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">Credits Completed</div>
-                        <div class="profile-info-value" id="modalCreditsCompleted">-</div>
-                    </div>
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">Overall Rank</div>
-                        <div class="profile-info-value" id="modalOverallRank">-</div>
-                    </div>
+            <div class="special-modal-body">
+                <div class="special-modal-tabs" id="specialModalTabs">
+                    <!-- Tabs will be dynamically loaded here -->
                 </div>
-                
-                <div class="profile-section">
-                    <div class="profile-section-title">
-                        <i class="fas fa-chart-line"></i>
-                        GPA History
-                    </div>
-                    <div class="chart-container" style="height: 200px;">
-                        <canvas id="gpaHistoryChart"></canvas>
-                    </div>
-                </div>
-                
-                <div class="profile-section">
-                    <div class="profile-section-title">
-                        <i class="fas fa-award"></i>
-                        Achievements
-                    </div>
-                    <div class="profile-info-grid">
-                        <div class="profile-info-item">
-                            <div class="profile-info-label">Dean's List</div>
-                            <div class="profile-info-value">3 Times</div>
-                        </div>
-                        <div class="profile-info-item">
-                            <div class="profile-info-label">Honor Roll</div>
-                            <div class="profile-info-value">2 Times</div>
-                        </div>
-                        <div class="profile-info-item">
-                            <div class="profile-info-label">Perfect Attendance</div>
-                            <div class="profile-info-value">1 Semester</div>
-                        </div>
-                        <div class="profile-info-item">
-                            <div class="profile-info-label">Academic Excellence</div>
-                            <div class="profile-info-value">1 Award</div>
-                        </div>
-                    </div>
+                <div id="specialModalTabContent">
+                    <!-- Tab content will be dynamically loaded here -->
                 </div>
             </div>
-            <div class="section-modal-actions">
-                <button class="btn btn-secondary" id="academicOverviewModalExport">Export Report</button>
-                <button class="btn btn-primary" id="academicOverviewModalCloseBtn">Close</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Messages Modal -->
-    <div class="section-modal" id="messagesModal">
-        <div class="section-modal-content">
-            <div class="section-modal-header">
-                <div class="section-modal-title">Messages</div>
-                <button class="section-modal-close" id="messagesModalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="section-modal-body">
-                <div class="content-actions">
-                    <button class="btn btn-primary" id="messagesModalCompose">
-                        <i class="fas fa-plus"></i>
-                        Compose
-                    </button>
-                    <button class="btn btn-secondary" id="messagesModalRefresh">
-                        <i class="fas fa-sync-alt"></i>
-                        Refresh
-                    </button>
-                </div>
-                
-                <div class="messages-list" id="messagesModalList" style="max-height: 400px; margin-top: 1rem;">
-                    <!-- Messages will be dynamically loaded here -->
-                </div>
-            </div>
-            <div class="section-modal-actions">
-                <button class="btn btn-secondary" id="messagesModalMarkAllRead">Mark All as Read</button>
-                <button class="btn btn-primary" id="messagesModalCloseBtn">Close</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Courses Modal -->
-    <div class="section-modal" id="coursesModal">
-        <div class="section-modal-content">
-            <div class="section-modal-header">
-                <div class="section-modal-title">Courses</div>
-                <button class="section-modal-close" id="coursesModalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="section-modal-body">
-                <div class="content-actions">
-                    <button class="btn btn-primary" id="coursesModalAdd">
-                        <i class="fas fa-plus"></i>
-                        Add Course
-                    </button>
-                    <button class="btn btn-secondary" id="coursesModalFilter">
-                        <i class="fas fa-filter"></i>
-                        Filter
-                    </button>
-                </div>
-                
-                <div class="course-details show" id="coursesModalDetails" style="margin-top: 1rem;">
-                    <!-- Course details will be dynamically loaded here -->
-                </div>
-            </div>
-            <div class="section-modal-actions">
-                <button class="btn btn-secondary" id="coursesModalExport">Export Schedule</button>
-                <button class="btn btn-primary" id="coursesModalCloseBtn">Close</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Assignments Modal -->
-    <div class="section-modal" id="assignmentsModal">
-        <div class="section-modal-content">
-            <div class="section-modal-header">
-                <div class="section-modal-title">Assignments</div>
-                <button class="section-modal-close" id="assignmentsModalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="section-modal-body">
-                <div class="content-actions">
-                    <button class="btn btn-primary" id="assignmentsModalCreate">
-                        <i class="fas fa-plus"></i>
-                        Create Assignment
-                    </button>
-                    <button class="btn btn-secondary" id="assignmentsModalFilter">
-                        <i class="fas fa-filter"></i>
-                        Filter
-                    </button>
-                </div>
-                
-                <div class="task-list" id="assignmentsModalList" style="max-height: 400px; margin-top: 1rem;">
-                    <!-- Assignments will be dynamically loaded here -->
-                </div>
-            </div>
-            <div class="section-modal-actions">
-                <button class="btn btn-secondary" id="assignmentsModalExport">Export List</button>
-                <button class="btn btn-primary" id="assignmentsModalCloseBtn">Close</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Study Time Modal -->
-    <div class="section-modal" id="studyTimeModal">
-        <div class="section-modal-content">
-            <div class="section-modal-header">
-                <div class="section-modal-title">Study Time</div>
-                <button class="section-modal-close" id="studyTimeModalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="section-modal-body">
-                <div class="profile-info-grid">
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">This Week</div>
-                        <div class="profile-info-value" id="modalStudyTimeValue">-</div>
-                    </div>
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">This Month</div>
-                        <div class="profile-info-value" id="modalStudyTimeMonth">-</div>
-                    </div>
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">This Semester</div>
-                        <div class="profile-info-value" id="modalStudyTimeSemester">-</div>
-                    </div>
-                    <div class="profile-info-item">
-                        <div class="profile-info-label">Average Daily</div>
-                        <div class="profile-info-value" id="modalStudyTimeDaily">-</div>
-                    </div>
-                </div>
-                
-                <div class="profile-section">
-                    <div class="profile-section-title">
-                        <i class="fas fa-chart-bar"></i>
-                        Weekly Study Time
-                    </div>
-                    <div class="chart-container" style="height: 200px;">
-                        <canvas id="weeklyStudyTimeChart"></canvas>
-                    </div>
-                </div>
-                
-                <div class="profile-section">
-                    <div class="profile-section-title">
-                        <i class="fas fa-clock"></i>
-                        Study Sessions
-                    </div>
-                    <div id="studySessionsList" style="max-height: 200px; overflow-y: auto;">
-                        <!-- Study sessions will be dynamically loaded here -->
-                    </div>
-                </div>
-            </div>
-            <div class="section-modal-actions">
-                <button class="btn btn-secondary" id="studyTimeModalExport">Export Report</button>
-                <button class="btn btn-primary" id="studyTimeModalCloseBtn">Close</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Resources Modal -->
-    <div class="section-modal" id="resourcesModal">
-        <div class="section-modal-content">
-            <div class="section-modal-header">
-                <div class="section-modal-title">Learning Resources</div>
-                <button class="section-modal-close" id="resourcesModalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="section-modal-body">
-                <div class="content-actions">
-                    <button class="btn btn-primary" id="resourcesModalUpload">
-                        <i class="fas fa-upload"></i>
-                        Upload Resource
-                    </button>
-                    <button class="btn btn-secondary" id="resourcesModalFilter">
-                        <i class="fas fa-filter"></i>
-                        Filter
-                    </button>
-                </div>
-                
-                <div class="resource-details show" id="resourcesModalDetails" style="margin-top: 1rem;">
-                    <!-- Resource details will be dynamically loaded here -->
-                </div>
-            </div>
-            <div class="section-modal-actions">
-                <button class="btn btn-secondary" id="resourcesModalExport">Export List</button>
-                <button class="btn btn-primary" id="resourcesModalCloseBtn">Close</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Skills Modal -->
-    <div class="section-modal" id="skillsModal">
-        <div class="section-modal-content">
-            <div class="section-modal-header">
-                <div class="section-modal-title">Skill Development</div>
-                <button class="section-modal-close" id="skillsModalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="section-modal-body">
-                <div class="content-actions">
-                    <button class="btn btn-primary" id="skillsModalAdd">
-                        <i class="fas fa-plus"></i>
-                        Add Skill
-                    </button>
-                    <button class="btn btn-secondary" id="skillsModalAssess">
-                        <i class="fas fa-clipboard-check"></i>
-                        Assess Skills
-                    </button>
-                </div>
-                
-                <div class="profile-section">
-                    <div class="profile-section-title">
-                        <i class="fas fa-chart-radar"></i>
-                        Skills Overview
-                    </div>
-                    <div class="chart-container" style="height: 300px;">
-                        <canvas id="skillsOverviewChart"></canvas>
-                    </div>
-                </div>
-                
-                <div class="profile-section">
-                    <div class="profile-section-title">
-                        <i class="fas fa-tasks"></i>
-                        Skills in Progress
-                    </div>
-                    <div id="skillsInProgressList" style="max-height: 200px; overflow-y: auto;">
-                        <!-- Skills will be dynamically loaded here -->
-                    </div>
-                </div>
-            </div>
-            <div class="section-modal-actions">
-                <button class="btn btn-secondary" id="skillsModalExport">Export Report</button>
-                <button class="btn btn-primary" id="skillsModalCloseBtn">Close</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Calendar Modal -->
-    <div class="section-modal" id="calendarModal">
-        <div class="section-modal-content">
-            <div class="section-modal-header">
-                <div class="section-modal-title">Calendar</div>
-                <button class="section-modal-close" id="calendarModalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="section-modal-body">
-                <div class="content-actions">
-                    <button class="btn btn-primary" id="calendarModalAddEvent">
-                        <i class="fas fa-plus"></i>
-                        Add Event
-                    </button>
-                    <button class="btn btn-secondary" id="calendarModalToday">
-                        <i class="fas fa-calendar-day"></i>
-                        Today
-                    </button>
-                </div>
-                
-                <div class="calendar-container" style="margin-top: 1rem;">
-                    <div class="calendar-header">
-                        <div class="calendar-month" id="calendarModalMonth">June 2023</div>
-                        <div class="calendar-nav">
-                            <button id="calendarModalPrev"><i class="fas fa-chevron-left"></i></button>
-                            <button id="calendarModalTodayBtn">Today</button>
-                            <button id="calendarModalNext"><i class="fas fa-chevron-right"></i></button>
-                        </div>
-                    </div>
-                    <div class="calendar-grid" id="calendarModalGrid">
-                        <!-- Calendar will be dynamically generated here -->
-                    </div>
-                </div>
-                
-                <div class="profile-section" style="margin-top: 1rem;">
-                    <div class="profile-section-title">
-                        <i class="fas fa-calendar-alt"></i>
-                        Upcoming Events
-                    </div>
-                    <div id="upcomingEventsList" style="max-height: 200px; overflow-y: auto;">
-                        <!-- Events will be dynamically loaded here -->
-                    </div>
-                </div>
-            </div>
-            <div class="section-modal-actions">
-                <button class="btn btn-secondary" id="calendarModalExport">Export Calendar</button>
-                <button class="btn btn-primary" id="calendarModalCloseBtn">Close</button>
+            <div class="special-modal-actions">
+                <button class="btn btn-secondary" id="specialModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="specialModalSave">Save Changes</button>
             </div>
         </div>
     </div>
@@ -3642,6 +3371,11 @@
         </div>
     </div>
     
+    <!-- Theme Toggle - Improved placement -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </div>
+    
     <!-- AI Assistant -->
     <div class="ai-assistant" id="aiAssistant">
         <i class="fas fa-robot"></i>
@@ -3785,8 +3519,8 @@
             performanceInfoGrid: document.getElementById('performanceInfoGrid'),
             viewProfileBtn: document.getElementById('viewProfileBtn'),
             // Theme Toggle Elements
-            themeToggleHeader: document.getElementById('themeToggleHeader'),
-            themeIconHeader: document.getElementById('themeIconHeader'),
+            themeToggle: document.getElementById('themeToggle'),
+            themeIcon: document.getElementById('themeIcon'),
             darkModeToggle: document.getElementById('darkModeToggle'),
             // WhatsApp Modal Elements
             whatsappModal: document.getElementById('whatsappModal'),
@@ -3800,78 +3534,14 @@
             // Button Elements
             filterBtn: document.getElementById('filterBtn'),
             newAssignmentBtn: document.getElementById('newAssignmentBtn'),
-            // Section Modal Elements
-            academicOverviewModal: document.getElementById('academicOverviewModal'),
-            academicOverviewModalClose: document.getElementById('academicOverviewModalClose'),
-            academicOverviewModalCloseBtn: document.getElementById('academicOverviewModalCloseBtn'),
-            academicOverviewModalExport: document.getElementById('academicOverviewModalExport'),
-            messagesModal: document.getElementById('messagesModal'),
-            messagesModalClose: document.getElementById('messagesModalClose'),
-            messagesModalCloseBtn: document.getElementById('messagesModalCloseBtn'),
-            messagesModalCompose: document.getElementById('messagesModalCompose'),
-            messagesModalRefresh: document.getElementById('messagesModalRefresh'),
-            messagesModalMarkAllRead: document.getElementById('messagesModalMarkAllRead'),
-            messagesModalList: document.getElementById('messagesModalList'),
-            coursesModal: document.getElementById('coursesModal'),
-            coursesModalClose: document.getElementById('coursesModalClose'),
-            coursesModalCloseBtn: document.getElementById('coursesModalCloseBtn'),
-            coursesModalAdd: document.getElementById('coursesModalAdd'),
-            coursesModalFilter: document.getElementById('coursesModalFilter'),
-            coursesModalDetails: document.getElementById('coursesModalDetails'),
-            coursesModalExport: document.getElementById('coursesModalExport'),
-            assignmentsModal: document.getElementById('assignmentsModal'),
-            assignmentsModalClose: document.getElementById('assignmentsModalClose'),
-            assignmentsModalCloseBtn: document.getElementById('assignmentsModalCloseBtn'),
-            assignmentsModalCreate: document.getElementById('assignmentsModalCreate'),
-            assignmentsModalFilter: document.getElementById('assignmentsModalFilter'),
-            assignmentsModalList: document.getElementById('assignmentsModalList'),
-            assignmentsModalExport: document.getElementById('assignmentsModalExport'),
-            studyTimeModal: document.getElementById('studyTimeModal'),
-            studyTimeModalClose: document.getElementById('studyTimeModalClose'),
-            studyTimeModalCloseBtn: document.getElementById('studyTimeModalCloseBtn'),
-            studyTimeModalExport: document.getElementById('studyTimeModalExport'),
-            modalStudyTimeValue: document.getElementById('modalStudyTimeValue'),
-            modalStudyTimeMonth: document.getElementById('modalStudyTimeMonth'),
-            modalStudyTimeSemester: document.getElementById('modalStudyTimeSemester'),
-            modalStudyTimeDaily: document.getElementById('modalStudyTimeDaily'),
-            weeklyStudyTimeChart: document.getElementById('weeklyStudyTimeChart'),
-            studySessionsList: document.getElementById('studySessionsList'),
-            resourcesModal: document.getElementById('resourcesModal'),
-            resourcesModalClose: document.getElementById('resourcesModalClose'),
-            resourcesModalCloseBtn: document.getElementById('resourcesModalCloseBtn'),
-            resourcesModalUpload: document.getElementById('resourcesModalUpload'),
-            resourcesModalFilter: document.getElementById('resourcesModalFilter'),
-            resourcesModalDetails: document.getElementById('resourcesModalDetails'),
-            resourcesModalExport: document.getElementById('resourcesModalExport'),
-            skillsModal: document.getElementById('skillsModal'),
-            skillsModalClose: document.getElementById('skillsModalClose'),
-            skillsModalCloseBtn: document.getElementById('skillsModalCloseBtn'),
-            skillsModalAdd: document.getElementById('skillsModalAdd'),
-            skillsModalAssess: document.getElementById('skillsModalAssess'),
-            skillsModalExport: document.getElementById('skillsModalExport'),
-            skillsOverviewChart: document.getElementById('skillsOverviewChart'),
-            skillsInProgressList: document.getElementById('skillsInProgressList'),
-            calendarModal: document.getElementById('calendarModal'),
-            calendarModalClose: document.getElementById('calendarModalClose'),
-            calendarModalCloseBtn: document.getElementById('calendarModalCloseBtn'),
-            calendarModalAddEvent: document.getElementById('calendarModalAddEvent'),
-            calendarModalToday: document.getElementById('calendarModalToday'),
-            calendarModalExport: document.getElementById('calendarModalExport'),
-            calendarModalMonth: document.getElementById('calendarModalMonth'),
-            calendarModalGrid: document.getElementById('calendarModalGrid'),
-            calendarModalPrev: document.getElementById('calendarModalPrev'),
-            calendarModalTodayBtn: document.getElementById('calendarModalTodayBtn'),
-            calendarModalNext: document.getElementById('calendarModalNext'),
-            upcomingEventsList: document.getElementById('upcomingEventsList'),
-            // Card elements for click events
-            academicOverviewCard: document.getElementById('academicOverviewCard'),
-            messagesCard: document.getElementById('messagesCard'),
-            coursesCard: document.getElementById('coursesCard'),
-            assignmentsCard: document.getElementById('assignmentsCard'),
-            studyTimeCard: document.getElementById('studyTimeCard'),
-            resourcesCard: document.getElementById('resourcesCard'),
-            skillsCard: document.getElementById('skillsCard'),
-            calendarCard: document.getElementById('calendarCard')
+            // Special Modal Elements
+            specialModal: document.getElementById('specialModal'),
+            specialModalClose: document.getElementById('specialModalClose'),
+            specialModalTitle: document.getElementById('specialModalTitle'),
+            specialModalTabs: document.getElementById('specialModalTabs'),
+            specialModalTabContent: document.getElementById('specialModalTabContent'),
+            specialModalCancel: document.getElementById('specialModalCancel'),
+            specialModalSave: document.getElementById('specialModalSave')
         };
 
         // Check if user is logged in
@@ -4034,7 +3704,7 @@
             db.collection('messages')
                 .where('receiverId', '==', userId)
                 .orderBy('timestamp', 'desc')
-                .limit(5)
+                .limit(3)
                 .get()
                 .then(querySnapshot => {
                     elements.messagesList.innerHTML = '';
@@ -5800,11 +5470,11 @@
                             if (settings.darkMode) {
                                 darkModeToggle.classList.add('active');
                                 document.documentElement.setAttribute('data-theme', 'dark');
-                                elements.themeIconHeader.className = 'fas fa-moon';
+                                elements.themeIcon.className = 'fas fa-moon';
                             } else {
                                 darkModeToggle.classList.remove('active');
                                 document.documentElement.setAttribute('data-theme', 'light');
-                                elements.themeIconHeader.className = 'fas fa-sun';
+                                elements.themeIcon.className = 'fas fa-sun';
                             }
                         }
                         
@@ -5859,10 +5529,10 @@
             // Apply theme immediately
             if (isDarkMode) {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                elements.themeIconHeader.className = 'fas fa-moon';
+                elements.themeIcon.className = 'fas fa-moon';
             } else {
                 document.documentElement.setAttribute('data-theme', 'light');
-                elements.themeIconHeader.className = 'fas fa-sun';
+                elements.themeIcon.className = 'fas fa-sun';
             }
         });
 
@@ -5871,16 +5541,16 @@
             saveUserSettings('compactView', this.classList.contains('active'));
         });
 
-        // Theme toggle in header
-        elements.themeToggleHeader.addEventListener('click', () => {
+        // Theme toggle
+        elements.themeToggle.addEventListener('click', () => {
             const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
             
             if (isDarkMode) {
                 document.documentElement.setAttribute('data-theme', 'light');
-                elements.themeIconHeader.className = 'fas fa-sun';
+                elements.themeIcon.className = 'fas fa-sun';
             } else {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                elements.themeIconHeader.className = 'fas fa-moon';
+                elements.themeIcon.className = 'fas fa-moon';
             }
             
             // Save preference
@@ -5897,10 +5567,10 @@
             
             if (savedTheme === 'dark' || (savedTheme === null && prefersDarkMode)) {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                elements.themeIconHeader.className = 'fas fa-moon';
+                elements.themeIcon.className = 'fas fa-moon';
             } else {
                 document.documentElement.setAttribute('data-theme', 'light');
-                elements.themeIconHeader.className = 'fas fa-sun';
+                elements.themeIcon.className = 'fas fa-sun';
             }
         }
 
@@ -5934,6 +5604,11 @@
                 
                 if (targetElement) {
                     targetElement.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // If it's courses, resources, or calendar, open the special modal
+                    if (targetId === 'courses' || targetId === 'resources' || targetId === 'calendar') {
+                        openSpecialModal(targetId);
+                    }
                 }
             });
         });
@@ -6243,921 +5918,852 @@
             }, 3000);
         }
 
-        // Card click handlers for section modals
-        elements.academicOverviewCard.addEventListener('click', () => {
-            openAcademicOverviewModal();
-        });
-
-        elements.messagesCard.addEventListener('click', () => {
-            openMessagesModal();
-        });
-
-        elements.coursesCard.addEventListener('click', () => {
-            openCoursesModal();
-        });
-
-        elements.assignmentsCard.addEventListener('click', () => {
-            openAssignmentsModal();
-        });
-
-        elements.studyTimeCard.addEventListener('click', () => {
-            openStudyTimeModal();
-        });
-
-        elements.resourcesCard.addEventListener('click', () => {
-            openResourcesModal();
-        });
-
-        elements.skillsCard.addEventListener('click', () => {
-            openSkillsModal();
-        });
-
-        elements.calendarCard.addEventListener('click', () => {
-            openCalendarModal();
-        });
-
-        // Section modal functions
-        function openAcademicOverviewModal() {
-            // Populate modal with data
-            document.getElementById('modalGpaValue').textContent = elements.gpaValue.textContent;
-            document.getElementById('modalSemesterProgress').textContent = elements.semesterProgress.textContent;
-            document.getElementById('modalCreditsCompleted').textContent = '45';
-            document.getElementById('modalOverallRank').textContent = '12/120';
+        // Open special modal for courses, resources, and calendar
+        function openSpecialModal(type) {
+            // Set modal title based on type
+            let title = '';
+            switch(type) {
+                case 'courses':
+                    title = 'Courses';
+                    break;
+                case 'resources':
+                    title = 'Learning Resources';
+                    break;
+                case 'calendar':
+                    title = 'Calendar';
+                    break;
+                default:
+                    title = 'Details';
+            }
             
-            // Show modal
-            elements.academicOverviewModal.classList.add('show');
+            elements.specialModalTitle.textContent = title;
             
-            // Initialize GPA history chart
-            const gpaHistoryCtx = document.getElementById('gpaHistoryChart').getContext('2d');
-            const gpaHistoryChart = new Chart(gpaHistoryCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6'],
-                    datasets: [{
-                        label: 'GPA',
-                        data: [3.2, 3.5, 3.4, 3.7, 3.8, 3.8],
-                        backgroundColor: 'rgba(241, 196, 15, 0.2)',
-                        borderColor: 'rgba(241, 196, 15, 1)',
-                        borderWidth: 2,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 2.5,
-                            max: 4.0,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#a8b2d1',
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: '#a8b2d1',
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-
-        function openMessagesModal() {
-            // Load messages in modal
-            const userId = auth.currentUser.uid;
-            elements.messagesModalList.innerHTML = '<div class="loading-spinner"></div>';
+            // Clear existing tabs and content
+            elements.specialModalTabs.innerHTML = '';
+            elements.specialModalTabContent.innerHTML = '';
             
-            db.collection('messages')
-                .where('receiverId', '==', userId)
-                .orderBy('timestamp', 'desc')
-                .get()
-                .then(querySnapshot => {
-                    elements.messagesModalList.innerHTML = '';
+            // Create tabs based on type
+            switch(type) {
+                case 'courses':
+                    // Create tabs for courses
+                    const coursesTabs = [
+                        { id: 'active-courses', label: 'Active Courses' },
+                        { id: 'completed-courses', label: 'Completed Courses' },
+                        { id: 'upcoming-courses', label: 'Upcoming Courses' }
+                    ];
                     
-                    if (querySnapshot.empty) {
-                        elements.messagesModalList.innerHTML = '<div class="text-center text-muted">No messages found</div>';
-                        return;
-                    }
-                    
-                    querySnapshot.forEach(doc => {
-                        const message = doc.data();
-                        const messageId = doc.id;
+                    coursesTabs.forEach((tab, index) => {
+                        const tabElement = document.createElement('div');
+                        tabElement.className = `special-modal-tab ${index === 0 ? 'active' : ''}`;
+                        tabElement.dataset.tabId = tab.id;
+                        tabElement.textContent = tab.label;
                         
-                        // Get sender information
-                        db.collection('users').doc(message.senderId).get()
-                            .then(senderDoc => {
-                                if (senderDoc.exists) {
-                                    const senderData = senderDoc.data();
-                                    
-                                    const messageItem = document.createElement('div');
-                                    messageItem.className = `message-item ${!message.read ? 'unread' : ''}`;
-                                    messageItem.dataset.messageId = messageId;
-                                    
-                                    const avatar = document.createElement('img');
-                                    avatar.src = senderData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(senderData.name || 'User')}&background=f1c40f&color=0a192f&size=36&format=png`;
-                                    avatar.alt = 'Sender';
-                                    avatar.className = 'message-avatar';
-                                    
-                                    const content = document.createElement('div');
-                                    content.className = 'message-content';
-                                    
-                                    const header = document.createElement('div');
-                                    header.className = 'message-header';
-                                    
-                                    const sender = document.createElement('div');
-                                    sender.className = 'message-sender';
-                                    sender.textContent = senderData.name || 'Unknown';
-                                    
-                                    const time = document.createElement('div');
-                                    time.className = 'message-time';
-                                    
-                                    // Format timestamp
-                                    if (message.timestamp) {
-                                        const date = message.timestamp.toDate();
-                                        time.textContent = formatDateTime(date);
-                                    } else {
-                                        time.textContent = 'Unknown time';
-                                    }
-                                    
-                                    header.appendChild(sender);
-                                    header.appendChild(time);
-                                    
-                                    const text = document.createElement('div');
-                                    text.className = 'message-text';
-                                    text.textContent = message.content || 'No content';
-                                    
-                                    content.appendChild(header);
-                                    content.appendChild(text);
-                                    
-                                    messageItem.appendChild(avatar);
-                                    messageItem.appendChild(content);
-                                    
-                                    if (!message.read) {
-                                        const indicator = document.createElement('div');
-                                        indicator.className = 'message-indicator';
-                                        messageItem.appendChild(indicator);
-                                    }
-                                    
-                                    elements.messagesModalList.appendChild(messageItem);
-                                    
-                                    // Add click event to open message modal
-                                    messageItem.addEventListener('click', () => {
-                                        openMessageModal(message, senderData);
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error getting sender data:', error);
+                        tabElement.addEventListener('click', () => {
+                            // Remove active class from all tabs
+                            document.querySelectorAll('.special-modal-tab').forEach(t => {
+                                t.classList.remove('active');
                             });
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading messages:', error);
-                    elements.messagesModalList.innerHTML = '<div class="text-center text-error">Error loading messages</div>';
-                });
-            
-            // Show modal
-            elements.messagesModal.classList.add('show');
-        }
-
-        function openCoursesModal() {
-            // Load courses in modal
-            const userId = auth.currentUser.uid;
-            elements.coursesModalDetails.innerHTML = '<div class="loading-spinner"></div>';
-            
-            db.collection('enrollments')
-                .where('studentId', '==', userId)
-                .get()
-                .then(querySnapshot => {
-                    elements.coursesModalDetails.innerHTML = '';
-                    
-                    if (querySnapshot.empty) {
-                        elements.coursesModalDetails.innerHTML = '<div class="text-center text-muted">No courses found</div>';
-                        return;
-                    }
-                    
-                    querySnapshot.forEach(doc => {
-                        const enrollment = doc.data();
-                        
-                        const courseItem = document.createElement('div');
-                        courseItem.className = 'course-item';
-                        
-                        const icon = document.createElement('div');
-                        icon.className = 'course-icon';
-                        
-                        const iconInner = document.createElement('i');
-                        iconInner.className = 'fas fa-book';
-                        icon.appendChild(iconInner);
-                        
-                        const info = document.createElement('div');
-                        info.className = 'course-info';
-                        
-                        const name = document.createElement('div');
-                        name.className = 'course-name';
-                        name.textContent = enrollment.courseName || 'Unknown Course';
-                        
-                        const meta = document.createElement('div');
-                        meta.className = 'course-meta';
-                        meta.textContent = enrollment.instructor || 'Unknown Instructor';
-                        
-                        info.appendChild(name);
-                        info.appendChild(meta);
-                        
-                        courseItem.appendChild(icon);
-                        courseItem.appendChild(info);
-                        
-                        elements.coursesModalDetails.appendChild(courseItem);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading courses:', error);
-                    elements.coursesModalDetails.innerHTML = '<div class="text-center text-error">Error loading courses</div>';
-                });
-            
-            // Show modal
-            elements.coursesModal.classList.add('show');
-        }
-
-        function openAssignmentsModal() {
-            // Load assignments in modal
-            const userId = auth.currentUser.uid;
-            elements.assignmentsModalList.innerHTML = '<div class="loading-spinner"></div>';
-            
-            db.collection('assignments')
-                .where('assignedTo', '==', userId)
-                .orderBy('dueDate', 'asc')
-                .get()
-                .then(querySnapshot => {
-                    elements.assignmentsModalList.innerHTML = '';
-                    
-                    if (querySnapshot.empty) {
-                        elements.assignmentsModalList.innerHTML = '<div class="text-center text-muted">No assignments found</div>';
-                        return;
-                    }
-                    
-                    querySnapshot.forEach(doc => {
-                        const assignment = doc.data();
-                        const assignmentId = doc.id;
-                        
-                        const taskItem = document.createElement('div');
-                        taskItem.className = 'task-item';
-                        
-                        const checkbox = document.createElement('div');
-                        checkbox.className = `task-checkbox ${assignment.completed ? 'checked' : ''}`;
-                        
-                        const content = document.createElement('div');
-                        content.className = 'task-content';
-                        
-                        const title = document.createElement('div');
-                        title.className = 'task-title';
-                        title.textContent = assignment.title || 'Untitled Assignment';
-                        
-                        const meta = document.createElement('div');
-                        meta.className = 'task-meta';
-                        
-                        // Format due date
-                        if (assignment.dueDate) {
-                            const dueDate = assignment.dueDate.toDate();
-                            const now = new Date();
-                            const diffTime = dueDate - now;
-                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                             
-                            if (diffDays < 0) {
-                                meta.textContent = 'Overdue';
-                            } else if (diffDays === 0) {
-                                meta.textContent = 'Due today';
-                            } else if (diffDays === 1) {
-                                meta.textContent = 'Due tomorrow';
-                            } else {
-                                meta.textContent = `Due in ${diffDays} days`;
-                            }
-                        } else {
-                            meta.textContent = 'No due date';
-                        }
-                        
-                        const priority = document.createElement('div');
-                        priority.className = `task-priority priority-${assignment.priority || 'medium'}`;
-                        priority.textContent = (assignment.priority || 'medium').charAt(0).toUpperCase() + (assignment.priority || 'medium').slice(1);
-                        
-                        content.appendChild(title);
-                        content.appendChild(meta);
-                        
-                        taskItem.appendChild(checkbox);
-                        taskItem.appendChild(content);
-                        taskItem.appendChild(priority);
-                        
-                        elements.assignmentsModalList.appendChild(taskItem);
-                        
-                        // Add event listener to checkbox
-                        checkbox.addEventListener('click', () => {
-                            const newStatus = !assignment.completed;
+                            // Add active class to clicked tab
+                            tabElement.classList.add('active');
                             
-                            // Update assignment in Firestore
-                            db.collection('assignments').doc(assignmentId).update({
-                                completed: newStatus
-                            })
-                            .then(() => {
-                                checkbox.classList.toggle('checked');
-                                showNotification(`Assignment ${newStatus ? 'completed' : 'marked as incomplete'}`, 'success');
-                            })
-                            .catch(error => {
-                                console.error('Error updating assignment:', error);
-                                showNotification('Error updating assignment', 'error');
+                            // Show corresponding content
+                            document.querySelectorAll('.special-modal-tab-content').forEach(content => {
+                                content.classList.remove('active');
                             });
+                            
+                            document.getElementById(`${tab.id}-content`).classList.add('active');
                         });
+                        
+                        elements.specialModalTabs.appendChild(tabElement);
+                        
+                        // Create tab content
+                        const contentElement = document.createElement('div');
+                        contentElement.id = `${tab.id}-content`;
+                        contentElement.className = `special-modal-tab-content ${index === 0 ? 'active' : ''}`;
+                        
+                        // Add loading spinner
+                        contentElement.innerHTML = '<div class="loading-spinner"></div>';
+                        
+                        elements.specialModalTabContent.appendChild(contentElement);
+                        
+                        // Load content based on tab
+                        loadSpecialModalContent(type, tab.id, contentElement);
                     });
-                })
-                .catch(error => {
-                    console.error('Error loading assignments:', error);
-                    elements.assignmentsModalList.innerHTML = '<div class="text-center text-error">Error loading assignments</div>';
-                });
-            
-            // Show modal
-            elements.assignmentsModal.classList.add('show');
-        }
-
-        function openStudyTimeModal() {
-            // Populate modal with data
-            elements.modalStudyTimeValue.textContent = elements.studyTimeValue.textContent;
-            elements.modalStudyTimeMonth.textContent = '18.5h';
-            elements.modalStudyTimeSemester.textContent = '72h';
-            elements.modalStudyTimeDaily.textContent = '2.6h';
-            
-            // Show modal
-            elements.studyTimeModal.classList.add('show');
-            
-            // Initialize weekly study time chart
-            const weeklyStudyTimeCtx = document.getElementById('weeklyStudyTimeChart').getContext('2d');
-            const weeklyStudyTimeChart = new Chart(weeklyStudyTimeCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [{
-                        label: 'Hours',
-                        data: [2.5, 3.0, 2.0, 3.5, 2.5, 1.5, 2.0],
-                        backgroundColor: 'rgba(241, 196, 15, 0.6)',
-                        borderColor: 'rgba(241, 196, 15, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#a8b2d1',
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: '#a8b2d1',
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-            
-            // Load study sessions
-            elements.studySessionsList.innerHTML = `
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Mathematics</div>
-                    <div class="profile-info-value">Today, 10:00 AM - 11:30 AM</div>
-                </div>
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Physics</div>
-                    <div class="profile-info-value">Yesterday, 2:00 PM - 4:00 PM</div>
-                </div>
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Programming</div>
-                    <div class="profile-info-value">May 15, 6:00 PM - 8:00 PM</div>
-                </div>
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Chemistry</div>
-                    <div class="profile-info-value">May 14, 9:00 AM - 10:30 AM</div>
-                </div>
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">English</div>
-                    <div class="profile-info-value">May 13, 3:00 PM - 4:30 PM</div>
-                </div>
-            `;
-        }
-
-        function openResourcesModal() {
-            // Load resources in modal
-            const userId = auth.currentUser.uid;
-            elements.resourcesModalDetails.innerHTML = '<div class="loading-spinner"></div>';
-            
-            db.collection('resources')
-                .where('studentId', '==', userId)
-                .get()
-                .then(querySnapshot => {
-                    elements.resourcesModalDetails.innerHTML = '';
+                    break;
                     
-                    if (querySnapshot.empty) {
-                        elements.resourcesModalDetails.innerHTML = '<div class="text-center text-muted">No resources found</div>';
-                        return;
-                    }
+                case 'resources':
+                    // Create tabs for resources
+                    const resourcesTabs = [
+                        { id: 'course-materials', label: 'Course Materials' },
+                        { id: 'practice-tests', label: 'Practice Tests' },
+                        { id: 'reference-books', label: 'Reference Books' }
+                    ];
                     
-                    querySnapshot.forEach(doc => {
-                        const resource = doc.data();
+                    resourcesTabs.forEach((tab, index) => {
+                        const tabElement = document.createElement('div');
+                        tabElement.className = `special-modal-tab ${index === 0 ? 'active' : ''}`;
+                        tabElement.dataset.tabId = tab.id;
+                        tabElement.textContent = tab.label;
                         
-                        const resourceItem = document.createElement('div');
-                        resourceItem.className = 'resource-item';
+                        tabElement.addEventListener('click', () => {
+                            // Remove active class from all tabs
+                            document.querySelectorAll('.special-modal-tab').forEach(t => {
+                                t.classList.remove('active');
+                            });
+                            
+                            // Add active class to clicked tab
+                            tabElement.classList.add('active');
+                            
+                            // Show corresponding content
+                            document.querySelectorAll('.special-modal-tab-content').forEach(content => {
+                                content.classList.remove('active');
+                            });
+                            
+                            document.getElementById(`${tab.id}-content`).classList.add('active');
+                        });
                         
-                        const icon = document.createElement('div');
-                        icon.className = `resource-icon ${resource.type || 'link'}`;
+                        elements.specialModalTabs.appendChild(tabElement);
                         
-                        const iconInner = document.createElement('i');
-                        if (resource.type === 'pdf') {
-                            iconInner.className = 'fas fa-file-pdf';
-                        } else if (resource.type === 'video') {
-                            iconInner.className = 'fas fa-video';
-                        } else {
-                            iconInner.className = 'fas fa-link';
-                        }
-                        icon.appendChild(iconInner);
+                        // Create tab content
+                        const contentElement = document.createElement('div');
+                        contentElement.id = `${tab.id}-content`;
+                        contentElement.className = `special-modal-tab-content ${index === 0 ? 'active' : ''}`;
                         
-                        const info = document.createElement('div');
-                        info.className = 'resource-info';
+                        // Add loading spinner
+                        contentElement.innerHTML = '<div class="loading-spinner"></div>';
                         
-                        const name = document.createElement('div');
-                        name.className = 'resource-name';
-                        name.textContent = resource.name || 'Unknown Resource';
+                        elements.specialModalTabContent.appendChild(contentElement);
                         
-                        const meta = document.createElement('div');
-                        meta.className = 'resource-meta';
-                        meta.textContent = resource.category || 'Uncategorized';
-                        
-                        info.appendChild(name);
-                        info.appendChild(meta);
-                        
-                        resourceItem.appendChild(icon);
-                        resourceItem.appendChild(info);
-                        
-                        elements.resourcesModalDetails.appendChild(resourceItem);
+                        // Load content based on tab
+                        loadSpecialModalContent(type, tab.id, contentElement);
                     });
-                })
-                .catch(error => {
-                    console.error('Error loading resources:', error);
-                    elements.resourcesModalDetails.innerHTML = '<div class="text-center text-error">Error loading resources</div>';
-                });
-            
-            // Show modal
-            elements.resourcesModal.classList.add('show');
-        }
-
-        function openSkillsModal() {
-            // Populate modal with data
-            elements.skillsCount.textContent = '6';
-            
-            // Show modal
-            elements.skillsModal.classList.add('show');
-            
-            // Initialize skills overview chart
-            const skillsOverviewCtx = document.getElementById('skillsOverviewChart').getContext('2d');
-            const skillsOverviewChart = new Chart(skillsOverviewCtx, {
-                type: 'radar',
-                data: {
-                    labels: ['Programming', 'Math', 'Writing', 'Research', 'Presentation', 'Teamwork'],
-                    datasets: [{
-                        label: 'Current Level',
-                        data: [8, 7, 6, 7, 5, 8],
-                        backgroundColor: 'rgba(241, 196, 15, 0.2)',
-                        borderColor: 'rgba(241, 196, 15, 1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: 'rgba(241, 196, 15, 1)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            pointLabels: {
-                                color: '#a8b2d1',
-                                font: {
-                                    size: 10
-                                }
-                            },
-                            ticks: {
-                                display: false,
-                                backdropColor: 'transparent'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-            
-            // Load skills in progress
-            elements.skillsInProgressList.innerHTML = `
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Web Development</div>
-                    <div class="profile-info-value">80% Complete</div>
-                </div>
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Data Analysis</div>
-                    <div class="profile-info-value">65% Complete</div>
-                </div>
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Technical Writing</div>
-                    <div class="profile-info-value">50% Complete</div>
-                </div>
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Public Speaking</div>
-                    <div class="profile-info-value">40% Complete</div>
-                </div>
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Project Management</div>
-                    <div class="profile-info-value">30% Complete</div>
-                </div>
-                <div class="event-modal-participant">
-                    <div class="profile-info-label">Critical Thinking</div>
-                    <div class="profile-info-value">75% Complete</div>
-                </div>
-            `;
-        }
-
-        function openCalendarModal() {
-            // Get current date
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth();
-            
-            // Update modal calendar
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                              'July', 'August', 'September', 'October', 'November', 'December'];
-            elements.calendarModalMonth.textContent = `${monthNames[month]} ${year}`;
-            
-            // Render calendar in modal
-            renderModalCalendar(year, month);
-            
-            // Load upcoming events
-            loadUpcomingEvents();
-            
-            // Show modal
-            elements.calendarModal.classList.add('show');
-        }
-
-        function renderModalCalendar(year, month) {
-            // Clear calendar grid
-            elements.calendarModalGrid.innerHTML = '';
-            
-            // Add day headers
-            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            dayNames.forEach(day => {
-                const dayHeader = document.createElement('div');
-                dayHeader.className = 'calendar-day-header';
-                dayHeader.textContent = day;
-                elements.calendarModalGrid.appendChild(dayHeader);
-            });
-            
-            // Get first day of month and number of days
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
-            // Add empty cells for days before the first day of the month
-            for (let i = 0; i < firstDay; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'calendar-day other-month';
-                elements.calendarModalGrid.appendChild(emptyDay);
+                    break;
+                    
+                case 'calendar':
+                    // Create tabs for calendar
+                    const calendarTabs = [
+                        { id: 'monthly-view', label: 'Monthly View' },
+                        { id: 'weekly-view', label: 'Weekly View' },
+                        { id: 'upcoming-events', label: 'Upcoming Events' }
+                    ];
+                    
+                    calendarTabs.forEach((tab, index) => {
+                        const tabElement = document.createElement('div');
+                        tabElement.className = `special-modal-tab ${index === 0 ? 'active' : ''}`;
+                        tabElement.dataset.tabId = tab.id;
+                        tabElement.textContent = tab.label;
+                        
+                        tabElement.addEventListener('click', () => {
+                            // Remove active class from all tabs
+                            document.querySelectorAll('.special-modal-tab').forEach(t => {
+                                t.classList.remove('active');
+                            });
+                            
+                            // Add active class to clicked tab
+                            tabElement.classList.add('active');
+                            
+                            // Show corresponding content
+                            document.querySelectorAll('.special-modal-tab-content').forEach(content => {
+                                content.classList.remove('active');
+                            });
+                            
+                            document.getElementById(`${tab.id}-content`).classList.add('active');
+                        });
+                        
+                        elements.specialModalTabs.appendChild(tabElement);
+                        
+                        // Create tab content
+                        const contentElement = document.createElement('div');
+                        contentElement.id = `${tab.id}-content`;
+                        contentElement.className = `special-modal-tab-content ${index === 0 ? 'active' : ''}`;
+                        
+                        // Add loading spinner
+                        contentElement.innerHTML = '<div class="loading-spinner"></div>';
+                        
+                        elements.specialModalTabContent.appendChild(contentElement);
+                        
+                        // Load content based on tab
+                        loadSpecialModalContent(type, tab.id, contentElement);
+                    });
+                    break;
             }
             
-            // Add days of the month
-            const today = new Date();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day';
-                dayElement.textContent = day;
-                
-                // Check if this is today
-                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
-                    dayElement.classList.add('today');
+            // Show modal
+            elements.specialModal.classList.add('show');
+        }
+
+        // Load content for special modal tabs
+        function loadSpecialModalContent(type, tabId, contentElement) {
+            const userId = auth.currentUser.uid;
+            
+            switch(type) {
+                case 'courses':
+                    switch(tabId) {
+                        case 'active-courses':
+                            // Load active courses
+                            db.collection('enrollments')
+                                .where('studentId', '==', userId)
+                                .where('status', '==', 'in-progress')
+                                .get()
+                                .then(querySnapshot => {
+                                    contentElement.innerHTML = '';
+                                    
+                                    if (querySnapshot.empty) {
+                                        contentElement.innerHTML = '<div class="text-center text-muted">No active courses found</div>';
+                                        return;
+                                    }
+                                    
+                                    querySnapshot.forEach(doc => {
+                                        const course = doc.data();
+                                        
+                                        const courseItem = document.createElement('div');
+                                        courseItem.className = 'course-item';
+                                        
+                                        const icon = document.createElement('div');
+                                        icon.className = 'course-icon';
+                                        
+                                        const iconInner = document.createElement('i');
+                                        iconInner.className = 'fas fa-book';
+                                        icon.appendChild(iconInner);
+                                        
+                                        const info = document.createElement('div');
+                                        info.className = 'course-info';
+                                        
+                                        const name = document.createElement('div');
+                                        name.className = 'course-name';
+                                        name.textContent = course.courseName || 'Unknown Course';
+                                        
+                                        const meta = document.createElement('div');
+                                        meta.className = 'course-meta';
+                                        meta.textContent = course.instructor || 'Unknown Instructor';
+                                        
+                                        info.appendChild(name);
+                                        info.appendChild(meta);
+                                        
+                                        courseItem.appendChild(icon);
+                                        courseItem.appendChild(info);
+                                        
+                                        contentElement.appendChild(courseItem);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error loading active courses:', error);
+                                    contentElement.innerHTML = '<div class="text-center text-error">Error loading courses</div>';
+                                });
+                            break;
+                            
+                        case 'completed-courses':
+                            // Load completed courses
+                            db.collection('enrollments')
+                                .where('studentId', '==', userId)
+                                .where('status', '==', 'completed')
+                                .get()
+                                .then(querySnapshot => {
+                                    contentElement.innerHTML = '';
+                                    
+                                    if (querySnapshot.empty) {
+                                        contentElement.innerHTML = '<div class="text-center text-muted">No completed courses found</div>';
+                                        return;
+                                    }
+                                    
+                                    querySnapshot.forEach(doc => {
+                                        const course = doc.data();
+                                        
+                                        const courseItem = document.createElement('div');
+                                        courseItem.className = 'course-item';
+                                        
+                                        const icon = document.createElement('div');
+                                        icon.className = 'course-icon';
+                                        
+                                        const iconInner = document.createElement('i');
+                                        iconInner.className = 'fas fa-book';
+                                        icon.appendChild(iconInner);
+                                        
+                                        const info = document.createElement('div');
+                                        info.className = 'course-info';
+                                        
+                                        const name = document.createElement('div');
+                                        name.className = 'course-name';
+                                        name.textContent = course.courseName || 'Unknown Course';
+                                        
+                                        const meta = document.createElement('div');
+                                        meta.className = 'course-meta';
+                                        meta.textContent = course.instructor || 'Unknown Instructor';
+                                        
+                                        info.appendChild(name);
+                                        info.appendChild(meta);
+                                        
+                                        courseItem.appendChild(icon);
+                                        courseItem.appendChild(info);
+                                        
+                                        contentElement.appendChild(courseItem);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error loading completed courses:', error);
+                                    contentElement.innerHTML = '<div class="text-center text-error">Error loading courses</div>';
+                                });
+                            break;
+                            
+                        case 'upcoming-courses':
+                            // Load upcoming courses
+                            db.collection('enrollments')
+                                .where('studentId', '==', userId)
+                                .where('status', '==', 'not-started')
+                                .get()
+                                .then(querySnapshot => {
+                                    contentElement.innerHTML = '';
+                                    
+                                    if (querySnapshot.empty) {
+                                        contentElement.innerHTML = '<div class="text-center text-muted">No upcoming courses found</div>';
+                                        return;
+                                    }
+                                    
+                                    querySnapshot.forEach(doc => {
+                                        const course = doc.data();
+                                        
+                                        const courseItem = document.createElement('div');
+                                        courseItem.className = 'course-item';
+                                        
+                                        const icon = document.createElement('div');
+                                        icon.className = 'course-icon';
+                                        
+                                        const iconInner = document.createElement('i');
+                                        iconInner.className = 'fas fa-book';
+                                        icon.appendChild(iconInner);
+                                        
+                                        const info = document.createElement('div');
+                                        info.className = 'course-info';
+                                        
+                                        const name = document.createElement('div');
+                                        name.className = 'course-name';
+                                        name.textContent = course.courseName || 'Unknown Course';
+                                        
+                                        const meta = document.createElement('div');
+                                        meta.className = 'course-meta';
+                                        meta.textContent = course.instructor || 'Unknown Instructor';
+                                        
+                                        info.appendChild(name);
+                                        info.appendChild(meta);
+                                        
+                                        courseItem.appendChild(icon);
+                                        courseItem.appendChild(info);
+                                        
+                                        contentElement.appendChild(courseItem);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error loading upcoming courses:', error);
+                                    contentElement.innerHTML = '<div class="text-center text-error">Error loading courses</div>';
+                                });
+                            break;
+                    }
+                    break;
+                    
+                case 'resources':
+                    switch(tabId) {
+                        case 'course-materials':
+                            // Load course materials
+                            db.collection('resources')
+                                .where('studentId', '==', userId)
+                                .where('type', '==', 'course-material')
+                                .get()
+                                .then(querySnapshot => {
+                                    contentElement.innerHTML = '';
+                                    
+                                    if (querySnapshot.empty) {
+                                        contentElement.innerHTML = '<div class="text-center text-muted">No course materials found</div>';
+                                        return;
+                                    }
+                                    
+                                    querySnapshot.forEach(doc => {
+                                        const resource = doc.data();
+                                        
+                                        const resourceItem = document.createElement('div');
+                                        resourceItem.className = 'resource-item';
+                                        
+                                        const icon = document.createElement('div');
+                                        icon.className = `resource-icon ${resource.type || 'link'}`;
+                                        
+                                        const iconInner = document.createElement('i');
+                                        if (resource.type === 'pdf') {
+                                            iconInner.className = 'fas fa-file-pdf';
+                                        } else if (resource.type === 'video') {
+                                            iconInner.className = 'fas fa-video';
+                                        } else {
+                                            iconInner.className = 'fas fa-link';
+                                        }
+                                        icon.appendChild(iconInner);
+                                        
+                                        const info = document.createElement('div');
+                                        info.className = 'resource-info';
+                                        
+                                        const name = document.createElement('div');
+                                        name.className = 'resource-name';
+                                        name.textContent = resource.name || 'Unknown Resource';
+                                        
+                                        const meta = document.createElement('div');
+                                        meta.className = 'resource-meta';
+                                        meta.textContent = resource.category || 'Uncategorized';
+                                        
+                                        info.appendChild(name);
+                                        info.appendChild(meta);
+                                        
+                                        resourceItem.appendChild(icon);
+                                        resourceItem.appendChild(info);
+                                        
+                                        contentElement.appendChild(resourceItem);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error loading course materials:', error);
+                                    contentElement.innerHTML = '<div class="text-center text-error">Error loading resources</div>';
+                                });
+                            break;
+                            
+                        case 'practice-tests':
+                            // Load practice tests
+                            db.collection('resources')
+                                .where('studentId', '==', userId)
+                                .where('type', '==', 'practice-test')
+                                .get()
+                                .then(querySnapshot => {
+                                    contentElement.innerHTML = '';
+                                    
+                                    if (querySnapshot.empty) {
+                                        contentElement.innerHTML = '<div class="text-center text-muted">No practice tests found</div>';
+                                        return;
+                                    }
+                                    
+                                    querySnapshot.forEach(doc => {
+                                        const resource = doc.data();
+                                        
+                                        const resourceItem = document.createElement('div');
+                                        resourceItem.className = 'resource-item';
+                                        
+                                        const icon = document.createElement('div');
+                                        icon.className = `resource-icon ${resource.type || 'link'}`;
+                                        
+                                        const iconInner = document.createElement('i');
+                                        if (resource.type === 'pdf') {
+                                            iconInner.className = 'fas fa-file-pdf';
+                                        } else if (resource.type === 'video') {
+                                            iconInner.className = 'fas fa-video';
+                                        } else {
+                                            iconInner.className = 'fas fa-link';
+                                        }
+                                        icon.appendChild(iconInner);
+                                        
+                                        const info = document.createElement('div');
+                                        info.className = 'resource-info';
+                                        
+                                        const name = document.createElement('div');
+                                        name.className = 'resource-name';
+                                        name.textContent = resource.name || 'Unknown Resource';
+                                        
+                                        const meta = document.createElement('div');
+                                        meta.className = 'resource-meta';
+                                        meta.textContent = resource.category || 'Uncategorized';
+                                        
+                                        info.appendChild(name);
+                                        info.appendChild(meta);
+                                        
+                                        resourceItem.appendChild(icon);
+                                        resourceItem.appendChild(info);
+                                        
+                                        contentElement.appendChild(resourceItem);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error loading practice tests:', error);
+                                    contentElement.innerHTML = '<div class="text-center text-error">Error loading resources</div>';
+                                });
+                            break;
+                            
+                        case 'reference-books':
+                            // Load reference books
+                            db.collection('resources')
+                                .where('studentId', '==', userId)
+                                .where('type', '==', 'reference-book')
+                                .get()
+                                .then(querySnapshot => {
+                                    contentElement.innerHTML = '';
+                                    
+                                    if (querySnapshot.empty) {
+                                        contentElement.innerHTML = '<div class="text-center text-muted">No reference books found</div>';
+                                        return;
+                                    }
+                                    
+                                    querySnapshot.forEach(doc => {
+                                        const resource = doc.data();
+                                        
+                                        const resourceItem = document.createElement('div');
+                                        resourceItem.className = 'resource-item';
+                                        
+                                        const icon = document.createElement('div');
+                                        icon.className = `resource-icon ${resource.type || 'link'}`;
+                                        
+                                        const iconInner = document.createElement('i');
+                                        if (resource.type === 'pdf') {
+                                            iconInner.className = 'fas fa-file-pdf';
+                                        } else if (resource.type === 'video') {
+                                            iconInner.className = 'fas fa-video';
+                                        } else {
+                                            iconInner.className = 'fas fa-link';
+                                        }
+                                        icon.appendChild(iconInner);
+                                        
+                                        const info = document.createElement('div');
+                                        info.className = 'resource-info';
+                                        
+                                        const name = document.createElement('div');
+                                        name.className = 'resource-name';
+                                        name.textContent = resource.name || 'Unknown Resource';
+                                        
+                                        const meta = document.createElement('div');
+                                        meta.className = 'resource-meta';
+                                        meta.textContent = resource.category || 'Uncategorized';
+                                        
+                                        info.appendChild(name);
+                                        info.appendChild(meta);
+                                        
+                                        resourceItem.appendChild(icon);
+                                        resourceItem.appendChild(info);
+                                        
+                                        contentElement.appendChild(resourceItem);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error loading reference books:', error);
+                                    contentElement.innerHTML = '<div class="text-center text-error">Error loading resources</div>';
+                                });
+                            break;
+                    }
+                    break;
+                    
+                case 'calendar':
+                    switch(tabId) {
+                        case 'monthly-view':
+                            // Create monthly calendar view
+                            const now = new Date();
+                            const year = now.getFullYear();
+                            const month = now.getMonth();
+                            
+                            const calendarContainer = document.createElement('div');
+                            calendarContainer.className = 'calendar-container';
+                            
+                            const calendarHeader = document.createElement('div');
+                            calendarHeader.className = 'calendar-header';
+                            
+                            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                                              'July', 'August', 'September', 'October', 'November', 'December'];
+                            
+                            const calendarMonth = document.createElement('div');
+                            calendarMonth.className = 'calendar-month';
+                            calendarMonth.textContent = `${monthNames[month]} ${year}`;
+                            
+                            const calendarNav = document.createElement('div');
+                            calendarNav.className = 'calendar-nav';
+                            
+                            const prevBtn = document.createElement('button');
+                            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                            
+                            const todayBtn = document.createElement('button');
+                            todayBtn.textContent = 'Today';
+                            
+                            const nextBtn = document.createElement('button');
+                            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                            
+                            calendarNav.appendChild(prevBtn);
+                            calendarNav.appendChild(todayBtn);
+                            calendarNav.appendChild(nextBtn);
+                            
+                            calendarHeader.appendChild(calendarMonth);
+                            calendarHeader.appendChild(calendarNav);
+                            
+                            const calendarGrid = document.createElement('div');
+                            calendarGrid.className = 'calendar-grid';
+                            
+                            // Add day headers
+                            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                            dayNames.forEach(day => {
+                                const dayHeader = document.createElement('div');
+                                dayHeader.className = 'calendar-day-header';
+                                dayHeader.textContent = day;
+                                calendarGrid.appendChild(dayHeader);
+                            });
+                            
+                            // Get first day of month and number of days
+                            const firstDay = new Date(year, month, 1).getDay();
+                            const daysInMonth = new Date(year, month + 1, 0).getDate();
+                            
+                            // Add empty cells for days before the first day of the month
+                            for (let i = 0; i < firstDay; i++) {
+                                const emptyDay = document.createElement('div');
+                                emptyDay.className = 'calendar-day other-month';
+                                calendarGrid.appendChild(emptyDay);
+                            }
+                            
+                            // Add days of the month
+                            for (let day = 1; day <= daysInMonth; day++) {
+                                const dayElement = document.createElement('div');
+                                dayElement.className = 'calendar-day';
+                                dayElement.textContent = day;
+                                
+                                // Check if this is today
+                                if (year === now.getFullYear() && month === now.getMonth() && day === now.getDate()) {
+                                    dayElement.classList.add('today');
+                                }
+                                
+                                calendarGrid.appendChild(dayElement);
+                            }
+                            
+                            calendarContainer.appendChild(calendarHeader);
+                            calendarContainer.appendChild(calendarGrid);
+                            
+                            contentElement.innerHTML = '';
+                            contentElement.appendChild(calendarContainer);
+                            
+                            // Load events for this month
+                            loadCalendarEvents(userId);
+                            break;
+                            
+                        case 'weekly-view':
+                            // Create weekly calendar view
+                            const weeklyContainer = document.createElement('div');
+                            weeklyContainer.className = 'calendar-container';
+                            
+                            const weeklyHeader = document.createElement('div');
+                            weeklyHeader.className = 'calendar-header';
+                            
+                            const today = new Date();
+                            const currentDay = today.getDay();
+                            const startOfWeek = new Date(today);
+                            startOfWeek.setDate(today.getDate() - currentDay);
+                            
+                            const weekDates = [];
+                            for (let i = 0; i < 7; i++) {
+                                const date = new Date(startOfWeek);
+                                date.setDate(startOfWeek.getDate() + i);
+                                weekDates.push(date);
+                            }
+                            
+                            const weekRange = `${formatDate(weekDates[0])} - ${formatDate(weekDates[6])}`;
+                            
+                            const weeklyMonth = document.createElement('div');
+                            weeklyMonth.className = 'calendar-month';
+                            weeklyMonth.textContent = weekRange;
+                            
+                            const weeklyNav = document.createElement('div');
+                            weeklyNav.className = 'calendar-nav';
+                            
+                            const prevWeekBtn = document.createElement('button');
+                            prevWeekBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                            
+                            const todayWeekBtn = document.createElement('button');
+                            todayWeekBtn.textContent = 'This Week';
+                            
+                            const nextWeekBtn = document.createElement('button');
+                            nextWeekBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                            
+                            weeklyNav.appendChild(prevWeekBtn);
+                            weeklyNav.appendChild(todayWeekBtn);
+                            weeklyNav.appendChild(nextWeekBtn);
+                            
+                            weeklyHeader.appendChild(weeklyMonth);
+                            weeklyHeader.appendChild(weeklyNav);
+                            
+                            const weeklyGrid = document.createElement('div');
+                            weeklyGrid.className = 'calendar-grid';
+                            
+                            // Add day headers
+                            const weekDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                            weekDayNames.forEach(day => {
+                                const dayHeader = document.createElement('div');
+                                dayHeader.className = 'calendar-day-header';
+                                dayHeader.textContent = day;
+                                weeklyGrid.appendChild(dayHeader);
+                            });
+                            
+                            // Add days of the week
+                            weekDates.forEach(date => {
+                                const dayElement = document.createElement('div');
+                                dayElement.className = 'calendar-day';
+                                
+                                if (date.toDateString() === today.toDateString()) {
+                                    dayElement.classList.add('today');
+                                }
+                                
+                                const dayNumber = document.createElement('div');
+                                dayNumber.textContent = date.getDate();
+                                dayElement.appendChild(dayNumber);
+                                
+                                weeklyGrid.appendChild(dayElement);
+                            });
+                            
+                            weeklyContainer.appendChild(weeklyHeader);
+                            weeklyContainer.appendChild(weeklyGrid);
+                            
+                            contentElement.innerHTML = '';
+                            contentElement.appendChild(weeklyContainer);
+                            break;
+                            
+                        case 'upcoming-events':
+                            // Load upcoming events
+                            db.collection('events')
+                                .where('participants', 'array-contains', userId)
+                                .where('date', '>=', new Date())
+                                .orderBy('date', 'asc')
+                                .limit(10)
+                                .get()
+                                .then(querySnapshot => {
+                                    contentElement.innerHTML = '';
+                                    
+                                    if (querySnapshot.empty) {
+                                        contentElement.innerHTML = '<div class="text-center text-muted">No upcoming events found</div>';
+                                        return;
+                                    }
+                                    
+                                    querySnapshot.forEach(doc => {
+                                        const event = doc.data();
+                                        
+                                        const eventItem = document.createElement('div');
+                                        eventItem.className = 'event-item';
+                                        
+                                        const eventDate = document.createElement('div');
+                                        eventDate.className = 'event-date';
+                                        eventDate.textContent = event.date ? formatDate(event.date.toDate()) : 'Unknown date';
+                                        
+                                        const eventTitle = document.createElement('div');
+                                        eventTitle.className = 'event-title';
+                                        eventTitle.textContent = event.title || 'Untitled Event';
+                                        
+                                        const eventLocation = document.createElement('div');
+                                        eventLocation.className = 'event-location';
+                                        eventLocation.textContent = event.location || 'No location specified';
+                                        
+                                        eventItem.appendChild(eventDate);
+                                        eventItem.appendChild(eventTitle);
+                                        eventItem.appendChild(eventLocation);
+                                        
+                                        contentElement.appendChild(eventItem);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error loading upcoming events:', error);
+                                    contentElement.innerHTML = '<div class="text-center text-error">Error loading events</div>';
+                                });
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        // Close special modal
+        elements.specialModalClose.addEventListener('click', () => {
+            elements.specialModal.classList.remove('show');
+        });
+
+        elements.specialModalCancel.addEventListener('click', () => {
+            elements.specialModal.classList.remove('show');
+        });
+
+        elements.specialModalSave.addEventListener('click', () => {
+            elements.specialModal.classList.remove('show');
+            showNotification('Changes saved successfully!', 'success');
+        });
+
+        // Add click event listeners to cards with data-card-type attribute
+        document.querySelectorAll('[data-card-type]').forEach(card => {
+            card.addEventListener('click', () => {
+                const cardType = card.getAttribute('data-card-type');
+                openSpecialModal(cardType);
+            });
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update online status randomly
+            const statusDots = document.querySelectorAll('.status-dot');
+            statusDots.forEach(dot => {
+                if (Math.random() > 0.9) {
+                    if (dot.classList.contains('status-online')) {
+                        dot.classList.remove('status-online');
+                        dot.classList.add('status-away');
+                    } else if (dot.classList.contains('status-away')) {
+                        dot.classList.remove('status-away');
+                        dot.classList.add('status-offline');
+                    } else if (dot.classList.contains('status-offline')) {
+                        dot.classList.remove('status-offline');
+                        dot.classList.add('status-online');
+                    }
                 }
+            });
+        }, 5000);
+
+        // Animate progress bars on load
+        window.addEventListener('load', () => {
+            const progressFills = document.querySelectorAll('.progress-fill');
+            progressFills.forEach(fill => {
+                const width = fill.style.width;
+                fill.style.width = '0';
                 
-                // Add event listener
-                dayElement.addEventListener('click', () => {
-                    // Load events for this day
-                    loadEventsForDay(year, month, day);
-                });
-                
-                elements.calendarModalGrid.appendChild(dayElement);
+                setTimeout(() => {
+                    fill.style.width = width;
+                }, 300);
+            });
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === elements.messageModal) {
+                elements.messageModal.classList.remove('show');
             }
             
-            // Load events for this month
-            loadCalendarEvents(auth.currentUser.uid);
-        }
-
-        function loadUpcomingEvents() {
-            const userId = auth.currentUser.uid;
-            const now = new Date();
+            if (e.target === elements.eventModal) {
+                elements.eventModal.classList.remove('show');
+            }
             
-            // Get upcoming events
-            db.collection('events')
-                .where('participants', 'array-contains', userId)
-                .where('date', '>=', now)
-                .orderBy('date', 'asc')
-                .limit(5)
-                .get()
-                .then(querySnapshot => {
-                    elements.upcomingEventsList.innerHTML = '';
-                    
-                    if (querySnapshot.empty) {
-                        elements.upcomingEventsList.innerHTML = '<div class="text-center text-muted">No upcoming events</div>';
-                        return;
-                    }
-                    
-                    querySnapshot.forEach(doc => {
-                        const event = doc.data();
-                        
-                        const eventItem = document.createElement('div');
-                        eventItem.className = 'event-modal-participant';
-                        
-                        const title = document.createElement('div');
-                        title.className = 'profile-info-label';
-                        title.textContent = event.title || 'Untitled Event';
-                        
-                        const details = document.createElement('div');
-                        details.className = 'profile-info-value';
-                        
-                        if (event.date) {
-                            const eventDate = event.date.toDate();
-                            details.textContent = `${formatDate(eventDate)} at ${formatTime(eventDate)}`;
-                        } else {
-                            details.textContent = 'Unknown date and time';
-                        }
-                        
-                        eventItem.appendChild(title);
-                        eventItem.appendChild(details);
-                        
-                        elements.upcomingEventsList.appendChild(eventItem);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading upcoming events:', error);
-                    elements.upcomingEventsList.innerHTML = '<div class="text-center text-error">Error loading events</div>';
-                });
-        }
-
-        // Section modal close handlers
-        elements.academicOverviewModalClose.addEventListener('click', () => {
-            elements.academicOverviewModal.classList.remove('show');
-        });
-
-        elements.academicOverviewModalCloseBtn.addEventListener('click', () => {
-            elements.academicOverviewModal.classList.remove('show');
-        });
-
-        elements.academicOverviewModalExport.addEventListener('click', () => {
-            elements.academicOverviewModal.classList.remove('show');
-            showNotification('Academic report exported successfully!', 'success');
-        });
-
-        elements.messagesModalClose.addEventListener('click', () => {
-            elements.messagesModal.classList.remove('show');
-        });
-
-        elements.messagesModalCloseBtn.addEventListener('click', () => {
-            elements.messagesModal.classList.remove('show');
-        });
-
-        elements.messagesModalCompose.addEventListener('click', () => {
-            elements.messagesModal.classList.remove('show');
-            // Open WhatsApp modal with a new contact
-            openWhatsAppModal({ name: 'New Message', role: 'Contact' });
-        });
-
-        elements.messagesModalRefresh.addEventListener('click', () => {
-            const userId = auth.currentUser.uid;
-            loadMessages(userId);
-            updateNotificationCount(userId);
-            showNotification('Messages refreshed!', 'success');
-        });
-
-        elements.messagesModalMarkAllRead.addEventListener('click', () => {
-            const userId = auth.currentUser.uid;
+            if (e.target === elements.profilePage) {
+                elements.profilePage.classList.remove('show');
+            }
             
-            // Mark all messages as read
-            db.collection('messages')
-                .where('receiverId', '==', userId)
-                .where('read', '==', false)
-                .get()
-                .then(querySnapshot => {
-                    const batch = db.batch();
-                    
-                    querySnapshot.forEach(doc => {
-                        batch.update(doc.ref, { read: true });
-                    });
-                    
-                    return batch.commit();
-                })
-                .then(() => {
-                    // Reload messages
-                    loadMessages(userId);
-                    updateNotificationCount(userId);
-                    showNotification('All messages marked as read!', 'success');
-                })
-                .catch(error => {
-                    console.error('Error marking messages as read:', error);
-                    showNotification('Error marking messages as read', 'error');
-                });
+            if (e.target === elements.whatsappModal) {
+                elements.whatsappModal.classList.remove('show');
+            }
+            
+            if (e.target === elements.specialModal) {
+                elements.specialModal.classList.remove('show');
+            }
+            
+            // Check for dynamically created modals
+            const courseModal = document.getElementById('courseModal');
+            if (courseModal && e.target === courseModal) {
+                courseModal.classList.remove('show');
+            }
+            
+            const assignmentModal = document.getElementById('assignmentModal');
+            if (assignmentModal && e.target === assignmentModal) {
+                assignmentModal.classList.remove('show');
+            }
+            
+            const resourceModal = document.getElementById('resourceModal');
+            if (resourceModal && e.target === resourceModal) {
+                resourceModal.classList.remove('show');
+            }
+            
+            const fileModal = document.getElementById('fileModal');
+            if (fileModal && e.target === fileModal) {
+                fileModal.classList.remove('show');
+            }
+            
+            const announcementModal = document.getElementById('announcementModal');
+            if (announcementModal && e.target === announcementModal) {
+                announcementModal.classList.remove('show');
+            }
         });
-
-        elements.coursesModalClose.addEventListener('click', () => {
-            elements.coursesModal.classList.remove('show');
-        });
-
-        elements.coursesModalCloseBtn.addEventListener('click', () => {
-            elements.coursesModal.classList.remove('show');
-        });
-
-        elements.coursesModalAdd.addEventListener('click', () => {
-            elements.coursesModal.classList.remove('show');
-            showNotification('Course addition feature coming soon!', 'info');
-        });
-
-        elements.coursesModalFilter.addEventListener('click', () => {
-            showNotification('Course filter feature coming soon!', 'info');
-        });
-
-        elements.coursesModalExport.addEventListener('click', () => {
-            elements.coursesModal.classList.remove('show');
-            showNotification('Course schedule exported successfully!', 'success');
-        });
-
-        elements.assignmentsModalClose.addEventListener('click', () => {
-            elements.assignmentsModal.classList.remove('show');
-        });
-
-        elements.assignmentsModalCloseBtn.addEventListener('click', () => {
-            elements.assignmentsModal.classList.remove('show');
-        });
-
-        elements.assignmentsModalCreate.addEventListener('click', () => {
-            elements.assignmentsModal.classList.remove('show');
-            openNewAssignmentModal();
-        });
-
-        elements.assignmentsModalFilter.addEventListener('click', () => {
-            showNotification('Assignment filter feature coming soon!', 'info');
-        });
-
-        elements.assignmentsModalExport.addEventListener('click', () => {
-            elements.assignmentsModal.classList.remove('show');
-            showNotification('Assignment list exported successfully!', 'success');
-        });
-
-        elements.studyTimeModalClose.addEventListener('click', () => {
-            elements.studyTimeModal.classList.remove('show');
-        });
-
-        elements.studyTimeModalCloseBtn.addEventListener('click', () => {
-            elements.studyTimeModal.classList.remove('show');
-        });
-
-        elements.studyTimeModalExport.addEventListener('click', () => {
-            elements.studyTimeModal.classList.remove('show');
-            showNotification('Study time report exported successfully!', 'success');
-        });
-
-        elements.resourcesModalClose.addEventListener('click', () => {
-            elements.resourcesModal.classList.remove('show');
-        });
-
-        elements.resourcesModalCloseBtn.addEventListener('click', () => {
-            elements.resourcesModal.classList.remove('show');
-        });
-
-        elements.resourcesModalUpload.addEventListener('click', () => {
-            elements.resourcesModal.classList.remove('show');
-            showNotification('Resource upload feature coming soon!', 'info');
-        });
-
-        elements.resourcesModalFilter.addEventListener('click', () => {
-            showNotification('Resource filter feature coming soon!', 'info');
-        });
-
-        elements.resourcesModalExport.addEventListener('click', () => {
-            elements.resourcesModal.classList.remove('show');
-            showNotification('Resource list exported successfully!', 'success');
-        });
-
-        elements.skillsModalClose.addEventListener('click', () => {
-            elements.skillsModal.classList.remove('show');
-        });
-
-        elements.skillsModalCloseBtn.addEventListener('click', () => {
-            elements.skillsModal.classList.remove('show');
-        });
-
-        elements.skillsModalAdd.addEventListener('click', () => {
-            elements.skillsModal.classList.remove('show');
-            showNotification('Skill addition feature coming soon!', 'info');
-        });
-
-        elements.skillsModalAssess.addEventListener('click', () => {
-            elements.skillsModal.classList.remove('show');
-            showNotification('Skill assessment feature coming soon!', 'info');
-        });
-
-        elements.skillsModalExport.addEventListener('click', () => {
-            elements.skillsModal.classList.remove('show');
-            showNotification('Skills report exported successfully!', 'success');
-        });
-
-        elements.calendarModalClose.addEventListener('click', () => {
-            elements.calendarModal.classList.remove('show');
-        });
-
-        elements.calendarModalCloseBtn.addEventListener('click', () => {
-            elements.calendarModal.classList.remove('show');
-        });
-
-        elements.calendarModalAddEvent.addEventListener('click', () => {
-            elements.calendarModal.classList.remove('show');
-            showNotification('Event creation feature coming soon!', 'info');
-        });
-
-        elements.calendarModalToday.addEventListener('click', () => {
-            const today = new Date();
-            renderModalCalendar(today.getFullYear(), today.getMonth());
-            loadUpcomingEvents();
-        });
-
-        elements.calendarModalExport.addEventListener('click', () => {
-            elements.calendarModal.classList.remove('show');
-            showNotification('Calendar exported successfully!', 'success');
-        });
-
-        // Modal navigation for calendar
-        elements.calendarModalPrev.addEventListener('click', () => {
-            const currentDate = new Date(elements.calendarModalMonth.textContent);
-            const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-            renderModalCalendar(newDate.getFullYear(), newDate.getMonth());
-            loadUpcomingEvents();
-        });
-
-        elements.calendarModalNext.addEventListener('click', () => {
-            const currentDate = new Date(elements.calendarModalMonth.textContent);
-            const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-            renderModalCalendar(newDate.getFullYear(), newDate.getMonth());
-            loadUpcomingEvents();
-        });
-
-        elements.calendarModalTodayBtn.addEventListener('click', () => {
-            const today = new Date();
-            renderModalCalendar(today.getFullYear(), today.getMonth());
-            loadUpcomingEvents();
-        });
-
+        
         // Button event listeners
         elements.filterBtn.addEventListener('click', () => {
             // Open filter modal
@@ -7445,128 +7051,6 @@
             
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
-        
-        // Simulate real-time updates
-        setInterval(() => {
-            // Update online status randomly
-            const statusDots = document.querySelectorAll('.status-dot');
-            statusDots.forEach(dot => {
-                if (Math.random() > 0.9) {
-                    if (dot.classList.contains('status-online')) {
-                        dot.classList.remove('status-online');
-                        dot.classList.add('status-away');
-                    } else if (dot.classList.contains('status-away')) {
-                        dot.classList.remove('status-away');
-                        dot.classList.add('status-offline');
-                    } else if (dot.classList.contains('status-offline')) {
-                        dot.classList.remove('status-offline');
-                        dot.classList.add('status-online');
-                    }
-                }
-            });
-        }, 5000);
-
-        // Animate progress bars on load
-        window.addEventListener('load', () => {
-            const progressFills = document.querySelectorAll('.progress-fill');
-            progressFills.forEach(fill => {
-                const width = fill.style.width;
-                fill.style.width = '0';
-                
-                setTimeout(() => {
-                    fill.style.width = width;
-                }, 300);
-            });
-        });
-
-        // Close modals when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === elements.messageModal) {
-                elements.messageModal.classList.remove('show');
-            }
-            
-            if (e.target === elements.eventModal) {
-                elements.eventModal.classList.remove('show');
-            }
-            
-            if (e.target === elements.profilePage) {
-                elements.profilePage.classList.remove('show');
-            }
-            
-            if (e.target === elements.whatsappModal) {
-                elements.whatsappModal.classList.remove('show');
-            }
-            
-            // Check for dynamically created modals
-            const courseModal = document.getElementById('courseModal');
-            if (courseModal && e.target === courseModal) {
-                courseModal.classList.remove('show');
-            }
-            
-            const assignmentModal = document.getElementById('assignmentModal');
-            if (assignmentModal && e.target === assignmentModal) {
-                assignmentModal.classList.remove('show');
-            }
-            
-            const resourceModal = document.getElementById('resourceModal');
-            if (resourceModal && e.target === resourceModal) {
-                resourceModal.classList.remove('show');
-            }
-            
-            const fileModal = document.getElementById('fileModal');
-            if (fileModal && e.target === fileModal) {
-                fileModal.classList.remove('show');
-            }
-            
-            const announcementModal = document.getElementById('announcementModal');
-            if (announcementModal && e.target === announcementModal) {
-                announcementModal.classList.remove('show');
-            }
-            
-            // Section modals
-            if (e.target === elements.academicOverviewModal) {
-                elements.academicOverviewModal.classList.remove('show');
-            }
-            
-            if (e.target === elements.messagesModal) {
-                elements.messagesModal.classList.remove('show');
-            }
-            
-            if (e.target === elements.coursesModal) {
-                elements.coursesModal.classList.remove('show');
-            }
-            
-            if (e.target === elements.assignmentsModal) {
-                elements.assignmentsModal.classList.remove('show');
-            }
-            
-            if (e.target === elements.studyTimeModal) {
-                elements.studyTimeModal.classList.remove('show');
-            }
-            
-            if (e.target === elements.resourcesModal) {
-                elements.resourcesModal.classList.remove('show');
-            }
-            
-            if (e.target === elements.skillsModal) {
-                elements.skillsModal.classList.remove('show');
-            }
-            
-            if (e.target === elements.calendarModal) {
-                elements.calendarModal.classList.remove('show');
-            }
-            
-            // Filter and new assignment modals
-            const filterModal = document.getElementById('filterModal');
-            if (filterModal && e.target === filterModal) {
-                filterModal.classList.remove('show');
-            }
-            
-            const newAssignmentModal = document.getElementById('newAssignmentModal');
-            if (newAssignmentModal && e.target === newAssignmentModal) {
-                newAssignmentModal.classList.remove('show');
-            }
-        });
     </script>
 </body>
 </html>
