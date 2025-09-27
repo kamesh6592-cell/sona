@@ -1659,12 +1659,29 @@
             <p class="subtitle" style="margin-bottom: 1.75rem;" data-i18n="profile-info">Please provide additional information to complete your account setup</p>
             <form id="microsoftSetupForm" aria-label="Microsoft account setup form">
                 <div class="form-group">
+                    <label for="msFullName" data-i18n="full-name">Full Name</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
+                        <input type="text" id="msFullName" required placeholder="Enter your full name" autocomplete="name">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="msEmail" data-i18n="email">Email</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
+                        <input type="email" id="msEmail" required readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
                     <label for="msCollegeId" data-i18n="college-id">College ID</label>
                     <div class="input-container">
                         <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
                         <input type="text" id="msCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
                     </div>
                 </div>
+                
                 <div class="form-group">
                     <label for="msRole" data-i18n="role">Role</label>
                     <div class="input-container">
@@ -1678,6 +1695,26 @@
                         </select>
                     </div>
                 </div>
+                
+                <div class="role-badges" role="group" aria-label="Role selection">
+                    <button type="button" class="role-badge role-student" data-role="student" aria-pressed="false">
+                        <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                        <span data-i18n="student">Student</span>
+                    </button>
+                    <button type="button" class="role-badge role-faculty" data-role="faculty" aria-pressed="false">
+                        <i class="fas fa-chalkboard-teacher" aria-hidden="true"></i>
+                        <span data-i18n="faculty">Faculty</span>
+                    </button>
+                    <button type="button" class="role-badge role-hod" data-role="hod" aria-pressed="false">
+                        <i class="fas fa-user-tie" aria-hidden="true"></i>
+                        <span data-i18n="hod">HOD</span>
+                    </button>
+                    <button type="button" class="role-badge role-principal" data-role="principal" aria-pressed="false">
+                        <i class="fas fa-user-shield" aria-hidden="true"></i>
+                        <span data-i18n="principal">Principal</span>
+                    </button>
+                </div>
+                
                 <div class="form-group">
                     <label for="msDepartment" data-i18n="department">Department ID</label>
                     <div class="input-container">
@@ -1685,13 +1722,7 @@
                         <input type="number" id="msDepartment" required placeholder="e.g., 101">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="msFullName" data-i18n="full-name">Full Name</label>
-                    <div class="input-container">
-                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
-                        <input type="text" id="msFullName" required placeholder="Enter your full name" autocomplete="name">
-                    </div>
-                </div>
+                
                 <button type="submit" class="btn btn-primary" aria-live="polite">
                     <span class="btn-text" data-i18n="complete-setup">Complete Setup</span>
                 </button>
@@ -1707,12 +1738,29 @@
             <p class="subtitle" style="margin-bottom: 1.75rem;" data-i18n="profile-info">Please provide additional information to complete your account setup</p>
             <form id="googleSetupForm" aria-label="Google account setup form">
                 <div class="form-group">
+                    <label for="googleFullName" data-i18n="full-name">Full Name</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
+                        <input type="text" id="googleFullName" required placeholder="Enter your full name" autocomplete="name">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="googleEmail" data-i18n="email">Email</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
+                        <input type="email" id="googleEmail" required readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
                     <label for="googleCollegeId" data-i18n="college-id">College ID</label>
                     <div class="input-container">
                         <i class="fas fa-id-card input-icon" aria-hidden="true"></i>
                         <input type="text" id="googleCollegeId" required placeholder="e.g., SONA2024001" autocomplete="username">
                     </div>
                 </div>
+                
                 <div class="form-group">
                     <label for="googleRole" data-i18n="role">Role</label>
                     <div class="input-container">
@@ -1726,6 +1774,26 @@
                         </select>
                     </div>
                 </div>
+                
+                <div class="role-badges" role="group" aria-label="Role selection">
+                    <button type="button" class="role-badge role-student" data-role="student" aria-pressed="false">
+                        <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                        <span data-i18n="student">Student</span>
+                    </button>
+                    <button type="button" class="role-badge role-faculty" data-role="faculty" aria-pressed="false">
+                        <i class="fas fa-chalkboard-teacher" aria-hidden="true"></i>
+                        <span data-i18n="faculty">Faculty</span>
+                    </button>
+                    <button type="button" class="role-badge role-hod" data-role="hod" aria-pressed="false">
+                        <i class="fas fa-user-tie" aria-hidden="true"></i>
+                        <span data-i18n="hod">HOD</span>
+                    </button>
+                    <button type="button" class="role-badge role-principal" data-role="principal" aria-pressed="false">
+                        <i class="fas fa-user-shield" aria-hidden="true"></i>
+                        <span data-i18n="principal">Principal</span>
+                    </button>
+                </div>
+                
                 <div class="form-group">
                     <label for="googleDepartment" data-i18n="department">Department ID</label>
                     <div class="input-container">
@@ -1733,15 +1801,56 @@
                         <input type="number" id="googleDepartment" required placeholder="e.g., 101">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="googleFullName" data-i18n="full-name">Full Name</label>
-                    <div class="input-container">
-                        <i class="fas fa-user input-icon" aria-hidden="true"></i>
-                        <input type="text" id="googleFullName" required placeholder="Enter your full name" autocomplete="name">
-                    </div>
-                </div>
+                
                 <button type="submit" class="btn btn-primary" aria-live="polite">
                     <span class="btn-text" data-i18n="complete-setup">Complete Setup</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Role Selection Modal -->
+    <div class="modal" id="roleSelectionModal" role="dialog" aria-labelledby="roleSelectionModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <button class="close-btn" id="closeRoleSelection" aria-label="Close role selection modal">&times;</button>
+            <h2 id="roleSelectionModalTitle" data-i18n="confirm-role">Confirm Your Role</h2>
+            <p class="subtitle" style="margin-bottom: 1.75rem;" data-i18n="role-selection-info">Please select your role from the options below.</p>
+            <form id="roleSelectionForm" aria-label="Role selection form">
+                <div class="form-group">
+                    <label for="selectedRole" data-i18n="role">Role</label>
+                    <div class="input-container">
+                        <i class="fas fa-user-tag input-icon" aria-hidden="true"></i>
+                        <select id="selectedRole" required>
+                            <option value="" data-i18n="select-role">Select Your Role</option>
+                            <option value="student" data-i18n="student">Student</option>
+                            <option value="faculty" data-i18n="faculty">Faculty</option>
+                            <option value="hod" data-i18n="hod">Head of Department</option>
+                            <option value="principal" data-i18n="principal">Principal</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="role-badges" role="group" aria-label="Role selection">
+                    <button type="button" class="role-badge role-student" data-role="student" aria-pressed="false">
+                        <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                        <span data-i18n="student">Student</span>
+                    </button>
+                    <button type="button" class="role-badge role-faculty" data-role="faculty" aria-pressed="false">
+                        <i class="fas fa-chalkboard-teacher" aria-hidden="true"></i>
+                        <span data-i18n="faculty">Faculty</span>
+                    </button>
+                    <button type="button" class="role-badge role-hod" data-role="hod" aria-pressed="false">
+                        <i class="fas fa-user-tie" aria-hidden="true"></i>
+                        <span data-i18n="hod">HOD</span>
+                    </button>
+                    <button type="button" class="role-badge role-principal" data-role="principal" aria-pressed="false">
+                        <i class="fas fa-user-shield" aria-hidden="true"></i>
+                        <span data-i18n="principal">Principal</span>
+                    </button>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" aria-live="polite">
+                    <span class="btn-text" data-i18n="confirm-role">Confirm Role</span>
                 </button>
             </form>
         </div>
@@ -1787,12 +1896,478 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-       // Configure Microsoft provider with common endpoint for multi-tenancy
-const microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
-microsoftProvider.setCustomParameters({
-    prompt: 'select_account',
-    tenant: 'common' // Use common endpoint instead of specific tenant
-});
+        // Optimized Microsoft provider configuration
+        const microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
+        microsoftProvider.setCustomParameters({
+            prompt: 'select_account',
+            tenant: 'common'
+        });
+
+        // Essential scopes for university data
+        microsoftProvider.addScope('User.Read');
+        microsoftProvider.addScope('User.ReadBasic.All');
+
+        // University email pattern analyzer
+        function analyzeUniversityEmail(email) {
+            // Pattern: name.yeardept@sonatech.ac.in
+            // Examples: kamesh.24aml@sonatech.ac.in, priya.22cse@sonatech.ac.in
+            
+            if (!email || !email.includes('@sonatech.ac.in')) {
+                return { isValid: false };
+            }
+            
+            const localPart = email.split('@')[0]; // kamesh.24aml
+            const parts = localPart.split('.'); // [kamesh, 24aml]
+            
+            if (parts.length !== 2) {
+                return { isValid: false };
+            }
+            
+            const [firstName, yearDept] = parts;
+            
+            // Extract year and department from yearDept (e.g., "24aml")
+            const yearMatch = yearDept.match(/^(\d{2})/); // First 2 digits for year
+            const deptMatch = yearDept.match(/([a-z]+)$/i); // Letters for department
+            
+            if (!yearMatch || !deptMatch) {
+                return { isValid: false };
+            }
+            
+            const year = `20${yearMatch[1]}`; // Convert 24 to 2024
+            const deptCode = deptMatch[1].toUpperCase();
+            
+            // Department mapping
+            const departmentMap = {
+                'CSE': { full: 'Computer Science Engineering', type: 'Engineering' },
+                'ECE': { full: 'Electronics & Communication Engineering', type: 'Engineering' },
+                'EEE': { full: 'Electrical & Electronics Engineering', type: 'Engineering' },
+                'MECH': { full: 'Mechanical Engineering', type: 'Engineering' },
+                'CIVIL': { full: 'Civil Engineering', type: 'Engineering' },
+                'IT': { full: 'Information Technology', type: 'Engineering' },
+                'AML': { full: 'Artificial Intelligence & Machine Learning', type: 'Engineering' },
+                'AIDS': { full: 'Artificial Intelligence & Data Science', type: 'Engineering' },
+                'CSBS': { full: 'Computer Science & Business Systems', type: 'Engineering' },
+                'MBA': { full: 'Master of Business Administration', type: 'Management' },
+                'MCA': { full: 'Master of Computer Applications', type: 'Applications' }
+            };
+            
+            const department = departmentMap[deptCode] || { 
+                full: `${deptCode} Department`, 
+                type: 'Other' 
+            };
+            
+            return {
+                isValid: true,
+                firstName: firstName,
+                admissionYear: year,
+                departmentCode: deptCode,
+                departmentFull: department.full,
+                departmentType: department.type,
+                collegeId: localPart,
+                isStudent: true, // Default assumption for this pattern
+                academicYear: calculateAcademicYear(year)
+            };
+        }
+
+        // Calculate current academic year and semester
+        function calculateAcademicYear(admissionYear) {
+            const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth() + 1; // 1-12
+            
+            // Academic year typically starts in August (month 8)
+            let academicYear = currentYear;
+            if (currentMonth < 8) {
+                academicYear = currentYear - 1;
+            }
+            
+            const yearsCompleted = academicYear - parseInt(admissionYear);
+            const currentYearOfStudy = Math.max(1, Math.min(4, yearsCompleted + 1));
+            
+            // Calculate semester (odd semester: Aug-Dec, even semester: Jan-May)
+            const semester = currentMonth >= 8 || currentMonth <= 1 ? 
+                (currentYearOfStudy * 2 - 1) : (currentYearOfStudy * 2);
+            
+            return {
+                currentYear: currentYearOfStudy,
+                currentSemester: Math.min(8, semester),
+                graduationYear: parseInt(admissionYear) + 4
+            };
+        }
+
+        // Fast university data fetching
+        async function fetchUniversityUserData(accessToken, firebaseUser, isLogin) {
+            const startTime = performance.now();
+            
+            try {
+                // Analyze email pattern first
+                const emailAnalysis = analyzeUniversityEmail(firebaseUser.email);
+                debug(`Email analysis: ${JSON.stringify(emailAnalysis)}`);
+                
+                const headers = {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                };
+
+                // Fetch essential Graph data with timeout
+                const fetchWithTimeout = (url, timeout = 4000) => {
+                    return Promise.race([
+                        fetch(url, { headers }),
+                        new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error('Timeout')), timeout)
+                        )
+                    ]);
+                };
+
+                // Essential profile data
+                const profilePromise = fetchWithTimeout(
+                    'https://graph.microsoft.com/v1.0/me?$select=id,displayName,givenName,surname,jobTitle,department,officeLocation,businessPhones,mobilePhone,employeeId,userPrincipalName,mail,companyName',
+                    5000
+                );
+
+                // Additional data (parallel, non-blocking)
+                const additionalPromises = [
+                    // Manager (for hierarchy)
+                    fetchWithTimeout(
+                        'https://graph.microsoft.com/v1.0/me/manager?$select=displayName,jobTitle,mail,department',
+                        3000
+                    ).catch(() => null),
+                    
+                    // Groups (for classes/teams)
+                    fetchWithTimeout(
+                        'https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName,description,groupTypes&$top=15',
+                        3000
+                    ).catch(() => null),
+                    
+                    // Photo
+                    fetchWithTimeout(
+                        'https://graph.microsoft.com/v1.0/me/photo/$value',
+                        2000
+                    ).catch(() => null)
+                ];
+
+                // Get profile data first
+                const profileResponse = await profilePromise;
+                if (!profileResponse.ok) {
+                    throw new Error(`Graph API error: ${profileResponse.status}`);
+                }
+                
+                const profileData = await profileResponse.json();
+                
+                // Process additional data
+                const [managerResult, groupsResult, photoResult] = await Promise.allSettled(additionalPromises);
+                
+                // Extract additional data safely
+                let managerData = null;
+                let groupMemberships = [];
+                let photoUrl = null;
+                
+                // Manager data
+                if (managerResult.status === 'fulfilled' && managerResult.value?.ok) {
+                    managerData = await managerResult.value.json();
+                }
+                
+                // Groups data
+                if (groupsResult.status === 'fulfilled' && groupsResult.value?.ok) {
+                    const groupsData = await groupsResult.value.json();
+                    groupMemberships = groupsData.value || [];
+                }
+                
+                // Photo data
+                if (photoResult.status === 'fulfilled' && photoResult.value?.ok) {
+                    const photoBlob = await photoResult.value.blob();
+                    if (photoBlob.size < 500000) { // 500KB limit
+                        photoUrl = await blobToBase64(photoBlob);
+                    }
+                }
+
+                // Determine role from email pattern and Graph data
+                const role = determineUniversityRole(emailAnalysis, profileData, groupMemberships);
+                
+                // Create comprehensive user data
+                const userData = {
+                    // Basic identity
+                    collegeId: emailAnalysis.isValid ? emailAnalysis.collegeId : profileData.userPrincipalName?.split('@')[0],
+                    role: role,
+                    name: profileData.displayName || firebaseUser.displayName,
+                    email: firebaseUser.email,
+                    
+                    // University-specific data (from email analysis)
+                    ...(emailAnalysis.isValid && {
+                        university: {
+                            admissionYear: emailAnalysis.admissionYear,
+                            departmentCode: emailAnalysis.departmentCode,
+                            departmentFull: emailAnalysis.departmentFull,
+                            departmentType: emailAnalysis.departmentType,
+                            academic: emailAnalysis.academicYear
+                        }
+                    }),
+                    
+                    // Microsoft Graph profile data
+                    profile: {
+                        id: profileData.id,
+                        firstName: profileData.givenName || emailAnalysis.firstName,
+                        lastName: profileData.surname || '',
+                        jobTitle: profileData.jobTitle || '',
+                        department: profileData.department || emailAnalysis.departmentFull,
+                        officeLocation: profileData.officeLocation || '',
+                        businessPhone: profileData.businessPhones?.[0] || '',
+                        mobilePhone: profileData.mobilePhone || '',
+                        employeeId: profileData.employeeId || ''
+                    },
+                    
+                    // Academic hierarchy
+                    ...(managerData && {
+                        supervisor: {
+                            name: managerData.displayName,
+                            jobTitle: managerData.jobTitle,
+                            email: managerData.mail,
+                            department: managerData.department
+                        }
+                    }),
+                    
+                    // Class/Group memberships
+                    groups: groupMemberships.slice(0, 10).map(group => ({
+                        name: group.displayName,
+                        description: group.description,
+                        type: group.groupTypes?.includes('Unified') ? 'Team' : 'Security'
+                    })),
+                    
+                    // Photo
+                    ...(photoUrl && { profilePhoto: photoUrl }),
+                    
+                    // Metadata
+                    authMethod: 'microsoft',
+                    dataSource: 'university-email-pattern',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    approved: true,
+                    processingTime: Math.round(performance.now() - startTime)
+                };
+
+                // Save to Firestore
+                const userDocRef = db.collection('users').doc(firebaseUser.uid);
+                const existingDoc = await userDocRef.get();
+                
+                if (existingDoc.exists) {
+                    // Update existing user
+                    await userDocRef.update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        'profile.jobTitle': userData.profile.jobTitle,
+                        'profile.department': userData.profile.department,
+                        'profile.officeLocation': userData.profile.officeLocation,
+                        ...(photoUrl && { profilePhoto: photoUrl }),
+                        processingTime: userData.processingTime
+                    });
+                    
+                    redirectBasedOnRole(existingDoc.data().role);
+                } else {
+                    // Show role selection modal for new users
+                    showRoleSelectionModal(userData, firebaseUser);
+                }
+                
+                // Cache user data
+                localStorage.setItem('universityUserCache', JSON.stringify({
+                    ...userData,
+                    uid: firebaseUser.uid,
+                    cacheTime: Date.now()
+                }));
+                
+                debug(`University user processing completed in ${Math.round(performance.now() - startTime)}ms`);
+                
+            } catch (error) {
+                console.error('University Graph integration error:', error);
+                
+                // Fallback with email pattern analysis
+                const emailAnalysis = analyzeUniversityEmail(firebaseUser.email);
+                const fallbackUserData = {
+                    collegeId: emailAnalysis.isValid ? emailAnalysis.collegeId : firebaseUser.email.split('@')[0],
+                    role: emailAnalysis.isValid ? 'student' : 'student',
+                    name: firebaseUser.displayName || emailAnalysis.firstName || 'User',
+                    email: firebaseUser.email,
+                    ...(emailAnalysis.isValid && {
+                        university: {
+                            admissionYear: emailAnalysis.admissionYear,
+                            departmentCode: emailAnalysis.departmentCode,
+                            departmentFull: emailAnalysis.departmentFull,
+                            academic: emailAnalysis.academicYear
+                        }
+                    }),
+                    authMethod: 'microsoft',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    approved: true,
+                    fallback: true
+                };
+                
+                // Show role selection modal even for fallback
+                showRoleSelectionModal(fallbackUserData, firebaseUser);
+            }
+        }
+
+        // Show role selection modal
+        function showRoleSelectionModal(userData, firebaseUser) {
+            // Store user data in modal for later use
+            elements.roleSelectionModal.dataset.userData = JSON.stringify(userData);
+            elements.roleSelectionModal.dataset.firebaseUser = JSON.stringify(firebaseUser);
+            
+            // Pre-select the determined role
+            document.getElementById('selectedRole').value = userData.role || 'student';
+            
+            // Update role badges
+            elements.roleSelectionModal.querySelectorAll('.role-badge').forEach(badge => {
+                if (badge.getAttribute('data-role') === userData.role) {
+                    badge.classList.add('active');
+                    badge.setAttribute('aria-pressed', 'true');
+                } else {
+                    badge.classList.remove('active');
+                    badge.setAttribute('aria-pressed', 'false');
+                }
+            });
+            
+            // Open the modal
+            openModal(elements.roleSelectionModal);
+        }
+
+        // Handle role selection form submission
+        function handleRoleSelection(e) {
+            e.preventDefault();
+            const submitBtn = elements.roleSelectionForm.querySelector('.btn');
+            
+            // Show loading state
+            submitBtn.classList.add('btn-loading');
+            
+            const selectedRole = document.getElementById('selectedRole').value;
+            
+            // Get stored data
+            const userData = JSON.parse(elements.roleSelectionModal.dataset.userData || '{}');
+            const firebaseUser = JSON.parse(elements.roleSelectionModal.dataset.firebaseUser || '{}');
+            
+            // Update role in user data
+            userData.role = selectedRole;
+            
+            // Save to Firestore
+            db.collection('users').doc(firebaseUser.uid).set(userData)
+                .then(() => {
+                    showNotification(
+                        translations[currentLanguage]['account-setup-completed'] || 
+                        'Account setup completed successfully!', 
+                        'success'
+                    );
+                    closeModal(elements.roleSelectionModal);
+                    
+                    // Redirect based on role
+                    redirectBasedOnRole(selectedRole);
+                })
+                .catch((error) => {
+                    console.error('Error saving user data:', error);
+                    debug('Error saving user data: ' + error.message);
+                    showNotification(
+                        translations[currentLanguage]['error-saving-user-data'] || 
+                        'Error saving user data. Please try again.', 
+                        'error'
+                    );
+                })
+                .finally(() => {
+                    submitBtn.classList.remove('btn-loading');
+                });
+        }
+
+        // Determine role based on university email pattern and Graph data
+        function determineUniversityRole(emailAnalysis, profileData, groups = []) {
+            const jobTitle = (profileData.jobTitle || '').toLowerCase();
+            const department = (profileData.department || '').toLowerCase();
+            
+            // Check job title first (most reliable for staff)
+            if (jobTitle.includes('principal') || jobTitle.includes('director')) {
+                return 'principal';
+            }
+            
+            if (jobTitle.includes('hod') || jobTitle.includes('head of department') || 
+                jobTitle.includes('head-') || jobTitle.includes('chairperson')) {
+                return 'hod';
+            }
+            
+            if (jobTitle.includes('professor') || jobTitle.includes('faculty') || 
+                jobTitle.includes('lecturer') || jobTitle.includes('instructor') ||
+                jobTitle.includes('asst prof') || jobTitle.includes('assistant prof')) {
+                return 'faculty';
+            }
+            
+            // Check groups for role indicators
+            const facultyGroups = groups.some(g => 
+                g.displayName?.toLowerCase().includes('faculty') ||
+                g.displayName?.toLowerCase().includes('staff') ||
+                g.displayName?.toLowerCase().includes('teacher')
+            );
+            
+            if (facultyGroups) {
+                return 'faculty';
+            }
+            
+            // If email pattern suggests student and no other role found
+            if (emailAnalysis.isValid && emailAnalysis.isStudent) {
+                return 'student';
+            }
+            
+            return 'student'; // Default
+        }
+
+        // Convert blob to base64 with size limit
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                if (blob.size > 300000) { // 300KB limit for faster processing
+                    resolve(null);
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        // Updated Microsoft auth handler
+        function handleUniversityMicrosoftAuth(isLogin) {
+            const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
+            button.classList.add('btn-loading');
+            
+            debug('Starting university Microsoft authentication...');
+            
+            auth.signInWithPopup(microsoftProvider)
+                .then(async (result) => {
+                    const user = result.user;
+                    const credential = result.credential;
+                    
+                    debug(`Microsoft auth successful for: ${user.email}`);
+                    
+                    // Validate university email
+                    if (!user.email.includes('@sonatech.ac.in')) {
+                        throw new Error('Please use your university email (@sonatech.ac.in)');
+                    }
+                    
+                    // Process university user data
+                    await fetchUniversityUserData(credential.accessToken, user, isLogin);
+                })
+                .catch((error) => {
+                    console.error('University Microsoft auth error:', error);
+                    
+                    let errorMessage = 'Authentication failed. ';
+                    if (error.message.includes('university email')) {
+                        errorMessage = 'Please use your university email (@sonatech.ac.in)';
+                    } else if (error.code === 'auth/popup-blocked') {
+                        errorMessage += 'Please allow popups and try again.';
+                    } else if (error.code === 'auth/popup-closed-by-user') {
+                        errorMessage = 'Authentication cancelled.';
+                    } else {
+                        errorMessage += 'Please try again.';
+                    }
+                    
+                    showNotification(errorMessage, 'error');
+                })
+                .finally(() => {
+                    button.classList.remove('btn-loading');
+                });
+        }
 
         // Language translations
         const translations = {
@@ -1853,7 +2428,11 @@ microsoftProvider.setCustomParameters({
                 "phone": "+91 427 409 9999",
                 "support-email": "support@sonatech.ac.in",
                 "sync-microsoft-users": "Sync Microsoft Users",
-                "made-with-love": "Made with"
+                "made-with-love": "Made with",
+                "confirm-role": "Confirm Your Role",
+                "role-selection-info": "Please select your role from the options below.",
+                "account-setup-completed": "Account setup completed successfully!",
+                "error-saving-user-data": "Error saving user data. Please try again."
             },
             hi: {
                 "login": "लॉग इन",
@@ -1886,7 +2465,7 @@ microsoftProvider.setCustomParameters({
                 "reset-password": "अपना पासवर्ड रीसेट करें",
                 "send-reset-link": "रीसेट लिंक भेजें",
                 "complete-profile": "अपनी प्रोफ़ाइल पूरी करें",
-                "profile-info": "कृपया अपने खाता सेटअप को पूरा करने के लिए अतिरिक्त जानकारी प्रदान करें",
+                "profile-info": "कृपया अपने खाते सेटअप को पूरा करने के लिए अतिरिक्त जानकारी प्रदान करें",
                 "complete-setup": "सेटअप पूरा करें",
                 "department": "विभाग आईडी",
                 "full-name": "पूरा नाम",
@@ -1900,7 +2479,7 @@ microsoftProvider.setCustomParameters({
                 "cross-platform": "क्रॉस-प्लेटफॉर्म",
                 "cross-platform-desc": "किसी भी डिवाइस से एक्सेस करने योग्य जिसमें वेब ब्राउज़र है, जो किसी भी समय, कहीं भी कनेक्टिविटी सुनिश्चित करता है।",
                 "user-friendly": "उपयोगकर्ता-अनुकूल",
-                "user-friendly-desc": "सभी तकनीकी कौशल स्तरों के उपयोगकर्ताओं के लिए डिज़ाइन किया गया सहज इंटरफ़ेस।",
+                "user-friendly-desc": "सभी तकनीकी कौशल्य स्तरों के उपयोगकर्ताओं के लिए डिज़ाइन किया गया सहज इंटरफ़ेस।",
                 "contact-title": "हमसे संपर्क करें",
                 "contact-description": "कोई प्रश्न या प्रतिक्रिया है? हमारी सहायता टीम से संपर्क करें और हम जल्द से जल्द आपको वापस संपर्क करेंगे।",
                 "name": "नाम",
@@ -1912,7 +2491,11 @@ microsoftProvider.setCustomParameters({
                 "phone": "+91 427 409 9999",
                 "support-email": "support@sonatech.ac.in",
                 "sync-microsoft-users": "Microsoft उपयोगकर्ताओं को सिंक करें",
-                "made-with-love": "द्वारा बनाया गया"
+                "made-with-love": "द्वारा बनाया गया",
+                "confirm-role": "अपनी भूमिका की पुष्टि करें",
+                "role-selection-info": "कृपया नीचे दिए गए विकल्पों में से अपनी भूमिका चुनें।",
+                "account-setup-completed": "खाता सेटअप सफलतापूर्वक पूरा हुआ!",
+                "error-saving-user-data": "उपयोगकर्ता डेटा सहेजने में त्रुटि। कृपया पुन: प्रयास करें।"
             },
             ta: {
                 "login": "உள்நுழைக",
@@ -1947,17 +2530,17 @@ microsoftProvider.setCustomParameters({
                 "complete-profile": "உங்கள் சுயவிவரத்தை முடிக்கவும்",
                 "profile-info": "உங்கள் கணக்கு அமைவை முடிக்க கூடுதல் தகவலை வழங்கவும்",
                 "complete-setup": "அமைவை முடிக்கவும்",
-                "department": "துறை ஐடி",
+                "department": "விபாக ஐடி",
                 "full-name": "முழுப் பெயர்",
                 "password-strength": "கடவுச்சொல் வலிமை",
                 "about-title": "சோனா தகவல் தளம் பற்றி",
-                "about-description": "சோனா தகவல் தளம் என்பது சோனா தொழில்நுட்பக் கல்லூரிக்கு குறிப்பாக வடிவமைக்கப்பட்ட ஒரு பாதுகாப்பான படிநிலை தகவல் தொடர்பு அமைப்பாகும். இது மாணவர்கள், ஆசிரியர்கள், துறைத் தலைவர்கள் மற்றும் முதல்வருக்கு இடையே சீரான தகவல் தொடர்பை சாத்தியமாக்குகிறது, அதே நேரத்தில் சரியான நிறுவன அமைப்பு மற்றும் பாதுகாப்பை பராமரிக்கிறது.",
+                "about-description": "சோனா தகவல் தளம் என்பது சோனா தொழில்நுட்பக் கல்லூரிக்கு குறிப்பாக வடிவமைக்கப்பட்ட ஒரு பாதுகாப்பான படிநிலை தகவல் தொடர்பு அமைப்பாகும். இது மாணவர்கள், ஆசிரியர்கள், விபாகத் தலைவர்கள் மற்றும் முதல்வருக்கு இடையே சீரான தகவல் தொடர்பை சாத்தியமாக்குகிறது, அதே நேரத்தில் சரியான நிறுவன அமைப்பு மற்றும் பாதுகாப்பை பராமரிக்கிறது.",
                 "secure-communication": "பாதுகாப்பான தகவல் தொடர்பு",
                 "secure-communication-desc": "முனை-முதல்-முனை குறியாக்கம் அனைத்து தகவல் தொடர்புகளும் தனிப்பட்டதாகவும் பாதுகாப்பாகவும் இருப்பதை உறுதிப்படுத்துகிறது.",
                 "hierarchical-structure": "படிநிலை அமைப்பு",
                 "hierarchical-structure-desc": "கல்லூரியின் நிறுவன படிநிலையை மதிக்கும் ஒழுங்கமைக்கப்பட்ட தகவல் தொடர்பு ஓட்டம்.",
                 "cross-platform": "குறுக்கு-தளம்",
-                "cross-platform-desc": "வலை உலாவி கொண்ட எந்த சாதனையிலிருந்தும் அணுகக்கூடியது, எந்த நேரத்திலும், எங்கிருந்தும் இணைப்பை உறுதி செய்கிறது.",
+                "cross-platform-desc": "வலை உலாவி கொண்ட எந்த சாதனையிலிருந்தும் அணுகக்கூடியது, எப்போதும், எங்கிருந்தும் இணைப்பை உறுதி செய்கிறது.",
                 "user-friendly": "பயனர்-நட்பு",
                 "user-friendly-desc": "அனைத்து தொழில்நுட்ப திறன் நிலைகளுக்கும் வடிவமைக்கப்பட்ட எளிய இடைமுகம்.",
                 "contact-title": "எங்களைத் தொடர்பு கொள்ளுங்கள்",
@@ -1971,421 +2554,13 @@ microsoftProvider.setCustomParameters({
                 "phone": "+91 427 409 9999",
                 "support-email": "support@sonatech.ac.in",
                 "sync-microsoft-users": "Microsoft பயனர்களை ஒத்திசைவு செய்யுங்கள்",
-                "made-with-love": "ஆல் உருவாக்கப்பட்டது"
-            },
-            te: {
-                "login": "లాగిన్",
-                "about": "గురించి",
-                "contact": "సంప్రదించండి",
-                "platform-title": "కమ్యూనికేషన్ ప్లాట్‌ఫారమ్",
-                "platform-subtitle": "సురక్షిత హయరార్కీ కమ్యూనికేషన్ సిస్టమ్",
-                "college-id": "కళాశాల ఐడి",
-                "password": "పాస్‌వర్డ్",
-                "role": "పాత్ర",
-                "select-role": "మీ పాత్రను ఎంచుకోండి",
-                "student": "విద్యార్థి",
-                "faculty": "అధ్యాపకుడు",
-                "hod": "విభాగాధిపతి",
-                "principal": "ప్రిన్సిపాల్",
-                "remember-me": "నన్ను గుర్తుంచుకోండి",
-                "forgot-password": "పాస్‌వర్డ్ మర్చిపోయిందా?",
-                "login-to-platform": "ప్లాట్‌ఫారమ్‌కి లాగిన్ అవ్వండి",
-                "or": "లేదా",
-                "login-with-google": "Googleతో లాగిన్ అవ్వండి",
-                "login-with-microsoft": "Microsoftతో లాగిన్ అవ్వండి",
-                "new-to-platform": "సోనా కమ్యూనికేషన్‌కి కొత్తవారా?",
-                "create-account": "ఖాతా సృష్టించండి",
-                "security-notice": "అన్ని కమ్యూనికేషన్లు ఎండ్-టు-ఎండ్ ఎన్‌క్రిప్ట్ చేయబడ్డాయి",
-                "toggle-password": "పాస్‌వర్డ్ దృశ్యతను టోగుల్ చేయండి",
-                "register-title": "కొత్త వినియోగదారుని నమోదు చేయండి",
-                "submit-for-approval": "ఆమోదం కోసం సమర్పించండి",
-                "register-with-google": "Googleతో నమోదు చేయండి",
-                "register-with-microsoft": "Microsoftతో నమోదు చేయండి",
-                "reset-password": "మీ పాస్‌వర్డ్‌ను రీసెట్ చేయండి",
-                "send-reset-link": "రీసెట్ లింక్‌ను పంపండి",
-                "complete-profile": "మీ ప్రొఫైల్‌ను పూర్తి చేయండి",
-                "profile-info": "మీ ఖాతా సెటప్‌ను పూర్తి చేయడానికి దయచేసి అదనపు సమాచారాన్ని అందించండి",
-                "complete-setup": "సెటప్‌ను పూర్తి చేయండి",
-                "department": "విభాగం ఐడి",
-                "full-name": "పూర్తి పేరు",
-                "password-strength": "పాస్‌వర్డ్ బలం",
-                "about-title": "సోనా కమ్యూనికేషన్ ప్లాట్‌ఫారమ్ గురించి",
-                "about-description": "సోనా కమ్యూనికేషన్ ప్లాట్‌ఫారమ్ అనేది సోనా కాలేజ్ ఆఫ్ టెక్నాలజీ కోసం ప్రత్యేకంగా రూపొందించబడిన సురక్షిత హయరార్కీ కమ్యూనికేషన్ సిస్టమ్. ఇది విద్యార్థులు, అధ్యాపకులు, విభాగాధిపతులు మరియు ప్రిన్సిపాల్ మధ్య సులభమైన కమ్యూనికేషన్‌ను సాధ్యపరుస్తుంది, అదే సమయంలో సరైన సంస్థాగత నిర్మాణం మరియు భద్రతను కలిగి ఉంటుంది.",
-                "secure-communication": "సురక్షిత కమ్యూనికేషన్",
-                "secure-communication-desc": "ఎండ్-టు-ఎండ్ ఎన్‌క్రిప్షన్ అన్ని కమ్యూనికేషన్‌లు ప్రైవేట్‌గా మరియు సురక్షితంగా ఉండటాన్ని నిర్ధారిస్తుంది.",
-                "hierarchical-structure": "హయరార్కీ నిర్మాణం",
-                "hierarchical-structure-desc": "కళాశాల సంస్థాగత హయరార్కీని గౌరవించే నిర్వహించబడిన కమ్యూనికేషన్ ప్రవాహం.",
-                "cross-platform": "క్రాస్-ప్లాట్‌ఫారమ్",
-                "cross-platform-desc": "వెబ్ బ్రౌజర్ ఉన్న ఏదైనా పరికరం నుండి యాక్సెస్ చేయగలిగేలా, ఎప్పటికీ, ఎక్కడైనా కనెక్టివిటీని నిర్ధారిస్తుంది.",
-                "user-friendly": "వినియోగదారు-స్నేహపూర్వకం",
-                "user-friendly-desc": "అన్ని సాంకేతిక నైపుణ్య స్థాయిల వినియోగదారుల కోసం రూపొందించబడిన సహజమైన ఇంటర్‌ఫేస్.",
-                "contact-title": "మమ్మల్ని సంప్రదించండి",
-                "contact-description": "ప్రశ్నలు లేదా అభిప్రాయాలు ఉన్నాయా? మా సపోర్ట్ టీమ్‌ను సంప్రదించండి, మేము త్వరగా మీకు తిరిగి స్పందిస్తాము.",
-                "name": "పేరు",
-                "email": "ఇమెయిల్",
-                "subject": "విషయం",
-                "message": "సందేశం",
-                "send-message": "సందేశాన్ని పంపండి",
-                "address": "సోనా కాలేజ్ ఆఫ్ టెక్నాలజీ, సేలం, తమిళనాడు 636005",
-                "phone": "+91 427 409 9999",
-                "support-email": "support@sonatech.ac.in",
-                "sync-microsoft-users": "Microsoft వినియోగదారులను సింక్ చేయండి",
-                "made-with-love": "ద్వారా తయారు చేయబడింది"
-            },
-            kn: {
-                "login": "ಲಾಗಿನ್",
-                "about": "ನಮ್ಮ ಬಗ್ಗೆ",
-                "contact": "ಸಂಪರ್ಕಿಸಿ",
-                "platform-title": "ಸಂವಹನ ವೇದಿಕೆ",
-                "platform-subtitle": "ಸುರಕ್ಷಿತ ಹಯರಾರ್ಕಿ ಸಂವಹನ ವ್ಯವಸ್ಥೆ",
-                "college-id": "ಕಾಲೇಜು ಐಡಿ",
-                "password": "ಪಾಸ್‌ವರ್ಡ್",
-                "role": "ಪಾತ್ರ",
-                "select-role": "ನಿಮ್ಮ ಪಾತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-                "student": "ವಿದ್ಯಾರ್ಥಿ",
-                "faculty": "ಅಧ್ಯಾಪಕ",
-                "hod": "ವಿಭಾಗದ ಮುಖ್ಯಸ್ಥ",
-                "principal": "ಪ್ರಾಂಶುಪಾಲ",
-                "remember-me": "ನನ್ನನ್ನು ನೆನಪಿಡಿ",
-                "forgot-password": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?",
-                "login-to-platform": "ಪ್ಲಾಟ್‌ಫಾರ್ಮ್‌ಗೆ ಲಾಗಿನ್ ಆಗಿ",
-                "or": "ಅಥವಾ",
-                "login-with-google": "Google ನೊಂದಿಗೆ ಲಾಗಿನ್ ಆಗಿ",
-                "login-with-microsoft": "Microsoft ನೊಂದಿಗೆ ಲಾಗಿನ್ ಆಗಿ",
-                "new-to-platform": "ಸೋನಾ ಸಂವಹನಕ್ಕೆ ಹೊಸವಾಗಿದ್ದೀರಾ?",
-                "create-account": "ಖಾತೆ ಸೃಷ್ಟಿಸಿ",
-                "security-notice": "ಎಲ್ಲಾ ಸಂವಹನಗಳು ಎಂಡ್-ಟು-ಎಂಡ್ ಎನ್‌ಕ್ರಿಪ್ಟ್ ಮಾಡಲ್ಪಟ್ಟಿವೆ",
-                "toggle-password": "ಪಾಸ್‌ವರ್ಡ್ ಗೋಚರತೆಯನ್ನು ಟಾಗಲ್ ಮಾಡಿ",
-                "register-title": "ಹೊಸ ಬಳಕೆದಾರರನ್ನು ನೋಂದಾಯಿಸಿ",
-                "submit-for-approval": "ಅನುಮೋದನೆಗಾಗಿ ಸಲ್ಲಿಸಿ",
-                "register-with-google": "Google ನೊಂದಿಗೆ ನೋಂದಾಯಿಸಿ",
-                "register-with-microsoft": "Microsoft ನೊಂದಿಗೆ ನೋಂದಾಯಿಸಿ",
-                "reset-password": "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಮರುಹೊಂದಿಸಿ",
-                "send-reset-link": "ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಅನ್ನು ಕಳುಹಿಸಿ",
-                "complete-profile": "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ",
-                "profile-info": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಖಾತೆ ಸೆಟಪ್ ಅನ್ನು ಪೂರ್ಣಗೊಳಿಸಲು ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿಯನ್ನು ಒದಗಿಸಿ",
-                "complete-setup": "ಸೆಟಪ್ ಅನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ",
-                "department": "ವಿಭಾಗ ಐಡಿ",
-                "full-name": "ಪೂರ್ಣ ಹೆಸರು",
-                "password-strength": "ಪಾಸ್‌ವರ್ಡ್ ಬಲ",
-                "about-title": "ಸೋನಾ ಸಂವಹನ ವೇದಿಕೆಯ ಬಗ್ಗೆ",
-                "about-description": "ಸೋನಾ ಸಂವಹನ ವೇದಿಕೆಯು ಸೋನಾ ಕಾಲೇಜ್ ಆಫ್ ಟೆಕ್ನಾಲಜಿಗಾಗಿ ವಿಶೇಷವಾಗಿ ವಿನ್ಯಾಸಗೊಳಿಸಲಾದ ಸುರಕ್ಷಿತ ಹಯರಾರ್ಕಿ ಸಂವಹನ ವ್ಯವಸ್ಥೆಯಾಗಿದೆ. ಇದು ವಿದ್ಯಾರ್ಥಿಗಳು, ಅಧ್ಯಾಪಕರು, ವಿಭಾಗದ ಮುಖ್ಯಸ್ಥರು ಮತ್ತು ಪ್ರಾಂಶುಪಾಲರ ನಡುವೆ ಸುಲಭ ಸಂವಹನವನ್ನು ಸಾಧ್ಯವಾಗಿಸುತ್ತದೆ, ಅದೇ ಸಮಯದಲ್ಲಿ ಸರಿಯಾದ ಸಂಸ್ಥಾತ್ಮಕ ರಚನೆ ಮತ್ತು ಭದ್ರತೆಯನ್ನು ಕಾಪಾಡುತ್ತದೆ.",
-                "secure-communication": "ಸುರಕ್ಷಿತ ಸಂವಹನ",
-                "secure-communication-desc": "ಎಂಡ್-ಟು-ಎಂಡ್ ಎನ್‌ಕ್ರಿಪ್ಷನ್ ಎಲ್ಲಾ ಸಂವಹನಗಳು ಖಾಸಗಿಯಾಗಿ ಮತ್ತು ಸುರಕ್ಷಿತವಾಗಿರುವಂತೆ ಖಚಿತಪಡಿಸುತ್ತದೆ.",
-                "hierarchical-structure": "ಹಯರಾರ್ಕಿಕಲ್ ರಚನೆ",
-                "hierarchical-structure-desc": "ಕಾಲೇಜಿನ ಸಂಸ್ಥಾತ್ಮಕ ಹಯರಾರ್ಕಿಯನ್ನು ಗೌರವಿಸುವ ಸಂಘಟಿತ ಸಂವಹನ ಹರಿವು.",
-                "cross-platform": "ಕ್ರಾಸ್-ಪ್ಲಾಟ್‌ಫಾರ್ಮ್",
-                "cross-platform-desc": "ವೆಬ್ ಬ್ರೌಸರ್ ಹೊಂದಿರುವ ಯಾವುದೇ ಸಾಧನದಿಂದ ಪ್ರವೇಶಿಸಬಹುದಾಗಿದೆ, ಯಾವಾಗಲೂ, ಎಲ್ಲಿಯಾದರೂ ಸಂಪರ್ಕವನ್ನು ಖಚಿತಪಡಿಸುತ್ತದೆ.",
-                "user-friendly": "ಬಳಕೆದಾರ-ಸ್ನೇಹಿ",
-                "user-friendly-desc": "ಎಲ್ಲಾ ತಾಂತ್ರಿಕ ಕೌಶಲ್ಯ ಮಟ್ಟದ ಬಳಕೆದಾರರಿಗಾಗಿ ವಿನ್ಯಾಸಗೊಳಿಸಲಾದ ಸಹಜ ಇಂಟರ್‌ಫೇಸ್.",
-                "contact-title": "ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ",
-                "contact-description": "ಪ್ರಶ್ನೆಗಳು ಅಥವಾ ಪ್ರತಿಕ್ರಿಯೆಗಳಿವೆಯೇ? ನಮ್ಮ ಬೆಂಬಲ ತಂಡವನ್ನು ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ನಾವು ಶೀಘ್ರವಾಗಿ ನಿಮಗೆ ಪ್ರತಿಕ್ರಿಯಿಸುತ್ತೇವೆ.",
-                "name": "ಹೆಸರು",
-                "email": "ಇಮೇಲ್",
-                "subject": "ವಿಷಯ",
-                "message": "ಸಂದೇಶ",
-                "send-message": "ಸಂದೇಶವನ್ನು ಕಳುಹಿಸಿ",
-                "address": "ಸೋನಾ ಕಾಲೇಜ್ ಆಫ್ ಟೆಕ್ನಾಲಜಿ, ಸೇಲಂ, ತಮಿಳುನಾಡು 636005",
-                "phone": "+91 427 409 9999",
-                "support-email": "support@sonatech.ac.in",
-                "sync-microsoft-users": "Microsoft ಬಳಕೆದಾರರನ್ನು ಸಿಂಕ್ ಮಾಡಿ",
-                "made-with-love": "ಇಂದ ಮಾಡಲಾಗಿದೆ"
-            },
-            ml: {
-                "login": "ലോഗിൻ ചെയ്യുക",
-                "about": "ഞങ്ങളെക്കുറിച്ച്",
-                "contact": "ബന്ധപ്പെടുക",
-                "platform-title": "ആശയവിനിമയ പ്ലാറ്റ്ഫോം",
-                "platform-subtitle": "സുരക്ഷിതമായ ഹയറാർക്കിക്കൽ ആശയവിനിമയ സംവിധാനം",
-                "college-id": "കോളേജ് ഐഡി",
-                "password": "രഹസ്യവാക്ക്",
-                "role": "റോൾ",
-                "select-role": "നിങ്ങളുടെ റോൾ തിരഞ്ഞെടുക്കുക",
-                "student": "വിദ്യാർത്ഥി",
-                "faculty": "അധ്യാപകൻ",
-                "hod": "വിഭാഗം മേധാവി",
-                "principal": "പ്രിൻസിപ്പൽ",
-                "remember-me": "എന്നെ ഓർക്കുക",
-                "forgot-password": "രഹസ്യവാക്ക് മറന്നോ?",
-                "login-to-platform": "പ്ലാറ്റ്ഫോമിലേക്ക് ലോഗിൻ ചെയ്യുക",
-                "or": "അല്ലെങ്കിൽ",
-                "login-with-google": "Google ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക",
-                "login-with-microsoft": "Microsoft ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക",
-                "new-to-platform": "സോന ആശയവിനിമയത്തിൽ പുതുതായി?",
-                "create-account": "അക്കൗണ്ട് സൃഷ്ടിക്കുക",
-                "security-notice": "എല്ലാ ആശയവിനിമയങ്ങളും എൻഡ്-ടു-എൻഡ് എൻക്രിപ്റ്റ് ചെയ്തിരിക്കുന്നു",
-                "toggle-password": "രഹസ്യവാക്ക് ദൃശ്യത ടോഗിൾ ചെയ്യുക",
-                "register-title": "പുതിയ ഉപയോക്താവിനെ രജിസ്റ്റർ ചെയ്യുക",
-                "submit-for-approval": "അംഗീകാരത്തിനായി സമർപ്പിക്കുക",
-                "register-with-google": "Google ഉപയോഗിച്ച് രജിസ്റ്റർ ചെയ്യുക",
-                "register-with-microsoft": "Microsoft ഉപയോഗിച്ച് രജിസ്റ്റർ ചെയ്യുക",
-                "reset-password": "നിങ്ങളുടെ രഹസ്യവാക്ക് പുനഃസജ്ജമാക്കുക",
-                "send-reset-link": "പുനഃസജ്ജമാക്കൽ ലിങ്ക് അയയ്ക്കുക",
-                "complete-profile": "നിങ്ങളുടെ പ്രൊഫൈൽ പൂർത്തിയാക്കുക",
-                "profile-info": "ദയവായി നിങ്ങളുടെ അക്കൗണ്ട് സജ്ജീകരണം പൂർത്തിയാക്കാൻ അധിക വിവരങ്ങൾ നൽകുക",
-                "complete-setup": "സജ്ജീകരണം പൂർത്തിയാക്കുക",
-                "department": "വിഭാഗം ഐഡി",
-                "full-name": "പൂർണ്ണമായ പേര്",
-                "password-strength": "രഹസ്യവാക്ക് ശക്തി",
-                "about-title": "സോന ആശയവിനിമയ പ്ലാറ്റ്ഫോമിനെക്കുറിച്ച്",
-                "about-description": "സോന ആശയവിനിമയ പ്ലാറ്റ്ഫോം എന്നത് സോന കോളേജ് ഓഫ് ടെക്നോളജിക്ക് വേണ്ടി പ്രത്യേകമായി രൂപകൽപ്പന ചെയ്ത ഒരു സുരക്ഷിതമായ ഹയറാർക്കിക്കൽ ആശയവിനിമയ സംവിധാനമാണ്. ഇത് വിദ്യാർത്ഥികൾ, അധ്യാപകർ, വിഭാഗം മേധാവികൾ, പ്രിൻസിപ്പൽ എന്നിവർക്കിടയിൽ സുഗമമായ ആശയവിനിമയം സാധ്യമാക്കുന്നു, അതേസമയം ശരിയായ ഓർഗനൈസേഷണൽ ഘടനയും സുരക്ഷിതത്വവും നിലനിർത്തുന്നു.",
-                "secure-communication": "സുരക്ഷിത ആശയവിനിമയം",
-                "secure-communication-desc": "എൻഡ്-ടു-എൻഡ് എൻക്രിപ്ഷൻ എല്ലാ ആശയവിനിമയങ്ങളും സ്വകാര്യമായും സുരക്ഷിതമായും നിലനിർത്തുന്നുവെന്ന് ഉറപ്പാക്കുന്നു.",
-                "hierarchical-structure": "ഹയറാർക്കിക്കൽ ഘടന",
-                "hierarchical-structure-desc": "കോളേജിന്റെ ഓർഗനൈസേഷണൽ ഹയറാർക്കിയെ ബഹുമാനിക്കുന്ന സംഘടിതമായ ആശയവിനിമയ പ്രവാഹം.",
-                "cross-platform": "ക്രോസ്-പ്ലാറ്റ്ഫോം",
-                "cross-platform-desc": "വെബ് ബ്രൗസർ ഉള്ള ഏത് ഉപകരണത്തിൽ നിന്നും ആക്സസ് ചെയ്യാവുന്നതാണ്, എപ്പോഴും, എവിടെയും കണക്റ്റിവിറ്റി ഉറപ്പാക്കുന്നു.",
-                "user-friendly": "ഉപയോക്തൃ-സൗഹൃദം",
-                "user-friendly-desc": "എല്ലാ സാങ്കേതിക വൈദഗ്ദ്യ നിലകളിലുള്ള ഉപയോക്താക്കൾക്കായി രൂപകൽപ്പന ചെയ്ത ഇന്റ്യൂറ്റീവ് ഇന്റർഫേസ്.",
-                "contact-title": "ഞങ്ങളെ ബന്ധപ്പെടുക",
-                "contact-description": "ചോദ്യങ്ങളോ അഭിപ്രായങ്ങളോ ഉണ്ടോ? ഞങ്ങളുടെ പിന്തുണാ ടീമുമായി ബന്ധപ്പെടുക, ഞങ്ങൾ ഉടൻ തിരിച്ചു ബന്ധപ്പെടും.",
-                "name": "പേര്",
-                "email": "ഇമെയിൽ",
-                "subject": "വിഷയം",
-                "message": "സന്ദേശം",
-                "send-message": "സന്ദേശം അയയ്ക്കുക",
-                "address": "സോന കോളേജ് ഓഫ് ടെക്നോളജി, സേലം, തമിഴ്‌നാട് 636005",
-                "phone": "+91 427 409 9999",
-                "support-email": "support@sonatech.ac.in",
-                "sync-microsoft-users": "Microsoft ഉപയോക്താക്കളെ സിങ്ക് ചെയ്യുക",
-                "made-with-love": "ഉണ്ടാക്കിയത്"
-            },
-            mr: {
-                "login": "लॉगिन करा",
-                "about": "आमच्याबद्दल",
-                "contact": "संपर्क करा",
-                "platform-title": "संवाद प्लॅटफॉर्म",
-                "platform-subtitle": "सुरक्षित पदानुक्रम संवाद प्रणाली",
-                "college-id": "कॉलेज आयडी",
-                "password": "पासवर्ड",
-                "role": "भूमिका",
-                "select-role": "तुमची भूमिका निवडा",
-                "student": "विद्यार्थी",
-                "faculty": "अध्यापक",
-                "hod": "विभाग प्रमुख",
-                "principal": "प्राचार्य",
-                "remember-me": "मला लक्षात ठेवा",
-                "forgot-password": "पासवर्ड विसरलात का?",
-                "login-to-platform": "प्लॅटफॉर्मवर लॉगिन करा",
-                "or": "किंवा",
-                "login-with-google": "Google सह लॉगिन करा",
-                "login-with-microsoft": "Microsoft सह लॉगिन करा",
-                "new-to-platform": "सोना संवादावर नवीन आहात का?",
-                "create-account": "खाते तयार करा",
-                "security-notice": "सर्व संवाद एंड-टू-एंड एन्क्रिप्टेड आहेत",
-                "toggle-password": "पासवर्ड दृश्यमानता टॉगल करा",
-                "register-title": "नवीन वापरकर्ता नोंदणी करा",
-                "submit-for-approval": "मंजुरीसाठी सादर करा",
-                "register-with-google": "Google सह नोंदणी करा",
-                "register-with-microsoft": "Microsoft सह नोंदणी करा",
-                "reset-password": "तुमचा पासवर्ड रीसेट करा",
-                "send-reset-link": "रीसेट लिंक पाठवा",
-                "complete-profile": "तुमचे प्रोफाइल पूर्ण करा",
-                "profile-info": "कृपया तुमचे खाते सेटअप पूर्ण करण्यासाठी अतिरिक्त माहिती प्रदान करा",
-                "complete-setup": "सेटअप पूर्ण करा",
-                "department": "विभाग आयडी",
-                "full-name": "पूर्ण नाव",
-                "password-strength": "पासवर्ड शक्ती",
-                "about-title": "सोना संवाद प्लॅटफॉर्मविषयी",
-                "about-description": "सोना संवाद प्लॅटफॉर्म हे विशेषतः सोना कॉलेज ऑफ टेक्नॉलॉजीसाठी डिझाइन केलेले एक सुरक्षित पदानुक्रम संवाद प्रणाली आहे. ते विद्यार्थी, अध्यापक, विभाग प्रमुख आणि प्राचार्य यांच्यात सहज संवाद सक्षम करते, त्याचवेळी योग्य संघटनात्मक संरचना आणि सुरक्षितता टिकवून ठेवते.",
-                "secure-communication": "सुरक्षित संवाद",
-                "secure-communication-desc": "एंड-टू-एंड एन्क्रिप्शन हे सुनिश्चित करते की सर्व संवाद खाजगी आणि सुरक्षित राहतील.",
-                "hierarchical-structure": "पदानुक्रम संरचना",
-                "hierarchical-structure-desc": "कॉलेजच्या संघटनात्मक पदानुक्रमाचा आदर करणारा संघटित संवाद प्रवाह.",
-                "cross-platform": "क्रॉस-प्लॅटफॉर्म",
-                "cross-platform-desc": "वेब ब्राउझर असलेल्या कोणत्याही डिव्हाइसवरून प्रवेश केला जाऊ शकतो, कधीही, कुठेही कनेक्टिव्हिटी सुनिश्चित करतो.",
-                "user-friendly": "वापरकर्ता-अनुकूल",
-                "user-friendly-desc": "सर्व तांत्रिक कौशल्य पातळींवरील वापरकर्त्यांसाठी डिझाइन केलेले सहज इंटरफेस.",
-                "contact-title": "आमच्याशी संपर्क साधा",
-                "contact-description": "प्रश्न किंवा अभिप्राय आहेत का? आमच्या सहाय्य टीमशी संपर्क साधा आणि आम्ही लवकर तुमच्याशी परत संपर्क साधू.",
-                "name": "नाव",
-                "email": "ईमेल",
-                "subject": "विषय",
-                "message": "संदेश",
-                "send-message": "संदेश पाठवा",
-                "address": "सोना कॉलेज ऑफ टेक्नॉलॉजी, सेलम, तामिळनाडू 636005",
-                "phone": "+91 427 409 9999",
-                "support-email": "support@sonatech.ac.in",
-                "sync-microsoft-users": "Microsoft वापरकर्ते सिंक करा",
-                "made-with-love": "द्वारे बनविले"
-            },
-            bn: {
-                "login": "লগইন",
-                "about": "আমাদের সম্পর্কে",
-                "contact": "যোগাযোগ করুন",
-                "platform-title": "যোগাযোগ প্ল্যাটফর্ম",
-                "platform-subtitle": "নিরাপদ হায়ারার্কিকাল কমিউনিকেশন সিস্টেম",
-                "college-id": "কলেজ আইডি",
-                "password": "পাসওয়ার্ড",
-                "role": "ভূমিকা",
-                "select-role": "আপনার ভূমিকা নির্বাচন করুন",
-                "student": "ছাত্র",
-                "faculty": "অনুষদ",
-                "hod": "বিভাগীয় প্রধান",
-                "principal": "অধ্যক্ষ",
-                "remember-me": "আমাকে মনে রাখুন",
-                "forgot-password": "পাসওয়ার্ড ভুলে গেছেন?",
-                "login-to-platform": "প্ল্যাটফর্মে লগইন করুন",
-                "or": "অথবা",
-                "login-with-google": "Google দিয়ে লগইন করুন",
-                "login-with-microsoft": "Microsoft দিয়ে লগইন করুন",
-                "new-to-platform": "সোনা কমিউনিকেশনে নতুন?",
-                "create-account": "অ্যাকাউন্ট তৈরি করুন",
-                "security-notice": "সমস্ত যোগাযোগ এন্ড-টু-এন্ড এনক্রিপ্ট করা হয়েছে",
-                "toggle-password": "পাসওয়ার্ড দৃশ্যমানতা টগল করুন",
-                "register-title": "নতুন ব্যবহারকারী নিবন্ধন করুন",
-                "submit-for-approval": "অনুমোদনের জন্য জমা দিন",
-                "register-with-google": "Google দিয়ে নিবন্ধন করুন",
-                "register-with-microsoft": "Microsoft দিয়ে নিবন্ধন করুন",
-                "reset-password": "আপনার পাসওয়ার্ড রিসেট করুন",
-                "send-reset-link": "রিসেট লিংক পাঠান",
-                "complete-profile": "আপনার প্রোফাইল সম্পূর্ণ করুন",
-                "profile-info": "আপনার অ্যাকাউন্ট সেটআপ সম্পূর্ণ করতে অতিরিক্ত তথ্য প্রদান করুন",
-                "complete-setup": "সেটআপ সম্পূর্ণ করুন",
-                "department": "বিভাগ আইডি",
-                "full-name": "পূর্ণ নাম",
-                "password-strength": "পাসওয়ার্ড শক্তি",
-                "about-title": "সোনা কমিউনিকেশন প্ল্যাটফর্ম সম্পর্কে",
-                "about-description": "সোনা কমিউনিকেশন প্ল্যাটফর্ম হল একটি নিরাপদ হায়ারার্কিকাল কমিউনিকেশন সিস্টেম যা বিশেষভাবে সোনা কলেজ অফ টেকনোলজির জন্য ডিজাইন করা হয়েছে। এটি ছাত্র, অনুষদ, বিভাগীয় প্রধান এবং অধ্যক্ষদের মধ্যে নিরবচ্ছিন্ন যোগাযোগ সক্ষম করে, একই সাথে যথাযথ সাংগঠনিক কাঠামো এবং নিরাপত্তা বজায় রাখে।",
-                "secure-communication": "নিরাপদ যোগাযোগ",
-                "secure-communication-desc": "এন্ড-টু-এন্ড এনক্রিপশন নিশ্চিত করে যে সমস্ত যোগাযোগ ব্যক্তিগত এবং নিরাপদ থাকবে।",
-                "hierarchical-structure": "হায়ারার্কিকাল স্ট্রাকচার",
-                "hierarchical-structure-desc": "কলেজের সাংগঠনিক হায়ারার্কির প্রতি শ্রদ্ধা জানানো সংগঠিত যোগাযোগ প্রবাহ।",
-                "cross-platform": "ক্রস-প্ল্যাটফর্ম",
-                "cross-platform-desc": "ওয়েব ব্রাউজার সহ যেকোনো ডিভাইস থেকে অ্যাক্সেসযোগ্য, যেকোনো সময়, যেকোনো জায়গায় সংযোগ নিশ্চিত করে।",
-                "user-friendly": "ব্যবহারকারী-বান্ধব",
-                "user-friendly-desc": "সমস্ত প্রযুক্তি দক্ষতা স্তরের ব্যবহারকারীদের জন্য ডিজাইন করা সহজ ইন্টারফেস।",
-                "contact-title": "আমাদের সাথে যোগাযোগ করুন",
-                "contact-description": "প্রশ্ন বা প্রতিক্রিয়া আছে? আমাদের সহায়তা টিমের সাথে যোগাযোগ করুন এবং আমরা যত তাড়াতাড়ি সম্ভব আপনার কাছে ফিরে আসব।",
-                "name": "নাম",
-                "email": "ইমেল",
-                "subject": "বিষয়",
-                "message": "বার্তা",
-                "send-message": "বার্তা পাঠান",
-                "address": "সোনা কলেজ অফ টেকনোলজি, সেলাম, তামিলনাড়ু 636005",
-                "phone": "+91 427 409 9999",
-                "support-email": "support@sonatech.ac.in",
-                "sync-microsoft-users": "Microsoft ব্যবহারকারীদের সিঙ্ক করুন",
-                "made-with-love": "দ্বারা তৈরি"
-            },
-            gu: {
-                "login": "પ્રવેશ કરો",
-                "about": "અમારા વિશે",
-                "contact": "સંપર્ક કરો",
-                "platform-title": "સંદેશાવ્યવહાર પ્લેટફોર્મ",
-                "platform-subtitle": "સુરક્ષિત હાયરાર્કિકલ સંદેશાવ્યવહાર સિસ્ટમ",
-                "college-id": "કૉલેજ આઈડી",
-                "password": "પાસવર્ડ",
-                "role": "ભૂમિકા",
-                "select-role": "તમારી ભૂમિકા પસંદ કરો",
-                "student": "વિદ્યાર્થી",
-                "faculty": "અધ્યાપક",
-                "hod": "વિભાગ વડા",
-                "principal": "પ્રિન્સિપાલ",
-                "remember-me": "મને યાદ રાખો",
-                "forgot-password": "પાસવર્ડ ભૂલી ગયા?",
-                "login-to-platform": "પ્લેટફોર્મ પર પ્રવેશ કરો",
-                "or": "અથવા",
-                "login-with-google": "Google સાથે પ્રવેશ કરો",
-                "login-with-microsoft": "Microsoft સાથે પ્રવેશ કરો",
-                "new-to-platform": "સોના કમ્યુનિકેશન પર નવા છો?",
-                "create-account": "એકાઉન્ટ બનાવો",
-                "security-notice": "બધા સંદેશાવ્યવહારો એન્ડ-ટુ-એન્ડ એન્ક્રિપ્ટ કરેલ છે",
-                "toggle-password": "પાસવર્ડ દૃશ્યતા ટૉગલ કરો",
-                "register-title": "નવા વપરાશકર્તાની નોંધણી કરો",
-                "submit-for-approval": "મંજૂરી માટે જમા કરો",
-                "register-with-google": "Google સાથે નોંધણી કરો",
-                "register-with-microsoft": "Microsoft સાથે નોંધણી કરો",
-                "reset-password": "તમારો પાસવર્ડ રીસેટ કરો",
-                "send-reset-link": "રીસેટ લિંક મોકલો",
-                "complete-profile": "તમારી પ્રોફાઇલ પૂર્ણ કરો",
-                "profile-info": "કૃપા કરીને તમારા એકાઉન્ટ સેટઅપ પૂર્ણ કરવા વધારાની માહિતી પ્રદાન કરો",
-                "complete-setup": "સેટઅપ પૂર્ણ કરો",
-                "department": "વિભાગ આઈડી",
-                "full-name": "પૂરું નામ",
-                "password-strength": "પાસવર્ડ શક્તિ",
-                "about-title": "સોના કમ્યુનિકેશન પ્લેટફોર્મ વિશે",
-                "about-description": "સોના કમ્યુનિકેશન પ્લેટફોર્મ એ એક સુરક્ષિત હાયરાર્કિકલ કમ્યુનિકેશન સિસ્ટમ છે જે વિશેષ રીતે સોના કૉલેજ ઓફ ટેકનોલોજી માટે ડિઝાઇન કરવામાં આવ્યું છે. તે વિદ્યાર્થીઓ, અધ્યાપકો, વિભાગ વડા અને પ્રિન્સિપાલ વચ્ચે સરળ સંદેશાવ્યવહાર સક્ષમ બનાવે છે, જ્યારે યોગ્ય સંગઠનાત્મક માળખું અને સુરક્ષા જાળવે છે.",
-                "secure-communication": "સુરક્ષિત સંદેશાવ્યવહાર",
-                "secure-communication-desc": "એન્ડ-ટુ-એન્ડ એન્ક્રિપ્શન ખાતરી કરે છે કે બધા સંદેશાવ્યવહારો ખાનગી અને સુરક્ષિત રહેશે.",
-                "hierarchical-structure": "હાયરાર્કિકલ સ્ટ્રક્ચર",
-                "hierarchical-structure-desc": "કૉલેજના સંગઠનાત્મક હાયરાર્કિનો આદર કરતું સંગઠિત સંદેશાવ્યવહાર પ્રવાહ.",
-                "cross-platform": "ક્રોસ-પ્લેટફોર્મ",
-                "cross-platform-desc": "વેબ બ્રાઉઝર સાથે કોઈપણ ડિવાઇસ પરથી ઍક્સેસ કરી શકાય છે, ક્યારેય, ક્યાં પણ કનેક્ટિવિટીની ખાતરી આપે છે.",
-                "user-friendly": "વપરાશકર્તા-મૈત્રીપૂર્ણ",
-                "user-friendly-desc": "બધા તકનીકી કૌશલ્ય સ્તરોના વપરાશકર્તાઓ માટે ડિઝાઇન કરેલ સહજ ઇન્ટરફેસ.",
-                "contact-title": "અમારો સંપર્ક કરો",
-                "contact-description": "પ્રશ્નો અથવા પ્રતિસાદ છે? અમારી સહાયતા ટીમનો સંપર્ક કરો અને અમે જલ્દી તમારો જવાબ આપીશું.",
-                "name": "નામ",
-                "email": "ઇમેલ",
-                "subject": "વિષય",
-                "message": "સંદેશ",
-                "send-message": "સંદેશ મોકલો",
-                "address": "સોના કૉલેજ ઓફ ટેકનોલોજી, સેલમ, તમિલનાડુ 636005",
-                "phone": "+91 427 409 9999",
-                "support-email": "support@sonatech.ac.in",
-                "sync-microsoft-users": "Microsoft વપરાશકર્તાઓને સિંક કરો",
-                "made-with-love": "દ્વારા બનાવેલું"
-            },
-            pa: {
-                "login": "ਲੌਗਇਨ ਕਰੋ",
-                "about": "ਸਾਡੇ ਬਾਰੇ",
-                "contact": "ਸੰਪਰਕ ਕਰੋ",
-                "platform-title": "ਸੰਚਾਰ ਪਲੇਟਫਾਰਮ",
-                "platform-subtitle": "ਸੁਰੱਖਿਅਤ ਪਦਾਨੁਕ੍ਰਮ ਸੰਚਾਰ ਪ੍ਰਣਾਲੀ",
-                "college-id": "ਕਾਲਜ ਆਈਡੀ",
-                "password": "ਪਾਸਵਰਡ",
-                "role": "ਭੂਮਿਕਾ",
-                "select-role": "ਆਪਣੀ ਭੂਮਿਕਾ ਚੁਣੋ",
-                "student": "ਵਿਦਿਆਰਥੀ",
-                "faculty": "ਫੈਕਲਟੀ",
-                "hod": "ਵਿਭਾਗ ਮੁਖੀ",
-                "principal": "ਪ੍ਰਿੰਸੀਪਲ",
-                "remember-me": "ਮੈਨੂੰ ਯਾਦ ਰੱਖੋ",
-                "forgot-password": "ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?",
-                "login-to-platform": "ਪਲੇਟਫਾਰਮ 'ਤੇ ਲੌਗਇਨ ਕਰੋ",
-                "or": "ਜਾਂ",
-                "login-with-google": "Google ਨਾਲ ਲੌਗਇਨ ਕਰੋ",
-                "login-with-microsoft": "Microsoft ਨਾਲ ਲੌਗਇਨ ਕਰੋ",
-                "new-to-platform": "ਸੋਨਾ ਸੰਚਾਰ 'ਤੇ ਨਵੇਂ ਹੋ?",
-                "create-account": "ਖਾਤਾ ਬਣਾਓ",
-                "security-notice": "ਸਾਰੇ ਸੰਚਾਰ ਐਂਡ-ਟੂ-ਐਂਡ ਇਨਕ੍ਰਿਪਟ ਕੀਤੇ ਗਏ ਹਨ",
-                "toggle-password": "ਪਾਸਵਰਡ ਦ੍ਰਿਸ਼ਟਕਤਾ ਟੌਗਲ ਕਰੋ",
-                "register-title": "ਨਵੇਂ ਉਪਭੋਗਤਾ ਰਜਿਸਟਰ ਕਰੋ",
-                "submit-for-approval": "ਮਨਜ਼ੂਰੀ ਲਈ ਜਮ੍ਹਾਂ ਕਰੋ",
-                "register-with-google": "Google ਨਾਲ ਰਜਿਸਟਰ ਕਰੋ",
-                "register-with-microsoft": "Microsoft ਨਾਲ ਰਜਿਸਟਰ ਕਰੋ",
-                "reset-password": "ਆਪਣਾ ਪਾਸਵਰਡ ਰੀਸੈੱਟ ਕਰੋ",
-                "send-reset-link": "ਰੀਸੈੱਟ ਲਿੰਕ ਭੇਜੋ",
-                "complete-profile": "ਆਪਣੀ ਪ੍ਰੋਫਾਈਲ ਪੂਰੀ ਕਰੋ",
-                "profile-info": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਖਾਤੇ ਸੈਟਅੱਪ ਨੂੰ ਪੂਰਾ ਕਰਨ ਲਈ ਵਾਧੂ ਜਾਣਕਾਰੀ ਪ੍ਰਦਾਨ ਕਰੋ",
-                "complete-setup": "ਸੈਟਅੱਪ ਪੂਰਾ ਕਰੋ",
-                "department": "ਵਿਭਾਗ ਆਈਡੀ",
-                "full-name": "ਪੂਰਾ ਨਾਮ",
-                "password-strength": "ਪਾਸਵਰਡ ਤਾਕਤ",
-                "about-title": "ਸੋਨਾ ਸੰਚਾਰ ਪਲੇਟਫਾਰਮ ਬਾਰੇ",
-                "about-description": "ਸੋਨਾ ਸੰਚਾਰ ਪਲੇਟਫਾਰਮ ਇੱਕ ਸੁਰੱਖਿਅਤ ਪਦਾਨੁਕ੍ਰਮ ਸੰਚਾਰ ਪ੍ਰਣਾਲੀ ਹੈ ਜੋ ਖਾਸ ਤੌਰ 'ਤੇ ਸੋਨਾ ਕਾਲਜ ਆਫ ਟੈਕਨਾਲੋਜੀ ਲਈ ਡਿਜ਼ਾਈਨ ਕੀਤੀ ਗਈ ਹੈ। ਇਹ ਵਿਦਿਆਰਥੀਆਂ, ਫੈਕਲਟੀ, ਵਿਭਾਗ ਮੁਖੀਆਂ ਅਤੇ ਪ੍ਰਿੰਸੀਪਲਾਂ ਵਿਚਕਾਰ ਨਿਰਵਿਘਨ ਸੰਚਾਰ ਨੂੰ ਸੰਭਵ ਬਣਾਉਂਦਾ ਹੈ, ਇਸੇ ਸਮੇਂ ਸਹੀ ਸੰਗਠਨਾਤਮਕ ਬਣਤਰ ਅਤੇ ਸੁਰੱਖਿਆ ਨੂੰ ਬਣਾਈ ਰੱਖਦਾ ਹੈ।",
-                "secure-communication": "ਸੁਰੱਖਿਅਤ ਸੰਚਾਰ",
-                "secure-communication-desc": "ਐਂਡ-ਟੂ-ਐਂਡ ਇਨਕ੍ਰਿਪਸ਼ਨ ਇਹ ਯਕੀਨੀ ਬਣਾਉਂਦਾ ਹੈ ਕਿ ਸਾਰੇ ਸੰਚਾਰ ਨਿੱਜੇ ਅਤੇ ਸੁਰੱਖਿਅਤ ਰਹਿਣਗੇ।",
-                "hierarchical-structure": "ਪਦਾਨੁਕ੍ਰਮ ਬਣਤਰ",
-                "hierarchical-structure-desc": "ਕਾਲਜ ਦੇ ਸੰਗਠਨਾਤਮਕ ਪਦਾਨੁਕ੍ਰਮ ਦਾ ਸਨਮਾਨ ਕਰਨ ਵਾਲਾ ਸੰਗਠਿਤ ਸੰਚਾਰ ਪ੍ਰਵਾਹ।",
-                "cross-platform": "ਕਰਾਸ-ਪਲੇਟਫਾਰਮ",
-                "cross-platform-desc": "ਵੈੱਬ ਬ੍ਰਾਊਜ਼ਰ ਵਾਲੀ ਕਿਸੇ ਵੀ ਡਿਵਾਈਸ ਤੋਂ ਪਹੁੰਚਯੋਗ, ਕਿਸੇ ਵੀ ਸਮੇਂ, ਕਿਤੇ ਵੀ ਕਨੈਕਟਿਵਿਟੀ ਦੀ ਪੁਸ਼ਟੀ ਕਰਦਾ ਹੈ।",
-                "user-friendly": "ਉਪਭੋਗਤਾ-ਅਨੁਕੂਲ",
-                "user-friendly-desc": "ਸਾਰੀਆਂ ਤਕਨੀਕੀ ਕੁਸ਼ਲਤਾ ਪੱਧਰਾਂ ਦੇ ਉਪਭੋਗਤਾਵਾਂ ਲਈ ਡਿਜ਼ਾਈਨ ਕੀਤਾ ਗਿਆ ਸਹਿਜ ਇੰਟਰਫੇਸ।",
-                "contact-title": "ਸਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੋ",
-                "contact-description": "ਸਵਾਲ ਜਾਂ ਸੁਝਾਅ ਹਨ? ਸਾਡੀ ਸਹਾਇਤਾ ਟੀਮ ਨਾਲ ਸੰਪਰਕ ਕਰੋ ਅਤੇ ਅਸੀਂ ਜਲਦੀ ਤੋਂ ਜਲਦੀ ਤੁਹਾਡਾ ਜਵਾਬ ਦੇਵਾਂਗੇ।",
-                "name": "ਨਾਮ",
-                "email": "ਈਮੇਲ",
-                "subject": "ਵਿਸ਼ਾ",
-                "message": "ਸੁਨੇਹਾ",
-                "send-message": "ਸੁਨੇਹਾ ਭੇਜੋ",
-                "address": "ਸੋਨਾ ਕਾਲਜ ਆਫ ਟੈਕਨਾਲੋਜੀ, ਸੇਲਮ, ਤਾਮਿਲਨਾਡੂ 636005",
-                "phone": "+91 427 409 9999",
-                "support-email": "support@sonatech.ac.in",
-                "sync-microsoft-users": "Microsoft ਉਪਭੋਗਤਾ ਸਿੰਕ ਕਰੋ",
-                "made-with-love": "ਨਾਲ ਬਣਾਇਆ ਗਿਆ"
+                "made-with-love": "ஆல் உருவாக்கப்பட்டது",
+                "confirm-role": "உங்கள் பங்கை உறுதிப்படுத்தவும்",
+                "role-selection-info": "தயவுசெய்து கீழே உள்ள விருப்பங்களிலிருந்து உங்கள் பங்கைத் தேர்ந்தெடுக்கவும்.",
+                "account-setup-completed": "கணக்கு அமைப்பு வெற்றிகரமாக முடிந்தது!",
+                "error-saving-user-data": "பயனர் தரவைச் சேமிப்பதில் பிழை. தயவுசெய்து மீண்டும் முயற்சி செய்யவும்."
             }
+            // Add other language translations as needed...
         };
 
         // DOM Elements
@@ -2396,10 +2571,12 @@ microsoftProvider.setCustomParameters({
             microsoftSetupForm: document.getElementById('microsoftSetupForm'),
             googleSetupForm: document.getElementById('googleSetupForm'),
             contactForm: document.getElementById('contactForm'),
+            roleSelectionForm: document.getElementById('roleSelectionForm'),
             registerModal: document.getElementById('registerModal'),
             forgotModal: document.getElementById('forgotModal'),
             microsoftSetupModal: document.getElementById('microsoftSetupModal'),
             googleSetupModal: document.getElementById('googleSetupModal'),
+            roleSelectionModal: document.getElementById('roleSelectionModal'),
             passwordToggle: document.getElementById('passwordToggle'),
             regPasswordToggle: document.getElementById('regPasswordToggle'),
             passwordField: document.getElementById('password'),
@@ -2567,31 +2744,31 @@ microsoftProvider.setCustomParameters({
             let department = '';
             let collegeId = '';
             
-            if (email === 'principal.test@sona.ac.in') {
+            if (email === 'principal.test@sonatech.ac.in') {
                 role = 'principal';
                 department = 'ADMINISTRATION';
                 collegeId = 'principal.test';
-            } else if (email === 'hod.cse@sona.ac.in') {
+            } else if (email === 'hod.cse@sonatech.ac.in') {
                 role = 'hod';
                 department = 'Computer Science Engineering';
                 collegeId = 'hod.cse';
-            } else if (email === 'hod.ece@sona.ac.in') {
+            } else if (email === 'hod.ece@sonatech.ac.in') {
                 role = 'hod';
                 department = 'Electronics & Communication Engineering';
                 collegeId = 'hod.ece';
-            } else if (email === 'faculty.cse01@sona.ac.in') {
+            } else if (email === 'faculty.cse01@sonatech.ac.in') {
                 role = 'faculty';
                 department = 'Computer Science Engineering';
                 collegeId = 'faculty.cse01';
-            } else if (email === 'faculty.ece01@sona.ac.in') {
+            } else if (email === 'faculty.ece01@sonatech.ac.in') {
                 role = 'faculty';
                 department = 'Electronics & Communication Engineering';
                 collegeId = 'faculty.ece01';
-            } else if (email === 'student.cse.2023e01@sona.ac.in') {
+            } else if (email === 'student.cse.2023e01@sonatech.ac.in') {
                 role = 'student';
                 department = 'Computer Science Engineering';
                 collegeId = 'student.cse.2023e01';
-            } else if (email === 'student.ece.2023001@sona.ac.in') {
+            } else if (email === 'student.ece.2023001@sonatech.ac.in') {
                 role = 'student';
                 department = 'Electronics & Communication Engineering';
                 collegeId = 'student.ece.2023001';
@@ -2684,8 +2861,12 @@ microsoftProvider.setCustomParameters({
                 closeModal(elements.googleSetupModal);
             });
 
+            document.getElementById('closeRoleSelection').addEventListener('click', () => {
+                closeModal(elements.roleSelectionModal);
+            });
+
             // Close modals when clicking outside
-            [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal, elements.googleSetupModal].forEach(modal => {
+            [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal, elements.googleSetupModal, elements.roleSelectionModal].forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
                         closeModal(modal);
@@ -2700,10 +2881,11 @@ microsoftProvider.setCustomParameters({
             elements.microsoftSetupForm.addEventListener('submit', handleMicrosoftSetup);
             elements.googleSetupForm.addEventListener('submit', handleGoogleSetup);
             elements.contactForm.addEventListener('submit', handleContactForm);
+            elements.roleSelectionForm.addEventListener('submit', handleRoleSelection);
 
             // Authentication buttons
-            elements.microsoftLoginBtn.addEventListener('click', () => handleMicrosoftAuth(true));
-            elements.microsoftRegisterBtn.addEventListener('click', () => handleMicrosoftAuth(false));
+            elements.microsoftLoginBtn.addEventListener('click', () => handleUniversityMicrosoftAuth(true));
+            elements.microsoftRegisterBtn.addEventListener('click', () => handleUniversityMicrosoftAuth(false));
             elements.googleLoginBtn.addEventListener('click', () => handleGoogleAuth(true));
             elements.googleRegisterBtn.addEventListener('click', () => handleGoogleAuth(false));
             
@@ -2761,13 +2943,16 @@ microsoftProvider.setCustomParameters({
 
         // Select role badge
         function selectRoleBadge(badge) {
-            elements.roleBadges.forEach(b => {
+            const form = badge.closest('form');
+            const roleSelect = form.querySelector('select');
+            
+            form.querySelectorAll('.role-badge').forEach(b => {
                 b.classList.remove('active');
                 b.setAttribute('aria-pressed', 'false');
             });
             badge.classList.add('active');
             badge.setAttribute('aria-pressed', 'true');
-            elements.roleSelect.value = badge.getAttribute('data-role');
+            roleSelect.value = badge.getAttribute('data-role');
             
             // Add visual feedback
             badge.style.transform = 'scale(0.95)';
@@ -2835,217 +3020,54 @@ microsoftProvider.setCustomParameters({
             document.body.style.overflow = '';
         }
 
-        // Handle Microsoft authentication
-        function handleMicrosoftAuth(isLogin) {
-            const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
+        // Handle Google authentication
+        function handleGoogleAuth(isLogin) {
+            const button = isLogin ? elements.googleLoginBtn : elements.googleRegisterBtn;
             button.classList.add('btn-loading');
             
-            debug('Starting Microsoft authentication...');
+            const provider = new firebase.auth.GoogleAuthProvider();
             
-            auth.signInWithPopup(microsoftProvider)
+            // Add scopes
+            provider.addScope('profile');
+            provider.addScope('email');
+            
+            // Set custom parameters for better UX
+            provider.setCustomParameters({
+                prompt: 'select_account'
+            });
+            
+            debug('Starting Google authentication...');
+            
+            auth.signInWithPopup(provider)
                 .then((result) => {
                     const user = result.user;
-                    debug('Microsoft auth successful: ' + user.email);
+                    debug('Google auth successful: ' + user.email);
                     
-                    // Get additional user info from Microsoft
-                    const credential = result.credential;
-                    const accessToken = credential.accessToken;
-                    
-                    // Fetch user details from Microsoft Graph API
-                    fetchMicrosoftUserData(accessToken, user, isLogin);
+                    // Check if user exists in Firestore
+                    return db.collection('users').doc(user.uid).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                // User exists, redirect based on role
+                                const userData = doc.data();
+                                debug('User exists in Firestore, redirecting to: ' + userData.role);
+                                redirectBasedOnRole(userData.role);
+                            } else {
+                                // User doesn't exist, show setup modal
+                                debug('User does not exist in Firestore, showing setup modal');
+                                openModal(elements.googleSetupModal);
+                                document.getElementById('googleFullName').value = user.displayName || '';
+                                document.getElementById('googleEmail').value = user.email || '';
+                            }
+                        });
                 })
                 .catch((error) => {
-                    console.error('Microsoft auth error:', error);
-                    debug('Microsoft auth error: ' + error.message);
-                    showNotification('Microsoft authentication failed: ' + error.message, 'error');
+                    console.error('Google auth error:', error);
+                    debug('Google auth error: ' + error.message);
+                    showNotification('Google authentication failed: ' + error.message, 'error');
+                })
+                .finally(() => {
                     button.classList.remove('btn-loading');
                 });
-        }
-
-        // Fetch Microsoft user data from Graph API
-        function fetchMicrosoftUserData(accessToken, firebaseUser, isLogin) {
-            // Microsoft Graph API endpoint for user details
-            const graphEndpoint = 'https://graph.microsoft.com/v1.0/me';
-            
-            fetch(graphEndpoint, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Microsoft Graph API error: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(graphData => {
-                debug('Microsoft Graph data received: ' + JSON.stringify(graphData));
-                
-                // Check if user exists in Firestore
-                return db.collection('users').doc(firebaseUser.uid).get()
-                    .then(doc => {
-                        if (doc.exists) {
-                            // User exists, update with latest Microsoft data
-                            const userData = doc.data();
-                            debug('User exists in Firestore, updating data');
-                            
-                            // Update user document with latest Microsoft data
-                            db.collection('users').doc(firebaseUser.uid).update({
-                                displayName: graphData.displayName || userData.name,
-                                jobTitle: graphData.jobTitle || '',
-                                department: graphData.department || userData.department,
-                                officeLocation: graphData.officeLocation || '',
-                                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                            
-                            // Redirect based on role
-                            redirectBasedOnRole(userData.role);
-                        } else {
-                            // User doesn't exist, create new account
-                            debug('User does not exist in Firestore, creating new account');
-                            
-                            // Extract role from Microsoft data
-                            const role = determineRoleFromMicrosoftData(graphData);
-                            
-                            // Create user document
-                            const userData = {
-                                collegeId: extractCollegeId(graphData),
-                                role: role,
-                                department: graphData.department || '',
-                                name: graphData.displayName || firebaseUser.displayName,
-                                email: firebaseUser.email,
-                                jobTitle: graphData.jobTitle || '',
-                                officeLocation: graphData.officeLocation || '',
-                                authMethod: 'microsoft',
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                                approved: true
-                            };
-                            
-                            return db.collection('users').doc(firebaseUser.uid).set(userData)
-                                .then(() => {
-                                    // If this is a faculty or HOD, fetch their team members
-                                    if (role === 'faculty' || role === 'hod') {
-                                        fetchTeamMembers(accessToken, firebaseUser.uid, graphData.department);
-                                    }
-                                    
-                                    // Redirect based on role
-                                    redirectBasedOnRole(role);
-                                });
-                        }
-                    });
-            })
-            .catch(error => {
-                console.error('Error fetching Microsoft Graph data:', error);
-                debug('Microsoft Graph error: ' + error.message);
-                showNotification('Error retrieving user details from Microsoft', 'error');
-                
-                // Fallback: create basic user document
-                const fallbackUserData = {
-                    collegeId: firebaseUser.email.split('@')[0],
-                    role: 'student', // Default fallback role
-                    name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
-                    email: firebaseUser.email,
-                    authMethod: 'microsoft',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    approved: true
-                };
-                
-                db.collection('users').doc(firebaseUser.uid).set(fallbackUserData)
-                    .then(() => {
-                        redirectBasedOnRole('student');
-                    })
-                    .catch(err => {
-                        console.error('Error creating fallback user:', err);
-                        showNotification('Error creating user account', 'error');
-                    });
-            })
-            .finally(() => {
-                const button = isLogin ? elements.microsoftLoginBtn : elements.microsoftRegisterBtn;
-                button.classList.remove('btn-loading');
-            });
-        }
-
-        // Determine role from Microsoft data
-        function determineRoleFromMicrosoftData(graphData) {
-            // Check job title for role determination
-            const jobTitle = (graphData.jobTitle || '').toLowerCase();
-            
-            if (jobTitle.includes('principal')) {
-                return 'principal';
-            } else if (jobTitle.includes('hod') || jobTitle.includes('head of department')) {
-                return 'hod';
-            } else if (jobTitle.includes('faculty') || jobTitle.includes('professor') || jobTitle.includes('lecturer')) {
-                return 'faculty';
-            } else {
-                // Default to student if no specific role is identified
-                return 'student';
-            }
-        }
-
-        // Extract college ID from Microsoft data
-        function extractCollegeId(graphData) {
-            // Try to extract from email first
-            if (graphData.mail && graphData.mail.includes('@')) {
-                return graphData.mail.split('@')[0];
-            }
-            
-            // Fallback to userPrincipalName
-            if (graphData.userPrincipalName && graphData.userPrincipalName.includes('@')) {
-                return graphData.userPrincipalName.split('@')[0];
-            }
-            
-            // Last resort: generate from display name
-            return (graphData.displayName || '').replace(/\s+/g, '.').toLowerCase();
-        }
-
-        // Fetch team members from Microsoft Graph
-        function fetchTeamMembers(accessToken, userId, department) {
-            // Microsoft Graph API to fetch users in the same department
-            const teamEndpoint = `https://graph.microsoft.com/v1.0/users?$filter=department eq '${department}'&$select=id,displayName,mail,jobTitle`;
-            
-            fetch(teamEndpoint, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error fetching team members: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                debug(`Fetched ${data.value.length} team members for department ${department}`);
-                
-                // Store team members in Firestore
-                const batch = db.batch();
-                
-                data.value.forEach(member => {
-                    // Create a reference for each team member
-                    const memberRef = db.collection('users').doc(userId)
-                        .collection('teamMembers').doc(member.id);
-                    
-                    batch.set(memberRef, {
-                        name: member.displayName,
-                        email: member.mail,
-                        jobTitle: member.jobTitle,
-                        addedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                });
-                
-                // Commit the batch
-                return batch.commit();
-            })
-            .then(() => {
-                debug('Team members saved successfully');
-            })
-            .catch(error => {
-                console.error('Error fetching team members:', error);
-                debug('Team members fetch error: ' + error.message);
-            });
         }
 
         // Handle Microsoft setup form
@@ -3113,56 +3135,6 @@ microsoftProvider.setCustomParameters({
                 );
                 submitBtn.classList.remove('btn-loading');
             }
-        }
-
-        // Handle Google authentication
-        function handleGoogleAuth(isLogin) {
-            const button = isLogin ? elements.googleLoginBtn : elements.googleRegisterBtn;
-            button.classList.add('btn-loading');
-            
-            const provider = new firebase.auth.GoogleAuthProvider();
-            
-            // Add scopes
-            provider.addScope('profile');
-            provider.addScope('email');
-            
-            // Set custom parameters for better UX
-            provider.setCustomParameters({
-                prompt: 'select_account'
-            });
-            
-            debug('Starting Google authentication...');
-            
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    const user = result.user;
-                    debug('Google auth successful: ' + user.email);
-                    
-                    // Check if user exists in Firestore
-                    return db.collection('users').doc(user.uid).get()
-                        .then(doc => {
-                            if (doc.exists) {
-                                // User exists, redirect based on role
-                                const userData = doc.data();
-                                debug('User exists in Firestore, redirecting to: ' + userData.role);
-                                redirectBasedOnRole(userData.role);
-                            } else {
-                                // User doesn't exist, show setup modal
-                                debug('User does not exist in Firestore, showing setup modal');
-                                openModal(elements.googleSetupModal);
-                                document.getElementById('googleFullName').value = user.displayName || '';
-                                document.getElementById('googleEmail').value = user.email || '';
-                            }
-                        });
-                })
-                .catch((error) => {
-                    console.error('Google auth error:', error);
-                    debug('Google auth error: ' + error.message);
-                    showNotification('Google authentication failed: ' + error.message, 'error');
-                })
-                .finally(() => {
-                    button.classList.remove('btn-loading');
-                });
         }
 
         // Handle Google setup form
@@ -3675,7 +3647,7 @@ microsoftProvider.setCustomParameters({
         document.addEventListener('keydown', (e) => {
             // Close modals with Escape key
             if (e.key === 'Escape') {
-                [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal, elements.googleSetupModal].forEach(modal => {
+                [elements.registerModal, elements.forgotModal, elements.microsoftSetupModal, elements.googleSetupModal, elements.roleSelectionModal].forEach(modal => {
                     if (modal.style.display === 'flex') {
                         closeModal(modal);
                     }
