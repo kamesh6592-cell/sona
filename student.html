@@ -583,7 +583,7 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
             color: var(--primary-dark);
             box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
         }
@@ -2787,11 +2787,11 @@
                     <p class="content-subtitle" id="welcomeMessage">Welcome back! Here's your academic overview.</p>
                 </div>
                 <div class="content-actions">
-                    <button class="btn btn-secondary">
+                    <button class="btn btn-secondary" id="filterBtn">
                         <i class="fas fa-filter"></i>
                         Filter
                     </button>
-                    <button class="btn btn-primary">
+                    <button class="btn btn-primary" id="newAssignmentBtn">
                         <i class="fas fa-plus"></i>
                         New Assignment
                     </button>
@@ -3386,7 +3386,10 @@
             whatsappStatus: document.getElementById('whatsappStatus'),
             whatsappMessages: document.getElementById('whatsappMessages'),
             whatsappInput: document.getElementById('whatsappInput'),
-            whatsappSend: document.getElementById('whatsappSend')
+            whatsappSend: document.getElementById('whatsappSend'),
+            // Button Elements
+            filterBtn: document.getElementById('filterBtn'),
+            newAssignmentBtn: document.getElementById('newAssignmentBtn')
         };
 
         // Check if user is logged in
@@ -4095,13 +4098,137 @@
                 
                 // Add click event to view course details
                 courseItem.addEventListener('click', () => {
-                    // In a real app, this would navigate to the course page
-                    console.log('Viewing course:', course.courseName);
-                    showNotification(`Viewing course: ${course.courseName}`, 'info');
+                    // Open course details modal
+                    openCourseDetailsModal(course);
                 });
                 
                 elements.courseDetails.appendChild(courseItem);
             });
+        }
+
+        // Open course details modal
+        function openCourseDetailsModal(course) {
+            // Create modal if it doesn't exist
+            let courseModal = document.getElementById('courseModal');
+            
+            if (!courseModal) {
+                courseModal = document.createElement('div');
+                courseModal.id = 'courseModal';
+                courseModal.className = 'event-modal';
+                courseModal.innerHTML = `
+                    <div class="event-modal-content">
+                        <div class="event-modal-header">
+                            <div class="event-modal-title" id="courseModalTitle">Course Details</div>
+                            <button class="event-modal-close" id="courseModalClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="event-modal-body" id="courseModalBody">
+                            <!-- Course details will be dynamically loaded here -->
+                        </div>
+                        <div class="event-modal-actions">
+                            <button class="btn btn-secondary" id="courseModalCloseBtn">Close</button>
+                            <button class="btn btn-primary" id="courseModalViewMaterials">View Materials</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(courseModal);
+                
+                // Add event listeners
+                document.getElementById('courseModalClose').addEventListener('click', () => {
+                    courseModal.classList.remove('show');
+                });
+                
+                document.getElementById('courseModalCloseBtn').addEventListener('click', () => {
+                    courseModal.classList.remove('show');
+                });
+                
+                document.getElementById('courseModalViewMaterials').addEventListener('click', () => {
+                    courseModal.classList.remove('show');
+                    // Open resources tab
+                    document.querySelector('[data-tab="files"]').click();
+                    elements.resourcesCard.scrollIntoView({ behavior: 'smooth' });
+                    if (!elements.resourceDetails.classList.contains('show')) {
+                        elements.resourcesToggle.click();
+                    }
+                });
+            }
+            
+            // Populate modal with course data
+            document.getElementById('courseModalTitle').textContent = course.courseName || 'Course Details';
+            
+            const modalBody = document.getElementById('courseModalBody');
+            modalBody.innerHTML = `
+                <div class="event-modal-date">
+                    <i class="fas fa-user"></i>
+                    <span>Instructor: ${course.instructor || 'Not specified'}</span>
+                </div>
+                <div class="event-modal-time">
+                    <i class="fas fa-clock"></i>
+                    <span>Schedule: ${course.schedule || 'Not specified'}</span>
+                </div>
+                <div class="event-modal-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Location: ${course.location || 'Not specified'}</span>
+                </div>
+                <div class="event-modal-description">
+                    ${course.description || 'No description available.'}
+                </div>
+                <div class="event-modal-participants">
+                    <div class="event-modal-participants-title">Course Materials</div>
+                    <div id="courseMaterialsList">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Load course materials
+            loadCourseMaterials(course.id);
+            
+            // Show modal
+            courseModal.classList.add('show');
+        }
+
+        // Load course materials
+        function loadCourseMaterials(courseId) {
+            const materialsList = document.getElementById('courseMaterialsList');
+            
+            if (!materialsList) return;
+            
+            // In a real app, this would fetch materials from Firestore
+            // For demo purposes, we'll use static data
+            setTimeout(() => {
+                materialsList.innerHTML = `
+                    <div class="event-modal-participant">
+                        <div class="resource-icon pdf">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="resource-info">
+                            <div class="resource-name">Course Syllabus</div>
+                            <div class="resource-meta">PDF • 2.4 MB</div>
+                        </div>
+                    </div>
+                    <div class="event-modal-participant">
+                        <div class="resource-icon video">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="resource-info">
+                            <div class="resource-name">Lecture 1: Introduction</div>
+                            <div class="resource-meta">Video • 45 min</div>
+                        </div>
+                    </div>
+                    <div class="event-modal-participant">
+                        <div class="resource-icon link">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <div class="resource-info">
+                            <div class="resource-name">Online Resources</div>
+                            <div class="resource-meta">External Link</div>
+                        </div>
+                    </div>
+                `;
+            }, 500);
         }
 
         // Load assignments
@@ -4194,9 +4321,8 @@
                         
                         // Add click event to view assignment details
                         title.addEventListener('click', () => {
-                            // In a real app, this would open the assignment details
-                            console.log('Viewing assignment:', assignment.title);
-                            showNotification(`Viewing assignment: ${assignment.title}`, 'info');
+                            // Open assignment details modal
+                            openAssignmentDetailsModal(assignment);
                         });
                     });
                 })
@@ -4204,6 +4330,93 @@
                     console.error('Error loading assignments:', error);
                     elements.assignmentsList.innerHTML = '<div class="text-center text-error">Error loading assignments</div>';
                 });
+        }
+
+        // Open assignment details modal
+        function openAssignmentDetailsModal(assignment) {
+            // Create modal if it doesn't exist
+            let assignmentModal = document.getElementById('assignmentModal');
+            
+            if (!assignmentModal) {
+                assignmentModal = document.createElement('div');
+                assignmentModal.id = 'assignmentModal';
+                assignmentModal.className = 'event-modal';
+                assignmentModal.innerHTML = `
+                    <div class="event-modal-content">
+                        <div class="event-modal-header">
+                            <div class="event-modal-title" id="assignmentModalTitle">Assignment Details</div>
+                            <button class="event-modal-close" id="assignmentModalClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="event-modal-body" id="assignmentModalBody">
+                            <!-- Assignment details will be dynamically loaded here -->
+                        </div>
+                        <div class="event-modal-actions">
+                            <button class="btn btn-secondary" id="assignmentModalCloseBtn">Close</button>
+                            <button class="btn btn-primary" id="assignmentModalSubmit">Submit Assignment</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(assignmentModal);
+                
+                // Add event listeners
+                document.getElementById('assignmentModalClose').addEventListener('click', () => {
+                    assignmentModal.classList.remove('show');
+                });
+                
+                document.getElementById('assignmentModalCloseBtn').addEventListener('click', () => {
+                    assignmentModal.classList.remove('show');
+                });
+                
+                document.getElementById('assignmentModalSubmit').addEventListener('click', () => {
+                    assignmentModal.classList.remove('show');
+                    showNotification('Assignment submitted successfully!', 'success');
+                });
+            }
+            
+            // Populate modal with assignment data
+            document.getElementById('assignmentModalTitle').textContent = assignment.title || 'Assignment Details';
+            
+            const modalBody = document.getElementById('assignmentModalBody');
+            modalBody.innerHTML = `
+                <div class="event-modal-date">
+                    <i class="fas fa-calendar"></i>
+                    <span>Due Date: ${assignment.dueDate ? formatDate(assignment.dueDate.toDate()) : 'Not specified'}</span>
+                </div>
+                <div class="event-modal-time">
+                    <i class="fas fa-percentage"></i>
+                    <span>Weight: ${assignment.weight || 'Not specified'}%</span>
+                </div>
+                <div class="event-modal-location">
+                    <i class="fas fa-user"></i>
+                    <span>Assigned by: ${assignment.assignedBy || 'Not specified'}</span>
+                </div>
+                <div class="event-modal-description">
+                    ${assignment.description || 'No description available.'}
+                </div>
+                <div class="event-modal-participants">
+                    <div class="event-modal-participants-title">Submission Requirements</div>
+                    <div id="submissionRequirements">
+                        <div class="event-modal-participant">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Submit in PDF format</span>
+                        </div>
+                        <div class="event-modal-participant">
+                            <i class="fas fa-file-word"></i>
+                            <span>Maximum 10 pages</span>
+                        </div>
+                        <div class="event-modal-participant">
+                            <i class="fas fa-font"></i>
+                            <span>12pt font size</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Show modal
+            assignmentModal.classList.add('show');
         }
 
         // Load study time
@@ -4399,13 +4612,128 @@
                 
                 // Add click event to view resource
                 resourceItem.addEventListener('click', () => {
-                    // In a real app, this would open the resource
-                    console.log('Viewing resource:', resource.name);
-                    showNotification(`Viewing resource: ${resource.name}`, 'info');
+                    // Open resource details modal
+                    openResourceDetailsModal(resource);
                 });
                 
                 elements.resourceDetails.appendChild(resourceItem);
             });
+        }
+
+        // Open resource details modal
+        function openResourceDetailsModal(resource) {
+            // Create modal if it doesn't exist
+            let resourceModal = document.getElementById('resourceModal');
+            
+            if (!resourceModal) {
+                resourceModal = document.createElement('div');
+                resourceModal.id = 'resourceModal';
+                resourceModal.className = 'event-modal';
+                resourceModal.innerHTML = `
+                    <div class="event-modal-content">
+                        <div class="event-modal-header">
+                            <div class="event-modal-title" id="resourceModalTitle">Resource Details</div>
+                            <button class="event-modal-close" id="resourceModalClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="event-modal-body" id="resourceModalBody">
+                            <!-- Resource details will be dynamically loaded here -->
+                        </div>
+                        <div class="event-modal-actions">
+                            <button class="btn btn-secondary" id="resourceModalCloseBtn">Close</button>
+                            <button class="btn btn-primary" id="resourceModalDownload">Download</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(resourceModal);
+                
+                // Add event listeners
+                document.getElementById('resourceModalClose').addEventListener('click', () => {
+                    resourceModal.classList.remove('show');
+                });
+                
+                document.getElementById('resourceModalCloseBtn').addEventListener('click', () => {
+                    resourceModal.classList.remove('show');
+                });
+                
+                document.getElementById('resourceModalDownload').addEventListener('click', () => {
+                    resourceModal.classList.remove('show');
+                    showNotification('Download started!', 'success');
+                });
+            }
+            
+            // Populate modal with resource data
+            document.getElementById('resourceModalTitle').textContent = resource.name || 'Resource Details';
+            
+            const modalBody = document.getElementById('resourceModalBody');
+            modalBody.innerHTML = `
+                <div class="event-modal-date">
+                    <i class="fas fa-folder"></i>
+                    <span>Category: ${resource.category || 'Uncategorized'}</span>
+                </div>
+                <div class="event-modal-time">
+                    <i class="fas fa-calendar"></i>
+                    <span>Uploaded: ${resource.uploadedAt ? formatDate(resource.uploadedAt.toDate()) : 'Unknown'}</span>
+                </div>
+                <div class="event-modal-location">
+                    <i class="fas fa-hdd"></i>
+                    <span>Size: ${resource.size ? formatFileSize(resource.size) : 'Unknown'}</span>
+                </div>
+                <div class="event-modal-description">
+                    ${resource.description || 'No description available.'}
+                </div>
+                <div class="event-modal-participants">
+                    <div class="event-modal-participants-title">Preview</div>
+                    <div id="resourcePreview">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Load resource preview
+            loadResourcePreview(resource);
+            
+            // Show modal
+            resourceModal.classList.add('show');
+        }
+
+        // Load resource preview
+        function loadResourcePreview(resource) {
+            const previewContainer = document.getElementById('resourcePreview');
+            
+            if (!previewContainer) return;
+            
+            // In a real app, this would generate a preview based on the resource type
+            // For demo purposes, we'll use a placeholder
+            setTimeout(() => {
+                if (resource.type === 'pdf') {
+                    previewContainer.innerHTML = `
+                        <div style="text-align: center; padding: 20px; background: var(--glass-bg); border-radius: var(--border-radius);">
+                            <i class="fas fa-file-pdf" style="font-size: 48px; color: #ef4444; margin-bottom: 10px;"></i>
+                            <p>PDF Document Preview</p>
+                            <p style="font-size: var(--font-size-xs); color: var(--text-muted);">Preview not available in this demo</p>
+                        </div>
+                    `;
+                } else if (resource.type === 'video') {
+                    previewContainer.innerHTML = `
+                        <div style="text-align: center; padding: 20px; background: var(--glass-bg); border-radius: var(--border-radius);">
+                            <i class="fas fa-video" style="font-size: 48px; color: #3b82f6; margin-bottom: 10px;"></i>
+                            <p>Video Preview</p>
+                            <p style="font-size: var(--font-size-xs); color: var(--text-muted);">Preview not available in this demo</p>
+                        </div>
+                    `;
+                } else {
+                    previewContainer.innerHTML = `
+                        <div style="text-align: center; padding: 20px; background: var(--glass-bg); border-radius: var(--border-radius);">
+                            <i class="fas fa-file" style="font-size: 48px; color: #10b981; margin-bottom: 10px;"></i>
+                            <p>File Preview</p>
+                            <p style="font-size: var(--font-size-xs); color: var(--text-muted);">Preview not available in this demo</p>
+                        </div>
+                    `;
+                }
+            }, 500);
         }
 
         // Load skills
@@ -4614,14 +4942,6 @@
             return contactItem;
         }
 
-        // Load messages for a specific contact
-        function loadMessagesForContact(contactId) {
-            // This would open a chat interface with the contact
-            // For now, we'll just log to console
-            console.log('Loading messages for contact:', contactId);
-            showNotification(`Loading messages for contact: ${contactId}`, 'info');
-        }
-
         // Load files
         function loadFiles(userId) {
             elements.filesList.innerHTML = '<div class="loading-spinner"></div>';
@@ -4733,9 +5053,8 @@
                         
                         // Add click event to view file
                         name.addEventListener('click', () => {
-                            // In a real app, this would open the file
-                            console.log('Viewing file:', file.name);
-                            showNotification(`Viewing file: ${file.name}`, 'info');
+                            // Open file details modal
+                            openFileDetailsModal(file);
                         });
                     });
                 })
@@ -4743,6 +5062,130 @@
                     console.error('Error loading files:', error);
                     elements.filesList.innerHTML = '<div class="text-center text-error">Error loading files</div>';
                 });
+        }
+
+        // Open file details modal
+        function openFileDetailsModal(file) {
+            // Create modal if it doesn't exist
+            let fileModal = document.getElementById('fileModal');
+            
+            if (!fileModal) {
+                fileModal = document.createElement('div');
+                fileModal.id = 'fileModal';
+                fileModal.className = 'event-modal';
+                fileModal.innerHTML = `
+                    <div class="event-modal-content">
+                        <div class="event-modal-header">
+                            <div class="event-modal-title" id="fileModalTitle">File Details</div>
+                            <button class="event-modal-close" id="fileModalClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="event-modal-body" id="fileModalBody">
+                            <!-- File details will be dynamically loaded here -->
+                        </div>
+                        <div class="event-modal-actions">
+                            <button class="btn btn-secondary" id="fileModalCloseBtn">Close</button>
+                            <button class="btn btn-primary" id="fileModalDownload">Download</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(fileModal);
+                
+                // Add event listeners
+                document.getElementById('fileModalClose').addEventListener('click', () => {
+                    fileModal.classList.remove('show');
+                });
+                
+                document.getElementById('fileModalCloseBtn').addEventListener('click', () => {
+                    fileModal.classList.remove('show');
+                });
+                
+                document.getElementById('fileModalDownload').addEventListener('click', () => {
+                    fileModal.classList.remove('show');
+                    showNotification('Download started!', 'success');
+                });
+            }
+            
+            // Populate modal with file data
+            document.getElementById('fileModalTitle').textContent = file.name || 'File Details';
+            
+            const modalBody = document.getElementById('fileModalBody');
+            modalBody.innerHTML = `
+                <div class="event-modal-date">
+                    <i class="fas fa-file"></i>
+                    <span>Type: ${file.type || 'Unknown'}</span>
+                </div>
+                <div class="event-modal-time">
+                    <i class="fas fa-hdd"></i>
+                    <span>Size: ${file.size ? formatFileSize(file.size) : 'Unknown'}</span>
+                </div>
+                <div class="event-modal-location">
+                    <i class="fas fa-calendar"></i>
+                    <span>Uploaded: ${file.uploadedAt ? formatDate(file.uploadedAt.toDate()) : 'Unknown'}</span>
+                </div>
+                <div class="event-modal-description">
+                    ${file.description || 'No description available.'}
+                </div>
+                <div class="event-modal-participants">
+                    <div class="event-modal-participants-title">Preview</div>
+                    <div id="filePreview">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Load file preview
+            loadFilePreview(file);
+            
+            // Show modal
+            fileModal.classList.add('show');
+        }
+
+        // Load file preview
+        function loadFilePreview(file) {
+            const previewContainer = document.getElementById('filePreview');
+            
+            if (!previewContainer) return;
+            
+            // In a real app, this would generate a preview based on the file type
+            // For demo purposes, we'll use a placeholder
+            setTimeout(() => {
+                if (file.type === 'pdf') {
+                    previewContainer.innerHTML = `
+                        <div style="text-align: center; padding: 20px; background: var(--glass-bg); border-radius: var(--border-radius);">
+                            <i class="fas fa-file-pdf" style="font-size: 48px; color: #ef4444; margin-bottom: 10px;"></i>
+                            <p>PDF Document Preview</p>
+                            <p style="font-size: var(--font-size-xs); color: var(--text-muted);">Preview not available in this demo</p>
+                        </div>
+                    `;
+                } else if (file.type === 'doc') {
+                    previewContainer.innerHTML = `
+                        <div style="text-align: center; padding: 20px; background: var(--glass-bg); border-radius: var(--border-radius);">
+                            <i class="fas fa-file-word" style="font-size: 48px; color: #3b82f6; margin-bottom: 10px;"></i>
+                            <p>Word Document Preview</p>
+                            <p style="font-size: var(--font-size-xs); color: var(--text-muted);">Preview not available in this demo</p>
+                        </div>
+                    `;
+                } else if (file.type === 'img') {
+                    previewContainer.innerHTML = `
+                        <div style="text-align: center; padding: 20px; background: var(--glass-bg); border-radius: var(--border-radius);">
+                            <i class="fas fa-file-image" style="font-size: 48px; color: #10b981; margin-bottom: 10px;"></i>
+                            <p>Image Preview</p>
+                            <p style="font-size: var(--font-size-xs); color: var(--text-muted);">Preview not available in this demo</p>
+                        </div>
+                    `;
+                } else {
+                    previewContainer.innerHTML = `
+                        <div style="text-align: center; padding: 20px; background: var(--glass-bg); border-radius: var(--border-radius);">
+                            <i class="fas fa-file" style="font-size: 48px; color: #64748b; margin-bottom: 10px;"></i>
+                            <p>File Preview</p>
+                            <p style="font-size: var(--font-size-xs); color: var(--text-muted);">Preview not available in this demo</p>
+                        </div>
+                    `;
+                }
+            }, 500);
         }
 
         // Load announcements
@@ -4810,9 +5253,8 @@
                         
                         // Add click event to read more
                         readMoreBtn.addEventListener('click', () => {
-                            // In a real app, this would open the full announcement
-                            console.log('Reading announcement:', announcement.title);
-                            showNotification(`Reading announcement: ${announcement.title}`, 'info');
+                            // Open announcement details modal
+                            openAnnouncementDetailsModal(announcement);
                         });
                     });
                 })
@@ -4820,6 +5262,78 @@
                     console.error('Error loading announcements:', error);
                     elements.announcementsList.innerHTML = '<div class="text-center text-error">Error loading announcements</div>';
                 });
+        }
+
+        // Open announcement details modal
+        function openAnnouncementDetailsModal(announcement) {
+            // Create modal if it doesn't exist
+            let announcementModal = document.getElementById('announcementModal');
+            
+            if (!announcementModal) {
+                announcementModal = document.createElement('div');
+                announcementModal.id = 'announcementModal';
+                announcementModal.className = 'event-modal';
+                announcementModal.innerHTML = `
+                    <div class="event-modal-content">
+                        <div class="event-modal-header">
+                            <div class="event-modal-title" id="announcementModalTitle">Announcement Details</div>
+                            <button class="event-modal-close" id="announcementModalClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="event-modal-body" id="announcementModalBody">
+                            <!-- Announcement details will be dynamically loaded here -->
+                        </div>
+                        <div class="event-modal-actions">
+                            <button class="btn btn-secondary" id="announcementModalCloseBtn">Close</button>
+                            ${announcement.urgent ? '<button class="btn btn-primary" id="announcementModalSetReminder">Set Reminder</button>' : ''}
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(announcementModal);
+                
+                // Add event listeners
+                document.getElementById('announcementModalClose').addEventListener('click', () => {
+                    announcementModal.classList.remove('show');
+                });
+                
+                document.getElementById('announcementModalCloseBtn').addEventListener('click', () => {
+                    announcementModal.classList.remove('show');
+                });
+                
+                if (announcement.urgent) {
+                    document.getElementById('announcementModalSetReminder').addEventListener('click', () => {
+                        announcementModal.classList.remove('show');
+                        showNotification('Reminder set successfully!', 'success');
+                    });
+                }
+            }
+            
+            // Populate modal with announcement data
+            document.getElementById('announcementModalTitle').textContent = announcement.title || 'Announcement Details';
+            
+            const modalBody = document.getElementById('announcementModalBody');
+            modalBody.innerHTML = `
+                <div class="event-modal-date">
+                    <i class="fas fa-calendar"></i>
+                    <span>Posted: ${announcement.createdAt ? formatDate(announcement.createdAt.toDate()) : 'Unknown'}</span>
+                </div>
+                <div class="event-modal-time">
+                    <i class="fas fa-user"></i>
+                    <span>By: ${announcement.author || 'Administration'}</span>
+                </div>
+                <div class="event-modal-location">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Priority: ${announcement.urgent ? 'Urgent' : 'Normal'}</span>
+                </div>
+                <div class="event-modal-description">
+                    ${announcement.content || 'No content available.'}
+                </div>
+            `;
+            
+            // Show modal
+            announcementModal.classList.add('show');
         }
 
         // Load calendar events
@@ -5677,7 +6191,257 @@
             if (e.target === elements.whatsappModal) {
                 elements.whatsappModal.classList.remove('show');
             }
+            
+            // Check for dynamically created modals
+            const courseModal = document.getElementById('courseModal');
+            if (courseModal && e.target === courseModal) {
+                courseModal.classList.remove('show');
+            }
+            
+            const assignmentModal = document.getElementById('assignmentModal');
+            if (assignmentModal && e.target === assignmentModal) {
+                assignmentModal.classList.remove('show');
+            }
+            
+            const resourceModal = document.getElementById('resourceModal');
+            if (resourceModal && e.target === resourceModal) {
+                resourceModal.classList.remove('show');
+            }
+            
+            const fileModal = document.getElementById('fileModal');
+            if (fileModal && e.target === fileModal) {
+                fileModal.classList.remove('show');
+            }
+            
+            const announcementModal = document.getElementById('announcementModal');
+            if (announcementModal && e.target === announcementModal) {
+                announcementModal.classList.remove('show');
+            }
         });
+        
+        // Button event listeners
+        elements.filterBtn.addEventListener('click', () => {
+            // Open filter modal
+            openFilterModal();
+        });
+        
+        elements.newAssignmentBtn.addEventListener('click', () => {
+            // Open new assignment modal
+            openNewAssignmentModal();
+        });
+        
+        // Open filter modal
+        function openFilterModal() {
+            // Create modal if it doesn't exist
+            let filterModal = document.getElementById('filterModal');
+            
+            if (!filterModal) {
+                filterModal = document.createElement('div');
+                filterModal.id = 'filterModal';
+                filterModal.className = 'event-modal';
+                filterModal.innerHTML = `
+                    <div class="event-modal-content">
+                        <div class="event-modal-header">
+                            <div class="event-modal-title">Filter Dashboard</div>
+                            <button class="event-modal-close" id="filterModalClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="event-modal-body">
+                            <div class="event-modal-description">
+                                <p>Select the filters you want to apply to your dashboard:</p>
+                            </div>
+                            <div class="event-modal-participants">
+                                <div class="event-modal-participant">
+                                    <div class="task-checkbox" id="filterCompletedCourses">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <div class="resource-info">
+                                        <div class="resource-name">Show Completed Courses</div>
+                                    <div class="resource-meta">Display only courses that have been completed</div>
+                                    </div>
+                                </div>
+                                <div class="event-modal-participant">
+                                    <div class="task-checkbox" id="filterUpcomingAssignments">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <div class="resource-info">
+                                        <div class="resource-name">Show Upcoming Assignments</div>
+                                        <div class="resource-meta">Display only assignments that are due soon</div>
+                                    </div>
+                                </div>
+                                <div class="event-modal-participant">
+                                    <div class="task-checkbox" id="filterRecentResources">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <div class="resource-info">
+                                        <div class="resource-name">Show Recent Resources</div>
+                                        <div class="resource-meta">Display only resources from the last 30 days</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="event-modal-actions">
+                            <button class="btn btn-secondary" id="filterModalReset">Reset Filters</button>
+                            <button class="btn btn-primary" id="filterModalApply">Apply Filters</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(filterModal);
+                
+                // Add event listeners
+                document.getElementById('filterModalClose').addEventListener('click', () => {
+                    filterModal.classList.remove('show');
+                });
+                
+                document.getElementById('filterModalReset').addEventListener('click', () => {
+                    // Reset all checkboxes
+                    document.querySelectorAll('#filterModal .task-checkbox').forEach(checkbox => {
+                        checkbox.classList.remove('checked');
+                    });
+                });
+                
+                document.getElementById('filterModalApply').addEventListener('click', () => {
+                    filterModal.classList.remove('show');
+                    showNotification('Filters applied successfully!', 'success');
+                });
+                
+                // Add event listeners to checkboxes
+                document.getElementById('filterCompletedCourses').addEventListener('click', function() {
+                    this.classList.toggle('checked');
+                });
+                
+                document.getElementById('filterUpcomingAssignments').addEventListener('click', function() {
+                    this.classList.toggle('checked');
+                });
+                
+                document.getElementById('filterRecentResources').addEventListener('click', function() {
+                    this.classList.toggle('checked');
+                });
+            }
+            
+            // Show modal
+            filterModal.classList.add('show');
+        }
+        
+        // Open new assignment modal
+        function openNewAssignmentModal() {
+            // Create modal if it doesn't exist
+            let newAssignmentModal = document.getElementById('newAssignmentModal');
+            
+            if (!newAssignmentModal) {
+                newAssignmentModal = document.createElement('div');
+                newAssignmentModal.id = 'newAssignmentModal';
+                newAssignmentModal.className = 'event-modal';
+                newAssignmentModal.innerHTML = `
+                    <div class="event-modal-content">
+                        <div class="event-modal-header">
+                            <div class="event-modal-title">Create New Assignment</div>
+                            <button class="event-modal-close" id="newAssignmentModalClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="event-modal-body">
+                            <div class="event-modal-description">
+                                <div class="profile-info-grid">
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-label">Assignment Title</div>
+                                        <input type="text" class="profile-info-value" id="newAssignmentTitle" placeholder="Enter assignment title">
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-label">Description</div>
+                                        <textarea class="profile-info-value" id="newAssignmentDescription" placeholder="Enter assignment description" rows="3"></textarea>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-label">Due Date</div>
+                                        <input type="date" class="profile-info-value" id="newAssignmentDueDate">
+                                        </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-label">Priority</div>
+                                        <select class="profile-info-value" id="newAssignmentPriority">
+                                            <option value="low">Low</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="high">High</option>
+                                        </select>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-label">Weight</div>
+                                        <input type="number" class="profile-info-value" id="newAssignmentWeight" min="0" max="100" value="10">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="event-modal-actions">
+                            <button class="btn btn-secondary" id="newAssignmentModalCancel">Cancel</button>
+                            <button class="btn btn-primary" id="newAssignmentModalCreate">Create Assignment</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(newAssignmentModal);
+                
+                // Add event listeners
+                document.getElementById('newAssignmentModalClose').addEventListener('click', () => {
+                    newAssignmentModal.classList.remove('show');
+                });
+                
+                document.getElementById('newAssignmentModalCancel').addEventListener('click', () => {
+                    newAssignmentModal.classList.remove('show');
+                });
+                
+                document.getElementById('newAssignmentModalCreate').addEventListener('click', () => {
+                    // Get form values
+                    const title = document.getElementById('newAssignmentTitle').value;
+                    const description = document.getElementById('newAssignmentDescription').value;
+                    const dueDate = document.getElementById('newAssignmentDueDate').value;
+                    const priority = document.getElementById('newAssignmentPriority').value;
+                    const weight = document.getElementById('newAssignmentWeight').value;
+                    
+                    // Validate form
+                    if (!title) {
+                        showNotification('Please enter a title for the assignment', 'error');
+                        return;
+                    }
+                    
+                    if (!dueDate) {
+                        showNotification('Please select a due date', 'error');
+                        return;
+                    }
+                    
+                    // Create assignment object
+                    const assignment = {
+                        title: title,
+                        description: description,
+                        dueDate: new Date(dueDate),
+                        priority: priority,
+                        weight: parseInt(weight),
+                        assignedTo: auth.currentUser.uid,
+                        assignedBy: auth.currentUser.uid,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        completed: false
+                    };
+                    
+                    // Add to Firestore
+                    db.collection('assignments').add(assignment)
+                        .then(() => {
+                            newAssignmentModal.classList.remove('show');
+                            showNotification('Assignment created successfully!', 'success');
+                            
+                            // Reload assignments
+                            loadAssignments(auth.currentUser.uid);
+                        })
+                        .catch(error => {
+                            console.error('Error creating assignment:', error);
+                            showNotification('Error creating assignment', 'error');
+                        });
+                });
+            }
+            
+            // Show modal
+            newAssignmentModal.classList.add('show');
+        }
         
         // Utility functions
         function formatTimeAgo(date) {
