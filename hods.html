@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <style>
         :root {
             /* Premium Dark Blue & Yellow Theme */
@@ -498,6 +502,7 @@
             padding: 1.5rem;
             box-shadow: var(--shadow);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
         }
 
         .card:hover {
@@ -930,6 +935,28 @@
             margin-top: 0.25rem;
         }
 
+        .message-status {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .message-status i {
+            font-size: 0.875rem;
+        }
+
+        .message-status i.sent {
+            color: var(--medium-gray);
+        }
+
+        .message-status i.delivered {
+            color: var(--medium-gray);
+        }
+
+        .message-status i.seen {
+            color: var(--accent-light-blue);
+        }
+
         .encryption-indicator {
             display: flex;
             align-items: center;
@@ -1055,6 +1082,7 @@
             background: rgba(255, 255, 255, 0.05);
             border-radius: 6px;
             transition: all 0.2s ease;
+            cursor: pointer;
         }
 
         .announcement-item:hover, .file-item:hover, .metric-item:hover {
@@ -1508,56 +1536,56 @@
                 <div class="content-body" id="contentBody">
                     <!-- Dashboard Content -->
                     <div class="dashboard-grid">
-                        <div class="card">
+                        <div class="card" data-action="faculty-details">
                             <div class="card-header">
                                 <h3 class="card-title">Faculty Members</h3>
                                 <div class="card-icon blue">
                                     <i class="fas fa-users"></i>
                                 </div>
                             </div>
-                            <div class="card-value">24</div>
+                            <div class="card-value" id="facultyCount">0</div>
                             <div class="card-description">Active faculty members in the department</div>
                             <div class="card-action">
                                 <span>View Details</span>
                                 <i class="fas fa-arrow-right"></i>
                             </div>
                         </div>
-                        <div class="card">
+                        <div class="card" data-action="student-details">
                             <div class="card-header">
                                 <h3 class="card-title">Students</h3>
                                 <div class="card-icon yellow">
                                     <i class="fas fa-user-graduate"></i>
                                 </div>
                             </div>
-                            <div class="card-value">486</div>
+                            <div class="card-value" id="studentCount">0</div>
                             <div class="card-description">Total students across all programs</div>
                             <div class="card-action">
                                 <span>View Details</span>
                                 <i class="fas fa-arrow-right"></i>
                             </div>
                         </div>
-                        <div class="card">
+                        <div class="card" data-action="course-details">
                             <div class="card-header">
                                 <h3 class="card-title">Courses</h3>
                                 <div class="card-icon green">
                                     <i class="fas fa-book"></i>
                                 </div>
                             </div>
-                            <div class="card-value">32</div>
+                            <div class="card-value" id="courseCount">0</div>
                             <div class="card-description">Active courses this semester</div>
                             <div class="card-action">
                                 <span>View Details</span>
                                 <i class="fas fa-arrow-right"></i>
                             </div>
                         </div>
-                        <div class="card">
+                        <div class="card" data-action="budget-details">
                             <div class="card-header">
                                 <h3 class="card-title">Budget Utilization</h3>
                                 <div class="card-icon blue">
                                     <i class="fas fa-chart-pie"></i>
                                 </div>
                             </div>
-                            <div class="card-value">68%</div>
+                            <div class="card-value" id="budgetUtilization">0%</div>
                             <div class="card-description">Of the annual budget utilized</div>
                             <div class="card-action">
                                 <span>View Details</span>
@@ -1570,8 +1598,8 @@
                         <div class="chart-header">
                             <h3 class="chart-title">Department Performance</h3>
                             <div class="chart-options">
-                                <div class="chart-option active">Semester</div>
-                                <div class="chart-option">Year</div>
+                                <div class="chart-option active" data-period="semester">Semester</div>
+                                <div class="chart-option" data-period="year">Year</div>
                             </div>
                         </div>
                         <canvas id="performanceChart"></canvas>
@@ -1601,77 +1629,18 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#REQ-001</td>
-                                    <td>Conference Attendance</td>
-                                    <td>Dr. Smith</td>
-                                    <td>2023-09-15</td>
-                                    <td><span class="status-badge pending">Pending</span></td>
-                                    <td>
-                                        <div class="table-actions">
-                                            <div class="action-icon view">
-                                                <i class="fas fa-eye"></i>
-                                            </div>
-                                            <div class="action-icon edit">
-                                                <i class="fas fa-edit"></i>
-                                            </div>
-                                            <div class="action-icon delete">
-                                                <i class="fas fa-trash"></i>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#REQ-002</td>
-                                    <td>Equipment Purchase</td>
-                                    <td>Prof. Johnson</td>
-                                    <td>2023-09-14</td>
-                                    <td><span class="status-badge approved">Approved</span></td>
-                                    <td>
-                                        <div class="table-actions">
-                                            <div class="action-icon view">
-                                                <i class="fas fa-eye"></i>
-                                            </div>
-                                            <div class="action-icon edit">
-                                                <i class="fas fa-edit"></i>
-                                            </div>
-                                            <div class="action-icon delete">
-                                                <i class="fas fa-trash"></i>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#REQ-003</td>
-                                    <td>Research Grant</td>
-                                    <td>Dr. Williams</td>
-                                    <td>2023-09-12</td>
-                                    <td><span class="status-badge rejected">Rejected</span></td>
-                                    <td>
-                                        <div class="table-actions">
-                                            <div class="action-icon view">
-                                                <i class="fas fa-eye"></i>
-                                            </div>
-                                            <div class="action-icon edit">
-                                                <i class="fas fa-edit"></i>
-                                            </div>
-                                            <div class="action-icon delete">
-                                                <i class="fas fa-trash"></i>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                            <tbody id="approvalsTableBody">
+                                <!-- Data will be loaded here -->
                             </tbody>
                         </table>
                         <div class="pagination">
-                            <div class="page-btn">
+                            <div class="page-btn" data-page="prev">
                                 <i class="fas fa-chevron-left"></i>
                             </div>
-                            <div class="page-btn active">1</div>
-                            <div class="page-btn">2</div>
-                            <div class="page-btn">3</div>
-                            <div class="page-btn">
+                            <div class="page-btn active" data-page="1">1</div>
+                            <div class="page-btn" data-page="2">2</div>
+                            <div class="page-btn" data-page="3">3</div>
+                            <div class="page-btn" data-page="next">
                                 <i class="fas fa-chevron-right"></i>
                             </div>
                         </div>
@@ -1729,16 +1698,8 @@
                         Announcements
                         <span class="section-action">View All</span>
                     </h3>
-                    <div class="announcement-list">
-                        <div class="announcement-item">
-                            Department meeting at 2 PM IST, Sep 26, 2023
-                        </div>
-                        <div class="announcement-item">
-                            Last date for course registration: Sep 30, 2023
-                        </div>
-                        <div class="announcement-item">
-                            Workshop on Research Methodologies - Oct 5, 2023
-                        </div>
+                    <div class="announcement-list" id="announcementList">
+                        <!-- Announcements will be loaded here -->
                     </div>
                 </div>
                 <div class="panel-section">
@@ -1746,28 +1707,8 @@
                         Shared Files
                         <span class="section-action">View All</span>
                     </h3>
-                    <div class="file-list">
-                        <div class="file-item">
-                            <i class="fas fa-file-pdf file-icon"></i>
-                            <span class="file-name">DeptReport.pdf</span>
-                            <button class="download-btn">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                        <div class="file-item">
-                            <i class="fas fa-file-excel file-icon"></i>
-                            <span class="file-name">BudgetAllocation.xlsx</span>
-                            <button class="download-btn">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                        <div class="file-item">
-                            <i class="fas fa-file-word file-icon"></i>
-                            <span class="file-name">MeetingMinutes.docx</span>
-                            <button class="download-btn">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
+                    <div class="file-list" id="fileList">
+                        <!-- Files will be loaded here -->
                     </div>
                 </div>
                 <div class="panel-section">
@@ -1775,19 +1716,19 @@
                     <div class="metrics-list">
                         <div class="metric-item">
                             <span class="metric-label">Attendance Rate</span>
-                            <span class="metric-value">92%</span>
+                            <span class="metric-value" id="attendanceRate">0%</span>
                         </div>
                         <div class="metric-item">
                             <span class="metric-label">Pending Approvals</span>
-                            <span class="metric-value">3</span>
+                            <span class="metric-value" id="pendingApprovals">0</span>
                         </div>
                         <div class="metric-item">
                             <span class="metric-label">Upcoming Events</span>
-                            <span class="metric-value">5</span>
+                            <span class="metric-value" id="upcomingEvents">0</span>
                         </div>
                         <div class="metric-item">
                             <span class="metric-label">Research Papers</span>
-                            <span class="metric-value">12</span>
+                            <span class="metric-value" id="researchPapers">0</span>
                         </div>
                     </div>
                 </div>
@@ -1853,12 +1794,31 @@
     </div>
 
     <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAUmR-p_bJ970GK9CevtzgfAm99nvLvSaE",
+            authDomain: "sona-da878.firebaseapp.com",
+            databaseURL: "https://sona-da878-default-rtdb.firebaseio.com",
+            projectId: "sona-da878",
+            storageBucket: "sona-da878.firebasestorage.app",
+            messagingSenderId: "963825066019",
+            appId: "1:963825066019:web:c1a095c0972a8874195196",
+            measurementId: "G-ED8CHJSJGH"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
         // Initialize variables
         const API_BASE = 'http://localhost:3000/api';
         const socket = io('http://localhost:3000');
         let currentPage = 'dashboard';
         let currentUser = null;
         let performanceChart = null;
+        let chatMessages = [];
+        let currentChat = 'department';
 
         // DOM Elements
         const sidebar = document.getElementById('sidebar');
@@ -1882,7 +1842,7 @@
         const rightPanel = document.getElementById('rightPanel');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
-        const messages = document.getElementById('messages');
+        const messagesContainer = document.getElementById('messages');
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
@@ -1894,28 +1854,39 @@
 
         // Check authentication
         function checkAuth() {
-            const user = localStorage.getItem('user');
-            const token = localStorage.getItem('jwt');
-            
-            if (!user || !token) {
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            try {
-                currentUser = JSON.parse(user);
-                if (currentUser.role !== 'hod') {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // User is signed in
+                    currentUser = {
+                        uid: user.uid,
+                        name: user.displayName || 'User',
+                        email: user.email,
+                        role: 'hod'
+                    };
+                    
+                    // Update user avatar
+                    const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    userAvatar.textContent = initials;
+                    
+                    // Load user data from Firebase
+                    loadUserData();
+                } else {
+                    // User is signed out
                     window.location.href = 'index.html';
-                    return;
                 }
-                
-                // Update user avatar
-                const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                userAvatar.textContent = initials;
-            } catch (error) {
-                console.error('Error parsing user data:', error);
-                window.location.href = 'index.html';
-            }
+            });
+        }
+
+        // Load user data from Firebase
+        function loadUserData() {
+            database.ref('users/' + currentUser.uid).once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    currentUser = { ...currentUser, ...userData };
+                }
+            }).catch((error) => {
+                console.error("Error loading user data:", error);
+            });
         }
 
         // Initialize event listeners
@@ -1971,9 +1942,11 @@
 
             // Logout
             logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('user');
-                localStorage.removeItem('jwt');
-                window.location.href = 'index.html';
+                auth.signOut().then(() => {
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    console.error("Error signing out:", error);
+                });
             });
 
             // Refresh button
@@ -2021,13 +1994,63 @@
                 }
             });
 
+            // Card actions
+            document.querySelectorAll('.card[data-action]').forEach(card => {
+                card.addEventListener('click', () => {
+                    const action = card.getAttribute('data-action');
+                    handleCardAction(action);
+                });
+            });
+
+            // Table actions
+            document.querySelectorAll('.action-icon').forEach(icon => {
+                icon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const action = icon.getAttribute('data-action');
+                    const id = icon.getAttribute('data-id');
+                    handleTableAction(action, id);
+                });
+            });
+
+            // Pagination
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const page = btn.getAttribute('data-page');
+                    handlePagination(page);
+                });
+            });
+
+            // Chart options
+            document.querySelectorAll('.chart-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const period = option.getAttribute('data-period');
+                    handleChartOption(period);
+                });
+            });
+
+            // File downloads
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const fileItem = btn.closest('.file-item');
+                    const fileName = fileItem.getAttribute('data-file');
+                    downloadFile(fileName);
+                });
+            });
+
             // Socket.io events
             socket.on('connect', () => {
                 console.log('Connected to server');
+                // Join the department room
+                socket.emit('join-room', { room: 'department', user: currentUser });
             });
 
             socket.on('message', (data) => {
                 receiveMessage(data);
+            });
+
+            socket.on('message-status', (data) => {
+                updateMessageStatus(data.messageId, data.status);
             });
 
             socket.on('notification', (data) => {
@@ -2086,16 +2109,185 @@
             }
         }
 
-        // Load dashboard data
+        // Load dashboard data from Firebase
         function loadDashboardData() {
-            // Simulate API call
-            setTimeout(() => {
-                // Update chart data
-                if (performanceChart) {
-                    performanceChart.data.datasets[0].data = [85, 92, 78, 88, 95, 90];
-                    performanceChart.update();
+            // Load faculty count
+            database.ref('faculty').once('value').then((snapshot) => {
+                const facultyData = snapshot.val();
+                const facultyCount = facultyData ? Object.keys(facultyData).length : 0;
+                document.getElementById('facultyCount').textContent = facultyCount;
+            }).catch((error) => {
+                console.error("Error loading faculty data:", error);
+            });
+
+            // Load student count
+            database.ref('students').once('value').then((snapshot) => {
+                const studentData = snapshot.val();
+                const studentCount = studentData ? Object.keys(studentData).length : 0;
+                document.getElementById('studentCount').textContent = studentCount;
+            }).catch((error) => {
+                console.error("Error loading student data:", error);
+            });
+
+            // Load course count
+            database.ref('courses').once('value').then((snapshot) => {
+                const courseData = snapshot.val();
+                const courseCount = courseData ? Object.keys(courseData).length : 0;
+                document.getElementById('courseCount').textContent = courseCount;
+            }).catch((error) => {
+                console.error("Error loading course data:", error);
+            });
+
+            // Load budget utilization
+            database.ref('budget/utilization').once('value').then((snapshot) => {
+                const budgetData = snapshot.val();
+                const utilization = budgetData ? budgetData.utilization : 0;
+                document.getElementById('budgetUtilization').textContent = utilization + '%';
+            }).catch((error) => {
+                console.error("Error loading budget data:", error);
+            });
+
+            // Load department metrics
+            database.ref('metrics').once('value').then((snapshot) => {
+                const metricsData = snapshot.val();
+                if (metricsData) {
+                    document.getElementById('attendanceRate').textContent = metricsData.attendanceRate + '%';
+                    document.getElementById('pendingApprovals').textContent = metricsData.pendingApprovals;
+                    document.getElementById('upcomingEvents').textContent = metricsData.upcomingEvents;
+                    document.getElementById('researchPapers').textContent = metricsData.researchPapers;
                 }
-            }, 500);
+            }).catch((error) => {
+                console.error("Error loading metrics data:", error);
+            });
+
+            // Load approvals
+            loadApprovalsData();
+
+            // Load announcements
+            loadAnnouncementsList();
+
+            // Load files
+            loadFilesList();
+
+            // Update chart data
+            if (performanceChart) {
+                database.ref('performance').once('value').then((snapshot) => {
+                    const performanceData = snapshot.val();
+                    if (performanceData) {
+                        performanceChart.data.datasets[0].data = performanceData.data;
+                        performanceChart.update();
+                    }
+                }).catch((error) => {
+                    console.error("Error loading performance data:", error);
+                });
+            }
+        }
+
+        // Load approvals data
+        function loadApprovalsData() {
+            const approvalsTableBody = document.getElementById('approvalsTableBody');
+            approvalsTableBody.innerHTML = '';
+
+            database.ref('approvals').orderByChild('date').limitToLast(10).once('value').then((snapshot) => {
+                const approvalsData = snapshot.val();
+                
+                if (approvalsData) {
+                    Object.keys(approvalsData).forEach(key => {
+                        const approval = approvalsData[key];
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>#${approval.id}</td>
+                            <td>${approval.title}</td>
+                            <td>${approval.requestedBy}</td>
+                            <td>${approval.date}</td>
+                            <td><span class="status-badge ${approval.status}">${approval.status}</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <div class="action-icon view" data-action="view-request" data-id="${approval.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="action-icon edit" data-action="edit-request" data-id="${approval.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="action-icon delete" data-action="delete-request" data-id="${approval.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        approvalsTableBody.appendChild(row);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading approvals data:", error);
+            });
+
+            // Re-attach event listeners for new elements
+            attachTableActionListeners();
+        }
+
+        // Load announcements list
+        function loadAnnouncementsList() {
+            const announcementList = document.getElementById('announcementList');
+            announcementList.innerHTML = '';
+
+            database.ref('announcements').orderByChild('date').limitToLast(5).once('value').then((snapshot) => {
+                const announcementsData = snapshot.val();
+                
+                if (announcementsData) {
+                    Object.keys(announcementsData).forEach(key => {
+                        const announcement = announcementsData[key];
+                        const item = document.createElement('div');
+                        item.className = 'announcement-item';
+                        item.textContent = announcement.title;
+                        
+                        announcementList.appendChild(item);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading announcements data:", error);
+            });
+        }
+
+        // Load files list
+        function loadFilesList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            database.ref('files').orderByChild('uploadedAt').limitToLast(5).once('value').then((snapshot) => {
+                const filesData = snapshot.val();
+                
+                if (filesData) {
+                    Object.keys(filesData).forEach(key => {
+                        const file = filesData[key];
+                        const item = document.createElement('div');
+                        item.className = 'file-item';
+                        item.setAttribute('data-file', file.name);
+                        
+                        let iconClass = 'fa-file';
+                        if (file.type === 'pdf') iconClass = 'fa-file-pdf';
+                        else if (file.type === 'doc' || file.type === 'docx') iconClass = 'fa-file-word';
+                        else if (file.type === 'xls' || file.type === 'xlsx') iconClass = 'fa-file-excel';
+                        
+                        item.innerHTML = `
+                            <i class="fas ${iconClass} file-icon"></i>
+                            <span class="file-name">${file.name}</span>
+                            <button class="download-btn">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        `;
+                        
+                        fileList.appendChild(item);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading files data:", error);
+            });
+
+            // Re-attach event listeners for new elements
+            attachFileDownloadListeners();
         }
 
         // Load faculty data
@@ -2126,164 +2318,109 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>FAC001</td>
-                                <td>Dr. John Smith</td>
-                                <td>Computer Science</td>
-                                <td>Professor</td>
-                                <td><span class="status-badge approved">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>FAC002</td>
-                                <td>Dr. Sarah Johnson</td>
-                                <td>Computer Science</td>
-                                <td>Associate Professor</td>
-                                <td><span class="status-badge approved">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>FAC003</td>
-                                <td>Dr. Michael Williams</td>
-                                <td>Electronics</td>
-                                <td>Professor</td>
-                                <td><span class="status-badge pending">On Leave</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>FAC004</td>
-                                <td>Dr. Emily Brown</td>
-                                <td>Mechanical</td>
-                                <td>Assistant Professor</td>
-                                <td><span class="status-badge approved">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>FAC005</td>
-                                <td>Dr. David Davis</td>
-                                <td>Civil</td>
-                                <td>Associate Professor</td>
-                                <td><span class="status-badge approved">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="facultyTableBody">
+                            <!-- Data will be loaded here -->
                         </tbody>
                     </table>
                     <div class="pagination">
-                        <div class="page-btn">
+                        <div class="page-btn" data-page="prev">
                             <i class="fas fa-chevron-left"></i>
                         </div>
-                        <div class="page-btn active">1</div>
-                        <div class="page-btn">2</div>
-                        <div class="page-btn">3</div>
-                        <div class="page-btn">
+                        <div class="page-btn active" data-page="1">1</div>
+                        <div class="page-btn" data-page="2">2</div>
+                        <div class="page-btn" data-page="3">3</div>
+                        <div class="page-btn" data-page="next">
                             <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Load faculty data from Firebase
+            const facultyTableBody = document.getElementById('facultyTableBody');
+            facultyTableBody.innerHTML = '';
+
+            database.ref('faculty').once('value').then((snapshot) => {
+                const facultyData = snapshot.val();
+                
+                if (facultyData) {
+                    Object.keys(facultyData).forEach(key => {
+                        const faculty = facultyData[key];
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${faculty.id}</td>
+                            <td>${faculty.name}</td>
+                            <td>${faculty.department}</td>
+                            <td>${faculty.designation}</td>
+                            <td><span class="status-badge ${faculty.status}">${faculty.status}</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <div class="action-icon view" data-action="view-faculty" data-id="${faculty.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="action-icon edit" data-action="edit-faculty" data-id="${faculty.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="action-icon delete" data-action="delete-faculty" data-id="${faculty.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        facultyTableBody.appendChild(row);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading faculty data:", error);
+            });
+            
+            // Re-attach event listeners for new elements
+            attachTableActionListeners();
+            attachPaginationListeners();
         }
 
         // Load academic data
         function loadAcademicData() {
             contentBody.innerHTML = `
                 <div class="dashboard-grid">
-                    <div class="card">
+                    <div class="card" data-action="courses-details">
                         <div class="card-header">
                             <h3 class="card-title">Active Courses</h3>
                             <div class="card-icon blue">
                                 <i class="fas fa-book"></i>
                             </div>
                         </div>
-                        <div class="card-value">32</div>
+                        <div class="card-value" id="activeCoursesCount">0</div>
                         <div class="card-description">Courses this semester</div>
                         <div class="card-action">
                             <span>View All</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="programs-details">
                         <div class="card-header">
                             <h3 class="card-title">Programs</h3>
                             <div class="card-icon yellow">
                                 <i class="fas fa-graduation-cap"></i>
                             </div>
                         </div>
-                        <div class="card-value">5</div>
+                        <div class="card-value" id="programsCount">0</div>
                         <div class="card-description">Degree programs offered</div>
                         <div class="card-action">
                             <span>View All</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="curriculum-details">
                         <div class="card-header">
                             <h3 class="card-title">Curriculum Updates</h3>
                             <div class="card-icon green">
                                 <i class="fas fa-sync-alt"></i>
                             </div>
                         </div>
-                        <div class="card-value">3</div>
+                        <div class="card-value" id="curriculumUpdatesCount">0</div>
                         <div class="card-description">Pending curriculum updates</div>
                         <div class="card-action">
                             <span>View All</span>
@@ -2316,129 +2453,141 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>CS101</td>
-                                <td>Introduction to Programming</td>
-                                <td>Dr. John Smith</td>
-                                <td>Mon, Wed 10:00-11:30</td>
-                                <td>45</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CS201</td>
-                                <td>Data Structures</td>
-                                <td>Dr. Sarah Johnson</td>
-                                <td>Tue, Thu 14:00-15:30</td>
-                                <td>38</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CS301</td>
-                                <td>Algorithms</td>
-                                <td>Dr. Robert Wilson</td>
-                                <td>Mon, Wed, Fri 09:00-10:00</td>
-                                <td>32</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="coursesTableBody">
+                            <!-- Data will be loaded here -->
                         </tbody>
                     </table>
                     <div class="pagination">
-                        <div class="page-btn">
+                        <div class="page-btn" data-page="prev">
                             <i class="fas fa-chevron-left"></i>
                         </div>
-                        <div class="page-btn active">1</div>
-                        <div class="page-btn">2</div>
-                        <div class="page-btn">3</div>
-                        <div class="page-btn">
+                        <div class="page-btn active" data-page="1">1</div>
+                        <div class="page-btn" data-page="2">2</div>
+                        <div class="page-btn" data-page="3">3</div>
+                        <div class="page-btn" data-page="next">
                             <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Load courses data from Firebase
+            database.ref('courses').once('value').then((snapshot) => {
+                const coursesData = snapshot.val();
+                const coursesCount = coursesData ? Object.keys(coursesData).length : 0;
+                document.getElementById('activeCoursesCount').textContent = coursesCount;
+                
+                const coursesTableBody = document.getElementById('coursesTableBody');
+                coursesTableBody.innerHTML = '';
+                
+                if (coursesData) {
+                    Object.keys(coursesData).forEach(key => {
+                        const course = coursesData[key];
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${course.code}</td>
+                            <td>${course.name}</td>
+                            <td>${course.instructor}</td>
+                            <td>${course.schedule}</td>
+                            <td>${course.students}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <div class="action-icon view" data-action="view-course" data-id="${course.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="action-icon edit" data-action="edit-course" data-id="${course.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        coursesTableBody.appendChild(row);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading courses data:", error);
+            });
+            
+            // Load programs data from Firebase
+            database.ref('programs').once('value').then((snapshot) => {
+                const programsData = snapshot.val();
+                const programsCount = programsData ? Object.keys(programsData).length : 0;
+                document.getElementById('programsCount').textContent = programsCount;
+            }).catch((error) => {
+                console.error("Error loading programs data:", error);
+            });
+            
+            // Load curriculum updates data from Firebase
+            database.ref('curriculum').orderByChild('status').equalTo('pending').once('value').then((snapshot) => {
+                const curriculumData = snapshot.val();
+                const curriculumUpdatesCount = curriculumData ? Object.keys(curriculumData).length : 0;
+                document.getElementById('curriculumUpdatesCount').textContent = curriculumUpdatesCount;
+            }).catch((error) => {
+                console.error("Error loading curriculum data:", error);
+            });
+            
+            // Re-attach event listeners for new elements
+            attachCardActionListeners();
+            attachTableActionListeners();
+            attachPaginationListeners();
         }
 
         // Load resources data
         function loadResourcesData() {
             contentBody.innerHTML = `
                 <div class="dashboard-grid">
-                    <div class="card">
+                    <div class="card" data-action="classrooms-details">
                         <div class="card-header">
                             <h3 class="card-title">Classrooms</h3>
                             <div class="card-icon blue">
                                 <i class="fas fa-door-open"></i>
                             </div>
                         </div>
-                        <div class="card-value">18</div>
+                        <div class="card-value" id="classroomsCount">0</div>
                         <div class="card-description">Total classrooms available</div>
                         <div class="card-action">
                             <span>View All</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="labs-details">
                         <div class="card-header">
                             <h3 class="card-title">Labs</h3>
                             <div class="card-icon yellow">
                                 <i class="fas fa-flask"></i>
                             </div>
                         </div>
-                        <div class="card-value">8</div>
+                        <div class="card-value" id="labsCount">0</div>
                         <div class="card-description">Laboratories available</div>
                         <div class="card-action">
                             <span>View All</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="equipment-details">
                         <div class="card-header">
                             <h3 class="card-title">Equipment</h3>
                             <div class="card-icon green">
                                 <i class="fas fa-tools"></i>
                             </div>
                         </div>
-                        <div class="card-value">124</div>
+                        <div class="card-value" id="equipmentCount">0</div>
                         <div class="card-description">Total equipment items</div>
                         <div class="card-action">
                             <span>View All</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="reservations-details">
                         <div class="card-header">
                             <h3 class="card-title">Reservations</h3>
                             <div class="card-icon blue">
                                 <i class="fas fa-calendar-check"></i>
                             </div>
                         </div>
-                        <div class="card-value">7</div>
+                        <div class="card-value" id="reservationsCount">0</div>
                         <div class="card-description">Pending resource reservations</div>
                         <div class="card-action">
                             <span>View All</span>
@@ -2472,127 +2621,168 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>RES001</td>
-                                <td>Computer Lab A</td>
-                                <td>Lab</td>
-                                <td>Dr. John Smith</td>
-                                <td>2023-10-15</td>
-                                <td><span class="status-badge approved">Allocated</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>RES002</td>
-                                <td>Projector P102</td>
-                                <td>Equipment</td>
-                                <td>Dr. Sarah Johnson</td>
-                                <td>2023-09-30</td>
-                                <td><span class="status-badge pending">In Use</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>RES003</td>
-                                <td>Classroom B205</td>
-                                <td>Classroom</td>
-                                <td>Dr. Robert Wilson</td>
-                                <td>2023-12-15</td>
-                                <td><span class="status-badge approved">Allocated</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="resourcesTableBody">
+                            <!-- Data will be loaded here -->
                         </tbody>
                     </table>
                     <div class="pagination">
-                        <div class="page-btn">
+                        <div class="page-btn" data-page="prev">
                             <i class="fas fa-chevron-left"></i>
                         </div>
-                        <div class="page-btn active">1</div>
-                        <div class="page-btn">2</div>
-                        <div class="page-btn">3</div>
-                        <div class="page-btn">
+                        <div class="page-btn active" data-page="1">1</div>
+                        <div class="page-btn" data-page="2">2</div>
+                        <div class="page-btn" data-page="3">3</div>
+                        <div class="page-btn" data-page="next">
                             <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Load resources data from Firebase
+            database.ref('resources').once('value').then((snapshot) => {
+                const resourcesData = snapshot.val();
+                
+                if (resourcesData) {
+                    // Count classrooms
+                    const classroomsData = resourcesData.classrooms || {};
+                    const classroomsCount = Object.keys(classroomsData).length;
+                    document.getElementById('classroomsCount').textContent = classroomsCount;
+                    
+                    // Count labs
+                    const labsData = resourcesData.labs || {};
+                    const labsCount = Object.keys(labsData).length;
+                    document.getElementById('labsCount').textContent = labsCount;
+                    
+                    // Count equipment
+                    const equipmentData = resourcesData.equipment || {};
+                    const equipmentCount = Object.keys(equipmentData).length;
+                    document.getElementById('equipmentCount').textContent = equipmentCount;
+                    
+                    // Count reservations
+                    const reservationsData = resourcesData.reservations || {};
+                    const reservationsCount = Object.keys(reservationsData).length;
+                    document.getElementById('reservationsCount').textContent = reservationsCount;
+                    
+                    // Load resources table
+                    const resourcesTableBody = document.getElementById('resourcesTableBody');
+                    resourcesTableBody.innerHTML = '';
+                    
+                    // Combine all resources
+                    const allResources = [];
+                    
+                    Object.keys(classroomsData).forEach(key => {
+                        allResources.push({
+                            id: key,
+                            name: classroomsData[key].name,
+                            type: 'Classroom',
+                            assignedTo: classroomsData[key].assignedTo || '',
+                            dueDate: classroomsData[key].dueDate || '',
+                            status: classroomsData[key].status || 'available'
+                        });
+                    });
+                    
+                    Object.keys(labsData).forEach(key => {
+                        allResources.push({
+                            id: key,
+                            name: labsData[key].name,
+                            type: 'Lab',
+                            assignedTo: labsData[key].assignedTo || '',
+                            dueDate: labsData[key].dueDate || '',
+                            status: labsData[key].status || 'available'
+                        });
+                    });
+                    
+                    Object.keys(equipmentData).forEach(key => {
+                        allResources.push({
+                            id: key,
+                            name: equipmentData[key].name,
+                            type: 'Equipment',
+                            assignedTo: equipmentData[key].assignedTo || '',
+                            dueDate: equipmentData[key].dueDate || '',
+                            status: equipmentData[key].status || 'available'
+                        });
+                    });
+                    
+                    // Display resources
+                    allResources.forEach(resource => {
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${resource.id}</td>
+                            <td>${resource.name}</td>
+                            <td>${resource.type}</td>
+                            <td>${resource.assignedTo}</td>
+                            <td>${resource.dueDate}</td>
+                            <td><span class="status-badge ${resource.status}">${resource.status}</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <div class="action-icon view" data-action="view-resource" data-id="${resource.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="action-icon edit" data-action="edit-resource" data-id="${resource.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="action-icon delete" data-action="delete-resource" data-id="${resource.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        resourcesTableBody.appendChild(row);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading resources data:", error);
+            });
+            
+            // Re-attach event listeners for new elements
+            attachCardActionListeners();
+            attachTableActionListeners();
+            attachPaginationListeners();
         }
 
         // Load budget data
         function loadBudgetData() {
             contentBody.innerHTML = `
                 <div class="dashboard-grid">
-                    <div class="card">
+                    <div class="card" data-action="total-budget-details">
                         <div class="card-header">
                             <h3 class="card-title">Total Budget</h3>
                             <div class="card-icon blue">
                                 <i class="fas fa-dollar-sign"></i>
                             </div>
                         </div>
-                        <div class="card-value">$125,000</div>
+                        <div class="card-value" id="totalBudgetValue">$0</div>
                         <div class="card-description">Annual department budget</div>
                         <div class="card-action">
                             <span>View Details</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="utilized-budget-details">
                         <div class="card-header">
                             <h3 class="card-title">Utilized</h3>
                             <div class="card-icon yellow">
                                 <i class="fas fa-chart-pie"></i>
                             </div>
                         </div>
-                        <div class="card-value">$85,000</div>
-                        <div class="card-description">68% of total budget</div>
+                        <div class="card-value" id="utilizedBudgetValue">$0</div>
+                        <div class="card-description">Of the total budget</div>
                         <div class="card-action">
                             <span>View Details</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="remaining-budget-details">
                         <div class="card-header">
                             <h3 class="card-title">Remaining</h3>
                             <div class="card-icon green">
                                 <i class="fas fa-wallet"></i>
                             </div>
                         </div>
-                        <div class="card-value">$40,000</div>
+                        <div class="card-value" id="remainingBudgetValue">$0</div>
                         <div class="card-description">Available for allocation</div>
                         <div class="card-action">
                             <span>View Details</span>
@@ -2605,8 +2795,8 @@
                     <div class="chart-header">
                         <h3 class="chart-title">Budget Allocation</h3>
                         <div class="chart-options">
-                            <div class="chart-option active">Current Year</div>
-                            <div class="chart-option">Previous Year</div>
+                            <div class="chart-option active" data-period="current">Current Year</div>
+                            <div class="chart-option" data-period="previous">Previous Year</div>
                         </div>
                     </div>
                     <canvas id="budgetChart"></canvas>
@@ -2638,126 +2828,127 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>EXP001</td>
-                                <td>Lab Equipment Purchase</td>
-                                <td>Equipment</td>
-                                <td>$5,200</td>
-                                <td>2023-09-10</td>
-                                <td><span class="status-badge approved">Approved</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>EXP002</td>
-                                <td>Conference Registration</td>
-                                <td>Travel</td>
-                                <td>$1,500</td>
-                                <td>2023-09-05</td>
-                                <td><span class="status-badge approved">Approved</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>EXP003</td>
-                                <td>Office Supplies</td>
-                                <td>Supplies</td>
-                                <td>$850</td>
-                                <td>2023-09-01</td>
-                                <td><span class="status-badge approved">Approved</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="expensesTableBody">
+                            <!-- Data will be loaded here -->
                         </tbody>
                     </table>
                     <div class="pagination">
-                        <div class="page-btn">
+                        <div class="page-btn" data-page="prev">
                             <i class="fas fa-chevron-left"></i>
                         </div>
-                        <div class="page-btn active">1</div>
-                        <div class="page-btn">2</div>
-                        <div class="page-btn">3</div>
-                        <div class="page-btn">
+                        <div class="page-btn active" data-page="1">1</div>
+                        <div class="page-btn" data-page="2">2</div>
+                        <div class="page-btn" data-page="3">3</div>
+                        <div class="page-btn" data-page="next">
                             <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
             `;
             
-            // Initialize budget chart
-            setTimeout(() => {
-                const budgetCtx = document.getElementById('budgetChart');
-                if (budgetCtx) {
-                    new Chart(budgetCtx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Equipment', 'Travel', 'Supplies', 'Maintenance', 'Salaries', 'Other'],
-                            datasets: [{
-                                data: [35000, 15000, 8000, 12000, 45000, 10000],
-                                backgroundColor: [
-                                    'rgba(59, 130, 246, 0.8)',
-                                    'rgba(245, 158, 11, 0.8)',
-                                    'rgba(16, 185, 129, 0.8)',
-                                    'rgba(139, 92, 246, 0.8)',
-                                    'rgba(236, 72, 153, 0.8)',
-                                    'rgba(107, 114, 128, 0.8)'
-                                ],
-                                borderColor: 'rgba(10, 25, 47, 0.8)',
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'right',
-                                    labels: {
-                                        color: '#FFFFFF',
-                                        font: {
-                                            size: 12
+            // Load budget data from Firebase
+            database.ref('budget').once('value').then((snapshot) => {
+                const budgetData = snapshot.val();
+                
+                if (budgetData) {
+                    const totalBudget = budgetData.total || 0;
+                    const utilizedBudget = budgetData.utilized || 0;
+                    const remainingBudget = totalBudget - utilizedBudget;
+                    
+                    document.getElementById('totalBudgetValue').textContent = '$' + totalBudget.toLocaleString();
+                    document.getElementById('utilizedBudgetValue').textContent = '$' + utilizedBudget.toLocaleString();
+                    document.getElementById('remainingBudgetValue').textContent = '$' + remainingBudget.toLocaleString();
+                    
+                    // Load expenses data
+                    const expensesTableBody = document.getElementById('expensesTableBody');
+                    expensesTableBody.innerHTML = '';
+                    
+                    const expensesData = budgetData.expenses || {};
+                    
+                    Object.keys(expensesData).forEach(key => {
+                        const expense = expensesData[key];
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${expense.id}</td>
+                            <td>${expense.description}</td>
+                            <td>${expense.category}</td>
+                            <td>$${expense.amount}</td>
+                            <td>${expense.date}</td>
+                            <td><span class="status-badge ${expense.status}">${expense.status}</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <div class="action-icon view" data-action="view-expense" data-id="${expense.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="action-icon edit" data-action="edit-expense" data-id="${expense.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="action-icon delete" data-action="delete-expense" data-id="${expense.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        expensesTableBody.appendChild(row);
+                    });
+                    
+                    // Initialize budget chart
+                    const budgetCtx = document.getElementById('budgetChart');
+                    if (budgetCtx) {
+                        new Chart(budgetCtx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Equipment', 'Travel', 'Supplies', 'Maintenance', 'Salaries', 'Other'],
+                                datasets: [{
+                                    data: [
+                                        budgetData.allocation?.equipment || 0,
+                                        budgetData.allocation?.travel || 0,
+                                        budgetData.allocation?.supplies || 0,
+                                        budgetData.allocation?.maintenance || 0,
+                                        budgetData.allocation?.salaries || 0,
+                                        budgetData.allocation?.other || 0
+                                    ],
+                                    backgroundColor: [
+                                        'rgba(59, 130, 246, 0.8)',
+                                        'rgba(245, 158, 11, 0.8)',
+                                        'rgba(16, 185, 129, 0.8)',
+                                        'rgba(139, 92, 246, 0.8)',
+                                        'rgba(236, 72, 153, 0.8)',
+                                        'rgba(107, 114, 128, 0.8)'
+                                    ],
+                                    borderColor: 'rgba(10, 25, 47, 0.8)',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'right',
+                                        labels: {
+                                            color: '#FFFFFF',
+                                            font: {
+                                                size: 12
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }, 100);
+            }).catch((error) => {
+                console.error("Error loading budget data:", error);
+            });
+            
+            // Re-attach event listeners for new elements
+            attachCardActionListeners();
+            attachTableActionListeners();
+            attachPaginationListeners();
+            attachChartOptionListeners();
         }
 
         // Load messages data
@@ -2785,98 +2976,91 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Dr. Sarah Johnson</td>
-                                <td>Course Syllabus Update</td>
-                                <td>2023-09-20</td>
-                                <td><span class="status-badge pending">Unread</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Principal Office</td>
-                                <td>Faculty Meeting Reminder</td>
-                                <td>2023-09-19</td>
-                                <td><span class="status-badge approved">Read</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Dr. Robert Wilson</td>
-                                <td>Research Grant Proposal</td>
-                                <td>2023-09-18</td>
-                                <td><span class="status-badge approved">Read</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="messagesTableBody">
+                            <!-- Data will be loaded here -->
                         </tbody>
                     </table>
                     <div class="pagination">
-                        <div class="page-btn">
+                        <div class="page-btn" data-page="prev">
                             <i class="fas fa-chevron-left"></i>
                         </div>
-                        <div class="page-btn active">1</div>
-                        <div class="page-btn">2</div>
-                        <div class="page-btn">3</div>
-                        <div class="page-btn">
+                        <div class="page-btn active" data-page="1">1</div>
+                        <div class="page-btn" data-page="2">2</div>
+                        <div class="page-btn" data-page="3">3</div>
+                        <div class="page-btn" data-page="next">
                             <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Load messages data from Firebase
+            const messagesTableBody = document.getElementById('messagesTableBody');
+            messagesTableBody.innerHTML = '';
+
+            database.ref('messages').orderByChild('date').limitToLast(10).once('value').then((snapshot) => {
+                const messagesData = snapshot.val();
+                
+                if (messagesData) {
+                    Object.keys(messagesData).forEach(key => {
+                        const message = messagesData[key];
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${message.sender}</td>
+                            <td>${message.subject}</td>
+                            <td>${message.date}</td>
+                            <td><span class="status-badge ${message.status}">${message.status}</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <div class="action-icon view" data-action="view-message" data-id="${message.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="action-icon delete" data-action="delete-message" data-id="${message.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        messagesTableBody.appendChild(row);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading messages data:", error);
+            });
+            
+            // Re-attach event listeners for new elements
+            attachTableActionListeners();
+            attachPaginationListeners();
         }
 
         // Load meetings data
         function loadMeetingsData() {
             contentBody.innerHTML = `
                 <div class="dashboard-grid">
-                    <div class="card">
+                    <div class="card" data-action="upcoming-meetings">
                         <div class="card-header">
                             <h3 class="card-title">Upcoming Meetings</h3>
                             <div class="card-icon blue">
                                 <i class="fas fa-calendar-alt"></i>
                             </div>
                         </div>
-                        <div class="card-value">5</div>
+                        <div class="card-value" id="upcomingMeetingsCount">0</div>
                         <div class="card-description">Meetings this week</div>
                         <div class="card-action">
                             <span>View All</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="meeting-rooms">
                         <div class="card-header">
                             <h3 class="card-title">Meeting Rooms</h3>
                             <div class="card-icon yellow">
                                 <i class="fas fa-door-closed"></i>
                             </div>
                         </div>
-                        <div class="card-value">3</div>
+                        <div class="card-value" id="meetingRoomsCount">0</div>
                         <div class="card-description">Available today</div>
                         <div class="card-action">
                             <span>View All</span>
@@ -2909,82 +3093,84 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Department Faculty Meeting</td>
-                                <td>2023-09-26, 14:00</td>
-                                <td>Conference Room A</td>
-                                <td>Dr. John Smith</td>
-                                <td><span class="status-badge pending">Upcoming</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Curriculum Review Committee</td>
-                                <td>2023-09-28, 10:00</td>
-                                <td>Meeting Room B</td>
-                                <td>Dr. Sarah Johnson</td>
-                                <td><span class="status-badge pending">Upcoming</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Budget Planning Session</td>
-                                <td>2023-09-29, 15:30</td>
-                                <td>Conference Room C</td>
-                                <td>Dr. Robert Wilson</td>
-                                <td><span class="status-badge pending">Upcoming</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="meetingsTableBody">
+                            <!-- Data will be loaded here -->
                         </tbody>
                     </table>
                     <div class="pagination">
-                        <div class="page-btn">
+                        <div class="page-btn" data-page="prev">
                             <i class="fas fa-chevron-left"></i>
                         </div>
-                        <div class="page-btn active">1</div>
-                        <div class="page-btn">2</div>
-                        <div class="page-btn">3</div>
-                        <div class="page-btn">
+                        <div class="page-btn active" data-page="1">1</div>
+                        <div class="page-btn" data-page="2">2</div>
+                        <div class="page-btn" data-page="3">3</div>
+                        <div class="page-btn" data-page="next">
                             <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Load meetings data from Firebase
+            database.ref('meetings').once('value').then((snapshot) => {
+                const meetingsData = snapshot.val();
+                
+                if (meetingsData) {
+                    // Count upcoming meetings
+                    const upcomingMeetings = Object.values(meetingsData).filter(meeting => 
+                        meeting.status === 'upcoming' || meeting.status === 'scheduled'
+                    );
+                    document.getElementById('upcomingMeetingsCount').textContent = upcomingMeetings.length;
+                    
+                    // Load meetings table
+                    const meetingsTableBody = document.getElementById('meetingsTableBody');
+                    meetingsTableBody.innerHTML = '';
+                    
+                    Object.keys(meetingsData).forEach(key => {
+                        const meeting = meetingsData[key];
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${meeting.title}</td>
+                            <td>${meeting.datetime}</td>
+                            <td>${meeting.location}</td>
+                            <td>${meeting.organizer}</td>
+                            <td><span class="status-badge ${meeting.status}">${meeting.status}</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <div class="action-icon view" data-action="view-meeting" data-id="${meeting.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="action-icon edit" data-action="edit-meeting" data-id="${meeting.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="action-icon delete" data-action="delete-meeting" data-id="${meeting.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        meetingsTableBody.appendChild(row);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading meetings data:", error);
+            });
+            
+            // Load meeting rooms data from Firebase
+            database.ref('resources/meetingRooms').once('value').then((snapshot) => {
+                const meetingRoomsData = snapshot.val();
+                const meetingRoomsCount = meetingRoomsData ? Object.keys(meetingRoomsData).length : 0;
+                document.getElementById('meetingRoomsCount').textContent = meetingRoomsCount;
+            }).catch((error) => {
+                console.error("Error loading meeting rooms data:", error);
+            });
+            
+            // Re-attach event listeners for new elements
+            attachCardActionListeners();
+            attachTableActionListeners();
+            attachPaginationListeners();
         }
 
         // Load announcements data
@@ -3021,80 +3207,18 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Department Meeting</td>
-                                <td>Monthly department meeting will be held on September 26, 2023 at 2 PM in Conference Room A.</td>
-                                <td>Dr. John Smith</td>
-                                <td>2023-09-20</td>
-                                <td>2023-09-26</td>
-                                <td><span class="status-badge approved">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Course Registration</td>
-                                <td>Last date for course registration for the upcoming semester is September 30, 2023.</td>
-                                <td>Admin Office</td>
-                                <td>2023-09-15</td>
-                                <td>2023-09-30</td>
-                                <td><span class="status-badge approved">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Workshop on Research Methodologies</td>
-                                <td>A workshop on research methodologies will be conducted on October 5, 2023. All faculty members are requested to attend.</td>
-                                <td>Dr. Sarah Johnson</td>
-                                <td>2023-09-10</td>
-                                <td>2023-10-05</td>
-                                <td><span class="status-badge approved">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="announcementsTableBody">
+                            <!-- Data will be loaded here -->
                         </tbody>
                     </table>
                     <div class="pagination">
-                        <div class="page-btn">
+                        <div class="page-btn" data-page="prev">
                             <i class="fas fa-chevron-left"></i>
                         </div>
-                        <div class="page-btn active">1</div>
-                        <div class="page-btn">2</div>
-                        <div class="page-btn">3</div>
-                        <div class="page-btn">
+                        <div class="page-btn active" data-page="1">1</div>
+                        <div class="page-btn" data-page="2">2</div>
+                        <div class="page-btn" data-page="3">3</div>
+                        <div class="page-btn" data-page="next">
                             <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
@@ -3108,48 +3232,93 @@
                     openModal('announcement');
                 });
             }
+            
+            // Load announcements data from Firebase
+            const announcementsTableBody = document.getElementById('announcementsTableBody');
+            announcementsTableBody.innerHTML = '';
+
+            database.ref('announcements').orderByChild('date').limitToLast(10).once('value').then((snapshot) => {
+                const announcementsData = snapshot.val();
+                
+                if (announcementsData) {
+                    Object.keys(announcementsData).forEach(key => {
+                        const announcement = announcementsData[key];
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${announcement.title}</td>
+                            <td>${announcement.content}</td>
+                            <td>${announcement.postedBy}</td>
+                            <td>${announcement.date}</td>
+                            <td>${announcement.expiry}</td>
+                            <td><span class="status-badge ${announcement.status}">${announcement.status}</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <div class="action-icon view" data-action="view-announcement" data-id="${announcement.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="action-icon edit" data-action="edit-announcement" data-id="${announcement.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="action-icon delete" data-action="delete-announcement" data-id="${announcement.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        announcementsTableBody.appendChild(row);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading announcements data:", error);
+            });
+            
+            // Re-attach event listeners for new elements
+            attachTableActionListeners();
+            attachPaginationListeners();
         }
 
         // Load reports data
         function loadReportsData() {
             contentBody.innerHTML = `
                 <div class="dashboard-grid">
-                    <div class="card">
+                    <div class="card" data-action="faculty-reports">
                         <div class="card-header">
                             <h3 class="card-title">Faculty Reports</h3>
                             <div class="card-icon blue">
                                 <i class="fas fa-users"></i>
                             </div>
                         </div>
-                        <div class="card-value">12</div>
+                        <div class="card-value" id="facultyReportsCount">0</div>
                         <div class="card-description">Faculty performance reports</div>
                         <div class="card-action">
                             <span>View All</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="student-reports">
                         <div class="card-header">
                             <h3 class="card-title">Student Reports</h3>
                             <div class="card-icon yellow">
                                 <i class="fas fa-user-graduate"></i>
                             </div>
                         </div>
-                        <div class="card-value">8</div>
+                        <div class="card-value" id="studentReportsCount">0</div>
                         <div class="card-description">Student performance reports</div>
                         <div class="card-action">
                             <span>View All</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="course-reports">
                         <div class="card-header">
                             <h3 class="card-title">Course Reports</h3>
                             <div class="card-icon green">
                                 <i class="fas fa-book"></i>
                             </div>
                         </div>
-                        <div class="card-value">15</div>
+                        <div class="card-value" id="courseReportsCount">0</div>
                         <div class="card-description">Course evaluation reports</div>
                         <div class="card-action">
                             <span>View All</span>
@@ -3183,82 +3352,81 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>RPT001</td>
-                                <td>Faculty Performance - Q3 2023</td>
-                                <td>Faculty</td>
-                                <td>Dr. John Smith</td>
-                                <td>2023-09-20</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>RPT002</td>
-                                <td>Student Performance - Fall 2023</td>
-                                <td>Student</td>
-                                <td>Dr. Sarah Johnson</td>
-                                <td>2023-09-18</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>RPT003</td>
-                                <td>Course Evaluation - CS101</td>
-                                <td>Course</td>
-                                <td>Dr. Robert Wilson</td>
-                                <td>2023-09-15</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <div class="action-icon view">
-                                            <i class="fas fa-eye"></i>
-                                        </div>
-                                        <div class="action-icon edit">
-                                            <i class="fas fa-edit"></i>
-                                        </div>
-                                        <div class="action-icon delete">
-                                            <i class="fas fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="reportsTableBody">
+                            <!-- Data will be loaded here -->
                         </tbody>
                     </table>
                     <div class="pagination">
-                        <div class="page-btn">
+                        <div class="page-btn" data-page="prev">
                             <i class="fas fa-chevron-left"></i>
                         </div>
-                        <div class="page-btn active">1</div>
-                        <div class="page-btn">2</div>
-                        <div class="page-btn">3</div>
-                        <div class="page-btn">
+                        <div class="page-btn active" data-page="1">1</div>
+                        <div class="page-btn" data-page="2">2</div>
+                        <div class="page-btn" data-page="3">3</div>
+                        <div class="page-btn" data-page="next">
                             <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Load reports data from Firebase
+            database.ref('reports').once('value').then((snapshot) => {
+                const reportsData = snapshot.val();
+                
+                if (reportsData) {
+                    // Count faculty reports
+                    const facultyReports = Object.values(reportsData).filter(report => report.type === 'faculty');
+                    document.getElementById('facultyReportsCount').textContent = facultyReports.length;
+                    
+                    // Count student reports
+                    const studentReports = Object.values(reportsData).filter(report => report.type === 'student');
+                    document.getElementById('studentReportsCount').textContent = studentReports.length;
+                    
+                    // Count course reports
+                    const courseReports = Object.values(reportsData).filter(report => report.type === 'course');
+                    document.getElementById('courseReportsCount').textContent = courseReports.length;
+                    
+                    // Load reports table
+                    const reportsTableBody = document.getElementById('reportsTableBody');
+                    reportsTableBody.innerHTML = '';
+                    
+                    Object.keys(reportsData).forEach(key => {
+                        const report = reportsData[key];
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${report.id}</td>
+                            <td>${report.title}</td>
+                            <td>${report.type}</td>
+                            <td>${report.generatedBy}</td>
+                            <td>${report.date}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <div class="action-icon view" data-action="view-report" data-id="${report.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="action-icon edit" data-action="edit-report" data-id="${report.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="action-icon delete" data-action="delete-report" data-id="${report.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        reportsTableBody.appendChild(row);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error loading reports data:", error);
+            });
+            
+            // Re-attach event listeners for new elements
+            attachCardActionListeners();
+            attachTableActionListeners();
+            attachPaginationListeners();
         }
 
         // Load analytics data
@@ -3268,50 +3436,50 @@
                     <div class="chart-header">
                         <h3 class="chart-title">Department Performance Trends</h3>
                         <div class="chart-options">
-                            <div class="chart-option active">Semester</div>
-                            <div class="chart-option">Year</div>
+                            <div class="chart-option active" data-period="semester">Semester</div>
+                            <div class="chart-option" data-period="year">Year</div>
                         </div>
                     </div>
                     <canvas id="trendsChart"></canvas>
                 </div>
                 
                 <div class="dashboard-grid">
-                    <div class="card">
+                    <div class="card" data-action="satisfaction-details">
                         <div class="card-header">
                             <h3 class="card-title">Student Satisfaction</h3>
                             <div class="card-icon blue">
                                 <i class="fas fa-smile"></i>
                             </div>
                         </div>
-                        <div class="card-value">87%</div>
+                        <div class="card-value" id="studentSatisfaction">0%</div>
                         <div class="card-description">Overall satisfaction rate</div>
                         <div class="card-action">
                             <span>View Details</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="utilization-details">
                         <div class="card-header">
                             <h3 class="card-title">Faculty Utilization</h3>
                             <div class="card-icon yellow">
                                 <i class="fas fa-user-clock"></i>
                             </div>
                         </div>
-                        <div class="card-value">92%</div>
+                        <div class="card-value" id="facultyUtilization">0%</div>
                         <div class="card-description">Average faculty utilization</div>
                         <div class="card-action">
                             <span>View Details</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" data-action="efficiency-details">
                         <div class="card-header">
                             <h3 class="card-title">Resource Efficiency</h3>
                             <div class="card-icon green">
                                 <i class="fas fa-tachometer-alt"></i>
                             </div>
                         </div>
-                        <div class="card-value">78%</div>
+                        <div class="card-value" id="resourceEfficiency">0%</div>
                         <div class="card-description">Resource utilization efficiency</div>
                         <div class="card-action">
                             <span>View Details</span>
@@ -3324,122 +3492,139 @@
                     <div class="chart-header">
                         <h3 class="chart-title">Course Performance</h3>
                         <div class="chart-options">
-                            <div class="chart-option active">Current Semester</div>
-                            <div class="chart-option">Previous Semester</div>
+                            <div class="chart-option active" data-period="current">Current Semester</div>
+                            <div class="chart-option" data-period="previous">Previous Semester</div>
                         </div>
                     </div>
                     <canvas id="courseChart"></canvas>
                 </div>
             `;
             
-            // Initialize analytics charts
-            setTimeout(() => {
-                const trendsCtx = document.getElementById('trendsChart');
-                if (trendsCtx) {
-                    new Chart(trendsCtx, {
-                        type: 'line',
-                        data: {
-                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-                            datasets: [{
-                                label: 'Student Performance',
-                                data: [82, 84, 83, 85, 87, 86, 88, 89, 90],
-                                borderColor: 'rgba(59, 130, 246, 1)',
-                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                                tension: 0.4,
-                                fill: true
-                            }, {
-                                label: 'Faculty Performance',
-                                data: [85, 86, 85, 87, 88, 89, 90, 91, 92],
-                                borderColor: 'rgba(245, 158, 11, 1)',
-                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                                tension: 0.4,
-                                fill: true
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    labels: {
-                                        color: '#FFFFFF'
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    grid: {
-                                        color: 'rgba(255, 255, 255, 0.1)'
-                                    },
-                                    ticks: {
-                                        color: '#FFFFFF'
-                                    }
-                                },
-                                y: {
-                                    grid: {
-                                        color: 'rgba(255, 255, 255, 0.1)'
-                                    },
-                                    ticks: {
-                                        color: '#FFFFFF'
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
+            // Load analytics data from Firebase
+            database.ref('analytics').once('value').then((snapshot) => {
+                const analyticsData = snapshot.val();
                 
-                const courseCtx = document.getElementById('courseChart');
-                if (courseCtx) {
-                    new Chart(courseCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['CS101', 'CS201', 'CS301', 'CS401', 'CS501', 'CS601'],
-                            datasets: [{
-                                label: 'Pass Rate',
-                                data: [92, 88, 85, 90, 87, 91],
-                                backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                                borderColor: 'rgba(59, 130, 246, 1)',
-                                borderWidth: 1
-                            }, {
-                                label: 'Average Grade',
-                                data: [85, 82, 80, 84, 81, 86],
-                                backgroundColor: 'rgba(245, 158, 11, 0.8)',
-                                borderColor: 'rgba(245, 158, 11, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    labels: {
-                                        color: '#FFFFFF'
-                                    }
-                                }
+                if (analyticsData) {
+                    // Update metrics
+                    document.getElementById('studentSatisfaction').textContent = (analyticsData.studentSatisfaction || 0) + '%';
+                    document.getElementById('facultyUtilization').textContent = (analyticsData.facultyUtilization || 0) + '%';
+                    document.getElementById('resourceEfficiency').textContent = (analyticsData.resourceEfficiency || 0) + '%';
+                    
+                    // Initialize trends chart
+                    const trendsCtx = document.getElementById('trendsChart');
+                    if (trendsCtx) {
+                        new Chart(trendsCtx, {
+                            type: 'line',
+                            data: {
+                                labels: analyticsData.trends?.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                                datasets: [{
+                                    label: 'Student Performance',
+                                    data: analyticsData.trends?.studentPerformance || [82, 84, 83, 85, 87, 86, 88, 89, 90],
+                                    borderColor: 'rgba(59, 130, 246, 1)',
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                    tension: 0.4,
+                                    fill: true
+                                }, {
+                                    label: 'Faculty Performance',
+                                    data: analyticsData.trends?.facultyPerformance || [85, 86, 85, 87, 88, 89, 90, 91, 92],
+                                    borderColor: 'rgba(245, 158, 11, 1)',
+                                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                    tension: 0.4,
+                                    fill: true
+                                }]
                             },
-                            scales: {
-                                x: {
-                                    grid: {
-                                        color: 'rgba(255, 255, 255, 0.1)'
-                                    },
-                                    ticks: {
-                                        color: '#FFFFFF'
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        labels: {
+                                            color: '#FFFFFF'
+                                        }
                                     }
                                 },
-                                y: {
-                                    grid: {
-                                        color: 'rgba(255, 255, 255, 0.1)'
+                                scales: {
+                                    x: {
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#FFFFFF'
+                                        }
                                     },
-                                    ticks: {
-                                        color: '#FFFFFF'
+                                    y: {
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#FFFFFF'
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
+                    
+                    // Initialize course chart
+                    const courseCtx = document.getElementById('courseChart');
+                    if (courseCtx) {
+                        new Chart(courseCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: analyticsData.courses?.labels || ['CS101', 'CS201', 'CS301', 'CS401', 'CS501', 'CS601'],
+                                datasets: [{
+                                    label: 'Pass Rate',
+                                    data: analyticsData.courses?.passRate || [92, 88, 85, 90, 87, 91],
+                                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                                    borderColor: 'rgba(59, 130, 246, 1)',
+                                    borderWidth: 1
+                                }, {
+                                    label: 'Average Grade',
+                                    data: analyticsData.courses?.averageGrade || [85, 82, 80, 84, 81, 86],
+                                    backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                                    borderColor: 'rgba(245, 158, 11, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        labels: {
+                                            color: '#FFFFFF'
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#FFFFFF'
+                                        }
+                                    },
+                                    y: {
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#FFFFFF'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
-            }, 100);
+            }).catch((error) => {
+                console.error("Error loading analytics data:", error);
+            });
+            
+            // Re-attach event listeners for new elements
+            attachCardActionListeners();
+            attachChartOptionListeners();
         }
 
         // Initialize performance chart
@@ -3494,6 +3679,7 @@
 
         // Open chat
         function openChat(contact) {
+            currentChat = contact;
             contentBody.style.display = 'none';
             chatContainer.style.display = 'flex';
             
@@ -3504,75 +3690,88 @@
         // Load messages
         function loadMessages() {
             // Clear existing messages
-            messages.innerHTML = '';
+            messagesContainer.innerHTML = '';
+            chatMessages = [];
             
-            // Simulate loading messages
-            const sampleMessages = [
-                {
-                    sender: 'Dr. Sarah Johnson',
-                    text: 'Good morning! Please review the course syllabus update.',
-                    time: '09:30 AM',
-                    sent: false
-                },
-                {
-                    sender: 'You',
-                    text: 'I will review it and get back to you by noon.',
-                    time: '09:32 AM',
-                    sent: true
-                },
-                {
-                    sender: 'Dr. Robert Wilson',
-                    text: 'The research grant proposal is ready for your review.',
-                    time: '10:15 AM',
-                    sent: false
-                },
-                {
-                    sender: 'You',
-                    text: 'Thank you. I will check it this afternoon.',
-                    time: '10:20 AM',
-                    sent: true
+            // Load messages from Firebase
+            database.ref('chatMessages/' + currentChat).orderByChild('timestamp').once('value').then((snapshot) => {
+                const messagesData = snapshot.val();
+                
+                if (messagesData) {
+                    Object.keys(messagesData).forEach(key => {
+                        const message = messagesData[key];
+                        addMessageToChat(message);
+                    });
                 }
-            ];
-            
-            sampleMessages.forEach(msg => {
-                addMessageToChat(msg.sender, msg.text, msg.time, msg.sent);
+            }).catch((error) => {
+                console.error("Error loading messages:", error);
             });
             
-            // Scroll to bottom
-            messages.scrollTop = messages.scrollHeight;
+            // Set up real-time listener for new messages
+            database.ref('chatMessages/' + currentChat).on('child_added', (snapshot) => {
+                const message = snapshot.val();
+                
+                // Check if message is already in chat
+                const existingMessage = chatMessages.find(msg => msg.id === message.id);
+                if (!existingMessage) {
+                    addMessageToChat(message);
+                }
+            });
         }
 
         // Add message to chat
-        function addMessageToChat(sender, text, time, sent) {
+        function addMessageToChat(message) {
+            chatMessages.push(message);
+            
             const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sent ? 'sent' : 'received'}`;
+            messageDiv.className = `message ${message.sender === currentUser.name ? 'sent' : 'received'}`;
+            messageDiv.setAttribute('data-id', message.id);
             
             const senderDiv = document.createElement('div');
             senderDiv.className = 'message-sender';
-            senderDiv.textContent = sent ? 'You' : sender;
+            senderDiv.textContent = message.sender === currentUser.name ? 'You' : message.sender;
             
             const bubbleDiv = document.createElement('div');
             bubbleDiv.className = 'message-bubble';
-            bubbleDiv.textContent = text;
+            bubbleDiv.textContent = message.text;
             
             const metaDiv = document.createElement('div');
             metaDiv.className = 'message-meta';
             
             const timeSpan = document.createElement('span');
-            timeSpan.textContent = time;
+            timeSpan.textContent = message.time;
+            
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'message-status';
+            
+            if (message.sender === currentUser.name) {
+                if (message.status === 'sent') {
+                    statusDiv.innerHTML = '<i class="fas fa-check sent"></i>';
+                } else if (message.status === 'delivered') {
+                    statusDiv.innerHTML = '<i class="fas fa-check-double delivered"></i>';
+                } else if (message.status === 'seen') {
+                    statusDiv.innerHTML = '<i class="fas fa-check-double seen"></i>';
+                }
+            }
             
             const encryptionDiv = document.createElement('div');
             encryptionDiv.className = 'encryption-indicator';
             encryptionDiv.innerHTML = '<i class="fas fa-lock"></i> <span>Encrypted</span>';
             
             metaDiv.appendChild(timeSpan);
+            if (message.sender === currentUser.name) {
+                metaDiv.appendChild(statusDiv);
+            }
             metaDiv.appendChild(encryptionDiv);
             
             messageDiv.appendChild(senderDiv);
             messageDiv.appendChild(bubbleDiv);
             messageDiv.appendChild(metaDiv);
             
-            messages.appendChild(messageDiv);
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         // Send message
@@ -3582,32 +3781,106 @@
             
             const now = new Date();
             const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const messageId = 'msg_' + Date.now();
+            const timestamp = now.getTime();
             
-            // Add message to chat
-            addMessageToChat('You', text, time, true);
+            // Create message object
+            const message = {
+                id: messageId,
+                sender: currentUser.name,
+                text: text,
+                time: time,
+                timestamp: timestamp,
+                status: 'sent',
+                room: currentChat
+            };
+            
+            // Add to chat
+            addMessageToChat(message);
             
             // Clear input
             messageInput.value = '';
             
-            // Scroll to bottom
-            messages.scrollTop = messages.scrollHeight;
-            
-            // Send via socket.io
-            socket.emit('message', {
-                sender: currentUser.name,
-                text: text,
-                time: time,
-                room: 'department'
+            // Save to Firebase
+            database.ref('chatMessages/' + currentChat + '/' + messageId).set(message).then(() => {
+                // Update status to delivered
+                updateMessageStatus(messageId, 'delivered');
+                
+                // Send via socket.io for real-time updates
+                socket.emit('message', {
+                    id: messageId,
+                    sender: currentUser.name,
+                    text: text,
+                    time: time,
+                    room: currentChat
+                });
+                
+                // If recipient is in chat, mark as seen
+                setTimeout(() => {
+                    updateMessageStatus(messageId, 'seen');
+                    socket.emit('message-status', {
+                        messageId: messageId,
+                        status: 'seen',
+                        room: currentChat
+                    });
+                }, 1500);
+            }).catch((error) => {
+                console.error("Error saving message:", error);
             });
         }
 
         // Receive message
         function receiveMessage(data) {
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            addMessageToChat(data.sender, data.text, time, false);
+            const message = {
+                id: data.id,
+                sender: data.sender,
+                text: data.text,
+                time: data.time,
+                timestamp: Date.now(),
+                status: 'delivered'
+            };
             
-            // Scroll to bottom
-            messages.scrollTop = messages.scrollHeight;
+            addMessageToChat(message);
+            
+            // Mark as seen if user is in chat
+            setTimeout(() => {
+                updateMessageStatus(data.id, 'seen');
+                socket.emit('message-status', {
+                    messageId: data.id,
+                    status: 'seen',
+                    room: currentChat
+                });
+            }, 1000);
+        }
+
+        // Update message status
+        function updateMessageStatus(messageId, status) {
+            const messageElement = document.querySelector(`.message[data-id="${messageId}"]`);
+            if (!messageElement) return;
+            
+            const statusElement = messageElement.querySelector('.message-status');
+            if (!statusElement) return;
+            
+            if (status === 'sent') {
+                statusElement.innerHTML = '<i class="fas fa-check sent"></i>';
+            } else if (status === 'delivered') {
+                statusElement.innerHTML = '<i class="fas fa-check-double delivered"></i>';
+            } else if (status === 'seen') {
+                statusElement.innerHTML = '<i class="fas fa-check-double seen"></i>';
+            }
+            
+            // Update message in Firebase
+            database.ref('chatMessages/' + currentChat + '/' + messageId).update({
+                status: status
+            }).catch((error) => {
+                console.error("Error updating message status:", error);
+            });
+            
+            // Update message in array
+            const message = chatMessages.find(msg => msg.id === messageId);
+            if (message) {
+                message.status = status;
+            }
         }
 
         // Open modal
@@ -3637,17 +3910,27 @@
                 description: document.getElementById('requestDescription').value,
                 amount: document.getElementById('requestAmount').value,
                 requestedBy: currentUser.name,
-                date: new Date().toISOString().split('T')[0]
+                date: new Date().toISOString().split('T')[0],
+                status: 'pending'
             };
             
-            // Simulate API call
-            setTimeout(() => {
+            // Save to Firebase
+            const newApprovalRef = database.ref('approvals').push();
+            const approvalId = newApprovalRef.key;
+            
+            newApprovalRef.set({
+                id: approvalId,
+                ...formData
+            }).then(() => {
                 closeModal();
                 showNotification('success', 'Submitted', 'Your request has been submitted successfully.');
                 
                 // Refresh current page
                 loadPage(currentPage);
-            }, 1000);
+            }).catch((error) => {
+                console.error("Error submitting form:", error);
+                showNotification('error', 'Error', 'Failed to submit your request. Please try again.');
+            });
         }
 
         // Show notification
@@ -3685,6 +3968,313 @@
             setTimeout(() => {
                 notificationToast.classList.remove('show');
             }, 5000);
+        }
+
+        // Handle card actions
+        function handleCardAction(action) {
+            switch (action) {
+                case 'faculty-details':
+                    loadPage('faculty');
+                    break;
+                case 'student-details':
+                    showNotification('info', 'Student Details', 'Loading student information...');
+                    break;
+                case 'course-details':
+                    loadPage('academic');
+                    break;
+                case 'budget-details':
+                    loadPage('budget');
+                    break;
+                case 'courses-details':
+                    loadPage('academic');
+                    break;
+                case 'programs-details':
+                    showNotification('info', 'Programs', 'Loading degree programs...');
+                    break;
+                case 'curriculum-details':
+                    showNotification('info', 'Curriculum', 'Loading curriculum updates...');
+                    break;
+                case 'classrooms-details':
+                    loadPage('resources');
+                    break;
+                case 'labs-details':
+                    loadPage('resources');
+                    break;
+                case 'equipment-details':
+                    loadPage('resources');
+                    break;
+                case 'reservations-details':
+                    loadPage('resources');
+                    break;
+                case 'total-budget-details':
+                    loadPage('budget');
+                    break;
+                case 'utilized-budget-details':
+                    loadPage('budget');
+                    break;
+                case 'remaining-budget-details':
+                    loadPage('budget');
+                    break;
+                case 'upcoming-meetings':
+                    loadPage('meetings');
+                    break;
+                case 'meeting-rooms':
+                    loadPage('resources');
+                    break;
+                case 'faculty-reports':
+                    loadPage('reports');
+                    break;
+                case 'student-reports':
+                    loadPage('reports');
+                    break;
+                case 'course-reports':
+                    loadPage('reports');
+                    break;
+                case 'satisfaction-details':
+                    showNotification('info', 'Student Satisfaction', 'Loading satisfaction metrics...');
+                    break;
+                case 'utilization-details':
+                    showNotification('info', 'Faculty Utilization', 'Loading utilization metrics...');
+                    break;
+                case 'efficiency-details':
+                    showNotification('info', 'Resource Efficiency', 'Loading efficiency metrics...');
+                    break;
+                default:
+                    showNotification('info', 'Details', 'Loading details...');
+            }
+        }
+
+        // Handle table actions
+        function handleTableAction(action, id) {
+            switch (action) {
+                case 'view-request':
+                    showNotification('info', 'Request Details', `Viewing request ${id}...`);
+                    break;
+                case 'edit-request':
+                    openModal();
+                    break;
+                case 'delete-request':
+                    // Delete from Firebase
+                    database.ref('approvals/' + id).remove().then(() => {
+                        showNotification('warning', 'Delete Request', `Request ${id} has been deleted.`);
+                        loadPage(currentPage);
+                    }).catch((error) => {
+                        console.error("Error deleting request:", error);
+                        showNotification('error', 'Error', 'Failed to delete request.');
+                    });
+                    break;
+                case 'view-faculty':
+                    showNotification('info', 'Faculty Details', `Viewing faculty member ${id}...`);
+                    break;
+                case 'edit-faculty':
+                    showNotification('info', 'Edit Faculty', `Editing faculty member ${id}...`);
+                    break;
+                case 'delete-faculty':
+                    // Delete from Firebase
+                    database.ref('faculty/' + id).remove().then(() => {
+                        showNotification('warning', 'Delete Faculty', `Faculty member ${id} has been deleted.`);
+                        loadPage('faculty');
+                    }).catch((error) => {
+                        console.error("Error deleting faculty:", error);
+                        showNotification('error', 'Error', 'Failed to delete faculty member.');
+                    });
+                    break;
+                case 'view-course':
+                    showNotification('info', 'Course Details', `Viewing course ${id}...`);
+                    break;
+                case 'edit-course':
+                    showNotification('info', 'Edit Course', `Editing course ${id}...`);
+                    break;
+                case 'view-resource':
+                    showNotification('info', 'Resource Details', `Viewing resource ${id}...`);
+                    break;
+                case 'edit-resource':
+                    showNotification('info', 'Edit Resource', `Editing resource ${id}...`);
+                    break;
+                case 'delete-resource':
+                    // Delete from Firebase
+                    database.ref('resources/' + id).remove().then(() => {
+                        showNotification('warning', 'Delete Resource', `Resource ${id} has been deleted.`);
+                        loadPage('resources');
+                    }).catch((error) => {
+                        console.error("Error deleting resource:", error);
+                        showNotification('error', 'Error', 'Failed to delete resource.');
+                    });
+                    break;
+                case 'view-expense':
+                    showNotification('info', 'Expense Details', `Viewing expense ${id}...`);
+                    break;
+                case 'edit-expense':
+                    showNotification('info', 'Edit Expense', `Editing expense ${id}...`);
+                    break;
+                case 'delete-expense':
+                    // Delete from Firebase
+                    database.ref('budget/expenses/' + id).remove().then(() => {
+                        showNotification('warning', 'Delete Expense', `Expense ${id} has been deleted.`);
+                        loadPage('budget');
+                    }).catch((error) => {
+                        console.error("Error deleting expense:", error);
+                        showNotification('error', 'Error', 'Failed to delete expense.');
+                    });
+                    break;
+                case 'view-message':
+                    showNotification('info', 'Message Details', `Viewing message ${id}...`);
+                    break;
+                case 'delete-message':
+                    // Delete from Firebase
+                    database.ref('messages/' + id).remove().then(() => {
+                        showNotification('warning', 'Delete Message', `Message ${id} has been deleted.`);
+                        loadPage('messages');
+                    }).catch((error) => {
+                        console.error("Error deleting message:", error);
+                        showNotification('error', 'Error', 'Failed to delete message.');
+                    });
+                    break;
+                case 'view-meeting':
+                    showNotification('info', 'Meeting Details', `Viewing meeting ${id}...`);
+                    break;
+                case 'edit-meeting':
+                    showNotification('info', 'Edit Meeting', `Editing meeting ${id}...`);
+                    break;
+                case 'delete-meeting':
+                    // Delete from Firebase
+                    database.ref('meetings/' + id).remove().then(() => {
+                        showNotification('warning', 'Delete Meeting', `Meeting ${id} has been deleted.`);
+                        loadPage('meetings');
+                    }).catch((error) => {
+                        console.error("Error deleting meeting:", error);
+                        showNotification('error', 'Error', 'Failed to delete meeting.');
+                    });
+                    break;
+                case 'view-announcement':
+                    showNotification('info', 'Announcement Details', `Viewing announcement ${id}...`);
+                    break;
+                case 'edit-announcement':
+                    showNotification('info', 'Edit Announcement', `Editing announcement ${id}...`);
+                    break;
+                case 'delete-announcement':
+                    // Delete from Firebase
+                    database.ref('announcements/' + id).remove().then(() => {
+                        showNotification('warning', 'Delete Announcement', `Announcement ${id} has been deleted.`);
+                        loadPage('announcements');
+                    }).catch((error) => {
+                        console.error("Error deleting announcement:", error);
+                        showNotification('error', 'Error', 'Failed to delete announcement.');
+                    });
+                    break;
+                case 'view-report':
+                    showNotification('info', 'Report Details', `Viewing report ${id}...`);
+                    break;
+                case 'edit-report':
+                    showNotification('info', 'Edit Report', `Editing report ${id}...`);
+                    break;
+                case 'delete-report':
+                    // Delete from Firebase
+                    database.ref('reports/' + id).remove().then(() => {
+                        showNotification('warning', 'Delete Report', `Report ${id} has been deleted.`);
+                        loadPage('reports');
+                    }).catch((error) => {
+                        console.error("Error deleting report:", error);
+                        showNotification('error', 'Error', 'Failed to delete report.');
+                    });
+                    break;
+                default:
+                    showNotification('info', 'Action', `Performing ${action} on ${id}...`);
+            }
+        }
+
+        // Handle pagination
+        function handlePagination(page) {
+            if (page === 'prev' || page === 'next') {
+                showNotification('info', 'Pagination', `Navigating to ${page} page...`);
+            } else {
+                showNotification('info', 'Pagination', `Loading page ${page}...`);
+            }
+        }
+
+        // Handle chart options
+        function handleChartOption(period) {
+            // Update active option
+            document.querySelectorAll('.chart-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-period') === period) {
+                    option.classList.add('active');
+                }
+            });
+            
+            showNotification('info', 'Chart Update', `Updating chart for ${period} period...`);
+            
+            // Update chart data
+            if (performanceChart) {
+                if (period === 'year') {
+                    performanceChart.data.labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+                    performanceChart.data.datasets[0].data = [82, 85, 88, 90];
+                } else {
+                    performanceChart.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                    performanceChart.data.datasets[0].data = [80, 85, 82, 88, 90, 92];
+                }
+                performanceChart.update();
+            }
+        }
+
+        // Download file
+        function downloadFile(fileName) {
+            showNotification('success', 'Download Started', `Downloading ${fileName}...`);
+            
+            // Simulate download
+            setTimeout(() => {
+                showNotification('success', 'Download Complete', `${fileName} has been downloaded successfully.`);
+            }, 2000);
+        }
+
+        // Attach event listeners for dynamically created elements
+        function attachCardActionListeners() {
+            document.querySelectorAll('.card[data-action]').forEach(card => {
+                card.addEventListener('click', () => {
+                    const action = card.getAttribute('data-action');
+                    handleCardAction(action);
+                });
+            });
+        }
+
+        function attachTableActionListeners() {
+            document.querySelectorAll('.action-icon').forEach(icon => {
+                icon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const action = icon.getAttribute('data-action');
+                    const id = icon.getAttribute('data-id');
+                    handleTableAction(action, id);
+                });
+            });
+        }
+
+        function attachPaginationListeners() {
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const page = btn.getAttribute('data-page');
+                    handlePagination(page);
+                });
+            });
+        }
+
+        function attachChartOptionListeners() {
+            document.querySelectorAll('.chart-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const period = option.getAttribute('data-period');
+                    handleChartOption(period);
+                });
+            });
+        }
+
+        function attachFileDownloadListeners() {
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const fileItem = btn.closest('.file-item');
+                    const fileName = fileItem.getAttribute('data-file');
+                    downloadFile(fileName);
+                });
+            });
         }
 
         // Handle responsive sidebar
