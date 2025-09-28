@@ -879,6 +879,350 @@
             100% { transform: scale(1); }
         }
 
+        /* Messages Section */
+        .messages-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-xl);
+            overflow: hidden;
+        }
+
+        .messages-container {
+            display: flex;
+            height: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .conversations-list {
+            width: 350px;
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conversations-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .conversations-header h2 {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .btn-new-message {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+            border: none;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .btn-new-message:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+        }
+
+        .conversations {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .conversation-item {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--card-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .conversation-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .conversation-item.active {
+            background: var(--hover-bg);
+            border-left: 4px solid var(--primary-yellow);
+        }
+
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .conversation-time {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+
+        .conversation-preview {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .no-conversation-selected {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .no-conversation-selected i {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+            opacity: 0.5;
+        }
+
+        .conversation-header-view {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+        }
+
+        .conversation-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .conversation-info {
+            flex: 1;
+        }
+
+        .conversation-title {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .conversation-status {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+
+        .messages-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .message {
+            max-width: 70%;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-lg);
+            position: relative;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+            border-bottom-right-radius: 0;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-bottom-left-radius: 0;
+        }
+
+        .message-text {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .message-time {
+            font-size: var(--text-xs);
+            text-align: right;
+            opacity: 0.7;
+        }
+
+        .message-input-container {
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .message-input {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            color: var(--text-light);
+            resize: none;
+            height: 60px;
+            font-family: inherit;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-yellow);
+        }
+
+        .btn-send-message {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+            border: none;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+        }
+
+        .btn-send-message:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+        }
+
+        .btn-send-message:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--secondary-dark);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            padding: var(--spacing-xl);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: var(--text-xl);
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-light);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            color: var(--text-light);
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-yellow);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-yellow) 100%);
+            color: var(--primary-dark);
+            border: none;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+        }
+
         /* Responsive Design */
         @media (max-width: 1200px) {
             .dashboard-grid {
@@ -940,6 +1284,14 @@
             
             .page-title {
                 font-size: var(--text-2xl);
+            }
+            
+            .conversations-list {
+                width: 100%;
+            }
+            
+            .messages-container {
+                flex-direction: column;
             }
         }
 
@@ -1062,7 +1414,7 @@
                     <p class="page-subtitle">Welcome back, Suresh! Here's your academic overview.</p>
                 </div>
                 
-                <div class="dashboard-grid">
+                <div class="dashboard-grid" id="dashboardGrid">
                     <!-- Academic Overview -->
                     <div class="card">
                         <div class="card-header">
@@ -1277,6 +1629,29 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Messages Section (Hidden by default) -->
+                <div class="messages-section" id="messagesSection" style="display: none;">
+                    <div class="messages-container">
+                        <div class="conversations-list">
+                            <div class="conversations-header">
+                                <h2>Messages</h2>
+                                <button class="btn-new-message" id="newMessageBtn">
+                                    <i class="fas fa-plus"></i> New Message
+                                </button>
+                            </div>
+                            <div class="conversations" id="conversationsList">
+                                <!-- Conversations will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="conversation-view" id="conversationView">
+                            <div class="no-conversation-selected">
+                                <i class="fas fa-comments"></i>
+                                <p>Select a conversation to start messaging</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
             
             <aside class="right-panel">
@@ -1356,6 +1731,35 @@
         </div>
     </div>
 
+    <!-- New Message Modal -->
+    <div class="modal" id="newMessageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">New Message</h3>
+                <button class="modal-close" id="closeModalBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="createConversationForm">
+                <div class="form-group">
+                    <label class="form-label" for="recipientSelect">Recipient</label>
+                    <select class="form-control" id="recipientSelect" required>
+                        <option value="">Select a recipient...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="messageSubject">Subject</label>
+                    <input type="text" class="form-control" id="messageSubject" placeholder="Message subject" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="messageText">Message</label>
+                    <textarea class="form-control" id="messageText" rows="4" placeholder="Type your message..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Send Message</button>
+            </form>
+        </div>
+    </div>
+    
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
     
@@ -1426,6 +1830,435 @@
         const notifications = document.getElementById('notifications');
         const notificationCount = document.getElementById('notificationCount');
         
+        // Messages functionality
+        const messagesSection = document.getElementById('messagesSection');
+        const conversationsList = document.getElementById('conversationsList');
+        const conversationView = document.getElementById('conversationView');
+        const newMessageBtn = document.getElementById('newMessageBtn');
+        const newMessageModal = document.getElementById('newMessageModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const createConversationForm = document.getElementById('createConversationForm');
+        const recipientSelect = document.getElementById('recipientSelect');
+        const messageSubject = document.getElementById('messageSubject');
+        const messageText = document.getElementById('messageText');
+        
+        let currentConversationId = null;
+        let messagesListener = null;
+        
+        // Load conversations when messages section is shown
+        function loadConversations() {
+            conversationsList.innerHTML = '<div class="loading">Loading conversations...</div>';
+            
+            // Query conversations where the current user is a participant
+            db.collection('conversations')
+                .where('participants', 'array-contains', user.id)
+                .orderBy('updatedAt', 'desc')
+                .onSnapshot(snapshot => {
+                    conversationsList.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        conversationsList.innerHTML = '<div class="no-conversations">No conversations yet</div>';
+                        return;
+                    }
+                    
+                    snapshot.forEach(doc => {
+                        const conversation = doc.data();
+                        const conversationId = doc.id;
+                        
+                        // Get the other participant's info
+                        const otherParticipantId = conversation.participants.find(id => id !== user.id);
+                        
+                        // Fetch user info for the other participant
+                        db.collection('users').doc(otherParticipantId).get()
+                            .then(userDoc => {
+                                if (userDoc.exists) {
+                                    const otherUser = userDoc.data();
+                                    const conversationItem = createConversationItem(conversationId, conversation, otherUser);
+                                    conversationsList.appendChild(conversationItem);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error getting user:', error);
+                            });
+                    });
+                }, error => {
+                    console.error('Error loading conversations:', error);
+                    conversationsList.innerHTML = '<div class="error">Error loading conversations</div>';
+                });
+        }
+        
+        function createConversationItem(conversationId, conversation, otherUser) {
+            const item = document.createElement('div');
+            item.className = 'conversation-item';
+            item.dataset.conversationId = conversationId;
+            
+            const lastMessage = conversation.lastMessage || {};
+            const lastMessageTime = lastMessage.timestamp ? new Date(lastMessage.timestamp.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+            
+            item.innerHTML = `
+                <div class="conversation-header">
+                    <div class="conversation-name">${otherUser.name}</div>
+                    <div class="conversation-time">${lastMessageTime}</div>
+                </div>
+                <div class="conversation-preview">${lastMessage.text || 'No messages yet'}</div>
+            `;
+            
+            item.addEventListener('click', () => {
+                // Remove active class from all items
+                document.querySelectorAll('.conversation-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // Add active class to this item
+                item.classList.add('active');
+                
+                // Load the conversation
+                loadConversation(conversationId, otherUser);
+            });
+            
+            return item;
+        }
+        
+        function loadConversation(conversationId, otherUser) {
+            currentConversationId = conversationId;
+            
+            // Show the conversation view with the other user's info
+            conversationView.innerHTML = `
+                <div class="conversation-header-view">
+                    <div class="conversation-avatar">${otherUser.name.split(' ').map(n => n[0]).join('')}</div>
+                    <div class="conversation-info">
+                        <div class="conversation-title">${otherUser.name}</div>
+                        <div class="conversation-status">${otherUser.role}</div>
+                    </div>
+                </div>
+                <div class="messages-list" id="messagesList">
+                    <div class="loading">Loading messages...</div>
+                </div>
+                <div class="message-input-container">
+                    <textarea class="message-input" id="messageInput" placeholder="Type your message..."></textarea>
+                    <button class="btn-send-message" id="sendMessageBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Get the new message input and send button
+            const messageInput = document.getElementById('messageInput');
+            const sendMessageBtn = document.getElementById('sendMessageBtn');
+            
+            // Add event listener for sending message
+            sendMessageBtn.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Load messages for this conversation
+            const messagesList = document.getElementById('messagesList');
+            
+            // Remove any existing listener
+            if (messagesListener) {
+                messagesListener();
+            }
+            
+            // Set up real-time listener for messages
+            messagesListener = db.collection('conversations')
+                .doc(conversationId)
+                .collection('messages')
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    messagesList.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        messagesList.innerHTML = '<div class="no-messages">No messages yet</div>';
+                        return;
+                    }
+                    
+                    snapshot.forEach(doc => {
+                        const message = doc.data();
+                        const messageEl = createMessageElement(message);
+                        messagesList.appendChild(messageEl);
+                    });
+                    
+                    // Scroll to bottom
+                    messagesList.scrollTop = messagesList.scrollHeight;
+                }, error => {
+                    console.error('Error loading messages:', error);
+                    messagesList.innerHTML = '<div class="error">Error loading messages</div>';
+                });
+        }
+        
+        function createMessageElement(message) {
+            const messageEl = document.createElement('div');
+            const isSent = message.senderId === user.id;
+            messageEl.className = `message ${isSent ? 'sent' : 'received'}`;
+            
+            const time = message.timestamp ? new Date(message.timestamp.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+            
+            messageEl.innerHTML = `
+                <div class="message-text">${message.text}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            return messageEl;
+        }
+        
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const text = messageInput.value.trim();
+            
+            if (!text || !currentConversationId) return;
+            
+            // Disable send button temporarily
+            const sendMessageBtn = document.getElementById('sendMessageBtn');
+            sendMessageBtn.disabled = true;
+            
+            // Create the message object
+            const message = {
+                senderId: user.id,
+                senderName: user.name,
+                text: text,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                read: false
+            };
+            
+            // Add the message to the conversation
+            db.collection('conversations')
+                .doc(currentConversationId)
+                .collection('messages')
+                .add(message)
+                .then(() => {
+                    // Update the conversation's last message and timestamp
+                    db.collection('conversations')
+                        .doc(currentConversationId)
+                        .update({
+                            lastMessage: {
+                                text: text,
+                                senderId: user.id,
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                            },
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    
+                    // Clear the input
+                    messageInput.value = '';
+                    
+                    // Re-enable send button
+                    sendMessageBtn.disabled = false;
+                    
+                    // Focus back on the input
+                    messageInput.focus();
+                    
+                    // Log analytics event
+                    analytics.logEvent('message_sent', {
+                        conversation_id: currentConversationId
+                    });
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                    showToast('Error sending message', 'error');
+                    
+                    // Re-enable send button
+                    sendMessageBtn.disabled = false;
+                });
+        }
+        
+        // New message modal
+        newMessageBtn.addEventListener('click', () => {
+            // Show the modal
+            newMessageModal.classList.add('show');
+            
+            // Load available recipients (faculty, HODs, principal)
+            loadRecipients();
+        });
+        
+        closeModalBtn.addEventListener('click', () => {
+            newMessageModal.classList.remove('show');
+        });
+        
+        function loadRecipients() {
+            recipientSelect.innerHTML = '<option value="">Select a recipient...</option>';
+            
+            // Query users with roles: faculty, hod, principal
+            db.collection('users')
+                .where('role', 'in', ['faculty', 'hod', 'principal'])
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        const recipient = doc.data();
+                        const option = document.createElement('option');
+                        option.value = doc.id;
+                        option.textContent = `${recipient.name} (${recipient.role})`;
+                        recipientSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading recipients:', error);
+                    showToast('Error loading recipients', 'error');
+                });
+        }
+        
+        createConversationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const recipientId = recipientSelect.value;
+            const subject = messageSubject.value.trim();
+            const text = messageText.value.trim();
+            
+            if (!recipientId || !subject || !text) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+            
+            // Check if a conversation already exists between the current user and the recipient
+            db.collection('conversations')
+                .where('participants', 'array-contains', user.id)
+                .get()
+                .then(snapshot => {
+                    let existingConversation = null;
+                    
+                    snapshot.forEach(doc => {
+                        const conversation = doc.data();
+                        if (conversation.participants.includes(recipientId)) {
+                            existingConversation = doc;
+                        }
+                    });
+                    
+                    if (existingConversation) {
+                        // Conversation already exists, load it
+                        newMessageModal.classList.remove('show');
+                        
+                        // Get the recipient's info
+                        db.collection('users').doc(recipientId).get()
+                            .then(userDoc => {
+                                if (userDoc.exists) {
+                                    const otherUser = userDoc.data();
+                                    loadConversation(existingConversation.id, otherUser);
+                                    
+                                    // Update the conversation item to active
+                                    const conversationItem = document.querySelector(`.conversation-item[data-conversation-id="${existingConversation.id}"]`);
+                                    if (conversationItem) {
+                                        conversationItem.click();
+                                    }
+                                    
+                                    // Send the initial message
+                                    const initialMessage = {
+                                        senderId: user.id,
+                                        senderName: user.name,
+                                        text: `Subject: ${subject}\n\n${text}`,
+                                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                        read: false
+                                    };
+                                    
+                                    db.collection('conversations')
+                                        .doc(existingConversation.id)
+                                        .collection('messages')
+                                        .add(initialMessage)
+                                        .then(() => {
+                                            // Update the conversation's last message and timestamp
+                                            db.collection('conversations')
+                                                .doc(existingConversation.id)
+                                                .update({
+                                                    lastMessage: {
+                                                        text: `Subject: ${subject}`,
+                                                        senderId: user.id,
+                                                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                                    },
+                                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                                });
+                                            
+                                            // Reset form
+                                            createConversationForm.reset();
+                                            
+                                            // Show success message
+                                            showToast('Message sent successfully', 'success');
+                                        })
+                                        .catch(error => {
+                                            console.error('Error sending message:', error);
+                                            showToast('Error sending message', 'error');
+                                        });
+                                }
+                            });
+                    } else {
+                        // Create a new conversation
+                        const newConversation = {
+                            participants: [user.id, recipientId],
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        
+                        db.collection('conversations')
+                            .add(newConversation)
+                            .then(docRef => {
+                                newMessageModal.classList.remove('show');
+                                
+                                // Get the recipient's info
+                                db.collection('users').doc(recipientId).get()
+                                    .then(userDoc => {
+                                        if (userDoc.exists) {
+                                            const otherUser = userDoc.data();
+                                            loadConversation(docRef.id, otherUser);
+                                            
+                                            // Add the new conversation to the list
+                                            const conversationItem = createConversationItem(docRef.id, newConversation, otherUser);
+                                            conversationsList.insertBefore(conversationItem, conversationsList.firstChild);
+                                            
+                                            // Make it active
+                                            conversationItem.click();
+                                            
+                                            // Send the initial message
+                                            const initialMessage = {
+                                                senderId: user.id,
+                                                senderName: user.name,
+                                                text: `Subject: ${subject}\n\n${text}`,
+                                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                                read: false
+                                            };
+                                            
+                                            db.collection('conversations')
+                                                .doc(docRef.id)
+                                                .collection('messages')
+                                                .add(initialMessage)
+                                                .then(() => {
+                                                    // Update the conversation's last message and timestamp
+                                                    db.collection('conversations')
+                                                        .doc(docRef.id)
+                                                        .update({
+                                                            lastMessage: {
+                                                                text: `Subject: ${subject}`,
+                                                                senderId: user.id,
+                                                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                                            },
+                                                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                                        });
+                                                    
+                                                    // Reset form
+                                                    createConversationForm.reset();
+                                                    
+                                                    // Show success message
+                                                    showToast('Message sent successfully', 'success');
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error sending message:', error);
+                                                    showToast('Error sending message', 'error');
+                                                });
+                                        }
+                                    });
+                            })
+                            .catch(error => {
+                                console.error('Error creating conversation:', error);
+                                showToast('Error creating conversation', 'error');
+                            });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking existing conversations:', error);
+                    showToast('Error creating conversation', 'error');
+                });
+        });
+        
         // Toggle Sidebar
         toggleSidebarBtn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
@@ -1466,21 +2299,22 @@
                     section: item.dataset.section
                 });
                 
-                // In a real app, this would load different sections
-                const section = item.dataset.section;
-                console.log(`Navigating to ${section} section`);
-                
                 // Handle navigation to different sections
-                if (section === 'timetable') {
-                    showToast('Opening full timetable...', 'info');
-                } else if (section === 'assignments') {
-                    showToast('Loading assignments...', 'info');
-                } else if (section === 'grades') {
-                    showToast('Loading grades...', 'info');
-                } else if (section === 'library') {
-                    showToast('Opening library resources...', 'info');
+                const section = item.dataset.section;
+                
+                // Hide all sections
+                document.getElementById('dashboardGrid').style.display = 'none';
+                messagesSection.style.display = 'none';
+                
+                if (section === 'dashboard') {
+                    document.getElementById('dashboardGrid').style.display = 'grid';
                 } else if (section === 'messages') {
-                    showToast('Loading messages...', 'info');
+                    messagesSection.style.display = 'flex';
+                    loadConversations();
+                } else {
+                    // For other sections, show a toast and keep the dashboard grid hidden
+                    showToast(`Opening ${section}...`, 'info');
+                    // In a real app, you would load the respective section
                 }
             });
         });
