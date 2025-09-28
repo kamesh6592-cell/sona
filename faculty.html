@@ -14,12 +14,12 @@
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
     
     <style>
-        /* All existing CSS remains the same */
+        /* All existing CSS remains the same - no changes needed */
         :root {
             /* Premium Dark Blue & Yellow Theme */
             --primary-dark: #0c1445;
@@ -1771,7 +1771,7 @@
                             <div class="stat-icon">
                                 <i class="fas fa-users"></i>
                             </div>
-                            <div class="stat-value">142</div>
+                            <div class="stat-value" id="totalStudents">142</div>
                             <div class="stat-label">Total Students</div>
                             <div class="stat-change positive">+12%</div>
                         </div>
@@ -1779,7 +1779,7 @@
                             <div class="stat-icon">
                                 <i class="fas fa-book"></i>
                             </div>
-                            <div class="stat-value">6</div>
+                            <div class="stat-value" id="activeClasses">6</div>
                             <div class="stat-label">Active Classes</div>
                             <div class="stat-change positive">+1</div>
                         </div>
@@ -1787,7 +1787,7 @@
                             <div class="stat-icon">
                                 <i class="fas fa-tasks"></i>
                             </div>
-                            <div class="stat-value">3</div>
+                            <div class="stat-value" id="pendingAssignments">3</div>
                             <div class="stat-label">Pending Assignments</div>
                             <div class="stat-change negative">-2</div>
                         </div>
@@ -1795,7 +1795,7 @@
                             <div class="stat-icon">
                                 <i class="fas fa-exclamation-circle"></i>
                             </div>
-                            <div class="stat-value">5</div>
+                            <div class="stat-value" id="studentQueries">5</div>
                             <div class="stat-label">Student Queries</div>
                             <div class="stat-change positive">+3</div>
                         </div>
@@ -1847,19 +1847,8 @@
                                     View All <i class="fas fa-arrow-right"></i>
                                 </div>
                             </div>
-                            <div class="announcement-list">
-                                <div class="announcement-item">
-                                    <div class="announcement-title">Assignment due by 11:59 PM IST, Sep 27, 2025</div>
-                                    <div class="announcement-date">Posted on Sep 20, 2025</div>
-                                </div>
-                                <div class="announcement-item">
-                                    <div class="announcement-title">Mid-term examinations scheduled from Oct 5, 2025</div>
-                                    <div class="announcement-date">Posted on Sep 18, 2025</div>
-                                </div>
-                                <div class="announcement-item">
-                                    <div class="announcement-title">Guest lecture on AI and Machine Learning on Sep 30, 2025</div>
-                                    <div class="announcement-date">Posted on Sep 15, 2025</div>
-                                </div>
+                            <div class="announcement-list" id="announcementList">
+                                <!-- Announcements will be loaded here -->
                             </div>
                         </div>
                         
@@ -1882,58 +1871,8 @@
                                     View All <i class="fas fa-arrow-right"></i>
                                 </div>
                             </div>
-                            <div class="class-list">
-                                <div class="class-item">
-                                    <div class="class-info">
-                                        <div class="class-name">Introduction to Programming</div>
-                                        <div class="class-code">CS101</div>
-                                    </div>
-                                    <div class="class-actions">
-                                        <button class="class-action-btn" title="Schedule Class" aria-label="Schedule Class">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </button>
-                                        <button class="class-action-btn" title="Take Attendance" aria-label="Take Attendance">
-                                            <i class="fas fa-user-check"></i>
-                                        </button>
-                                        <button class="class-action-btn" title="Class Materials" aria-label="Class Materials">
-                                            <i class="fas fa-folder-open"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="class-item">
-                                    <div class="class-info">
-                                        <div class="class-name">Data Structures</div>
-                                        <div class="class-code">CS201</div>
-                                    </div>
-                                    <div class="class-actions">
-                                        <button class="class-action-btn" title="Schedule Class" aria-label="Schedule Class">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </button>
-                                        <button class="class-action-btn" title="Take Attendance" aria-label="Take Attendance">
-                                            <i class="fas fa-user-check"></i>
-                                        </button>
-                                        <button class="class-action-btn" title="Class Materials" aria-label="Class Materials">
-                                            <i class="fas fa-folder-open"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="class-item">
-                                    <div class="class-info">
-                                        <div class="class-name">Algorithms</div>
-                                        <div class="class-code">CS301</div>
-                                    </div>
-                                    <div class="class-actions">
-                                        <button class="class-action-btn" title="Schedule Class" aria-label="Schedule Class">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </button>
-                                        <button class="class-action-btn" title="Take Attendance" aria-label="Take Attendance">
-                                            <i class="fas fa-user-check"></i>
-                                        </button>
-                                        <button class="class-action-btn" title="Class Materials" aria-label="Class Materials">
-                                            <i class="fas fa-folder-open"></i>
-                                        </button>
-                                    </div>
-                                </div>
+                            <div class="class-list" id="classList">
+                                <!-- Classes will be loaded here -->
                             </div>
                         </div>
                     </div>
@@ -2172,7 +2111,7 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const database = firebase.database();
         const auth = firebase.auth();
         const storage = firebase.storage();
 
@@ -2251,20 +2190,22 @@
         async function initializeAppData() {
             // Create sample users if they don't exist
             for (const user of sampleUsers) {
-                const userRef = db.collection('users').doc(user.id);
-                const doc = await userRef.get();
-                if (!doc.exists) {
-                    await userRef.set(user);
-                }
+                const userRef = database.ref('users/' + user.id);
+                userRef.once('value').then((snapshot) => {
+                    if (!snapshot.exists()) {
+                        userRef.set(user);
+                    }
+                });
             }
 
             // Create sample conversations if they don't exist
             for (const conversation of sampleConversations) {
-                const convRef = db.collection('conversations').doc(conversation.id);
-                const doc = await convRef.get();
-                if (!doc.exists) {
-                    await convRef.set(conversation);
-                }
+                const convRef = database.ref('conversations/' + conversation.id);
+                convRef.once('value').then((snapshot) => {
+                    if (!snapshot.exists()) {
+                        convRef.set(conversation);
+                    }
+                });
             }
 
             // Load initial data
@@ -2272,6 +2213,8 @@
             loadAssignments();
             loadGrades();
             loadQueries();
+            loadAnnouncements();
+            loadClasses();
         }
 
         function setupUI() {
@@ -2404,19 +2347,17 @@
                     description: document.getElementById('assignmentDescription').value,
                     file: document.getElementById('assignmentFile').files[0]?.name || null,
                     createdBy: currentUser.id,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
                 };
                 
-                // Add to Firestore
-                db.collection('assignments').add(formData)
-                    .then((docRef) => {
-                        console.log('Assignment created with ID: ', docRef.id);
+                // Add to Firebase Realtime Database
+                const newAssignmentRef = database.ref('assignments').push();
+                newAssignmentRef.set(formData)
+                    .then(() => {
+                        console.log('Assignment created successfully');
                         
                         // Reset form
                         assignmentForm.reset();
-                        
-                        // Refresh assignment list
-                        loadAssignments();
                         
                         // Show notification
                         showToast('Assignment created successfully!', 'success');
@@ -2462,57 +2403,157 @@
         function loadDashboardData() {
             // Initialize dashboard calendar
             initializeDashboardCalendar();
+            
+            // Load stats
+            loadStats();
+        }
+
+        function loadStats() {
+            // Load total students
+            database.ref('users').orderByChild('role').equalTo('student').once('value').then((snapshot) => {
+                const count = snapshot.numChildren();
+                document.getElementById('totalStudents').textContent = count;
+            });
+            
+            // Load active classes
+            database.ref('classes').once('value').then((snapshot) => {
+                const count = snapshot.numChildren();
+                document.getElementById('activeClasses').textContent = count;
+            });
+            
+            // Load pending assignments
+            database.ref('assignments').orderByChild('createdBy').equalTo(currentUser.id).once('value').then((snapshot) => {
+                const count = snapshot.numChildren();
+                document.getElementById('pendingAssignments').textContent = count;
+            });
+            
+            // Load student queries
+            database.ref('queries').orderByChild('status').equalTo('pending').once('value').then((snapshot) => {
+                const count = snapshot.numChildren();
+                document.getElementById('studentQueries').textContent = count;
+            });
+        }
+
+        function loadAnnouncements() {
+            const announcementList = document.getElementById('announcementList');
+            announcementList.innerHTML = '';
+            
+            database.ref('announcements').orderByChild('createdAt').limitToLast(3).once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const announcement = childSnapshot.val();
+                    const announcementId = childSnapshot.key;
+                    
+                    const announcementItem = document.createElement('div');
+                    announcementItem.className = 'announcement-item';
+                    
+                    const date = new Date(announcement.createdAt);
+                    const formattedDate = date.toLocaleDateString();
+                    
+                    announcementItem.innerHTML = `
+                        <div class="announcement-title">${announcement.title}</div>
+                        <div class="announcement-date">Posted on ${formattedDate}</div>
+                    `;
+                    
+                    announcementList.appendChild(announcementItem);
+                });
+                
+                if (snapshot.numChildren() === 0) {
+                    announcementList.innerHTML = '<p>No announcements found.</p>';
+                }
+            }).catch((error) => {
+                console.error('Error loading announcements: ', error);
+                announcementList.innerHTML = '<p>Error loading announcements. Please try again.</p>';
+            });
+        }
+
+        function loadClasses() {
+            const classList = document.getElementById('classList');
+            classList.innerHTML = '';
+            
+            database.ref('classes').once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const classData = childSnapshot.val();
+                    const classId = childSnapshot.key;
+                    
+                    const classItem = document.createElement('div');
+                    classItem.className = 'class-item';
+                    
+                    classItem.innerHTML = `
+                        <div class="class-info">
+                            <div class="class-name">${classData.name}</div>
+                            <div class="class-code">${classData.code}</div>
+                        </div>
+                        <div class="class-actions">
+                            <button class="class-action-btn" title="Schedule Class" aria-label="Schedule Class" onclick="scheduleClass('${classId}')">
+                                <i class="fas fa-calendar-alt"></i>
+                            </button>
+                            <button class="class-action-btn" title="Take Attendance" aria-label="Take Attendance" onclick="takeAttendance('${classId}')">
+                                <i class="fas fa-user-check"></i>
+                            </button>
+                            <button class="class-action-btn" title="Class Materials" aria-label="Class Materials" onclick="viewMaterials('${classId}')">
+                                <i class="fas fa-folder-open"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    classList.appendChild(classItem);
+                });
+                
+                if (snapshot.numChildren() === 0) {
+                    classList.innerHTML = '<p>No classes found.</p>';
+                }
+            }).catch((error) => {
+                console.error('Error loading classes: ', error);
+                classList.innerHTML = '<p>Error loading classes. Please try again.</p>';
+            });
         }
 
         function loadAssignments() {
             const assignmentList = document.getElementById('assignmentList');
             assignmentList.innerHTML = '';
             
-            db.collection('assignments').where('createdBy', '==', currentUser.id).orderBy('createdAt', 'desc')
-                .onSnapshot((snapshot) => {
-                    assignmentList.innerHTML = '';
+            database.ref('assignments').orderByChild('createdBy').equalTo(currentUser.id).once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const assignment = childSnapshot.val();
+                    const assignmentId = childSnapshot.key;
                     
-                    snapshot.forEach((doc) => {
-                        const assignment = doc.data();
-                        const assignmentId = doc.id;
-                        
-                        const assignmentCard = document.createElement('div');
-                        assignmentCard.className = 'assignment-card';
-                        
-                        const dueDate = assignment.dueDate ? new Date(assignment.dueDate) : null;
-                        const formattedDate = dueDate ? dueDate.toLocaleDateString() + ' ' + dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No due date';
-                        
-                        assignmentCard.innerHTML = `
-                            <div class="assignment-title">${assignment.title}</div>
-                            <div class="assignment-meta">
-                                <span>${assignment.class}</span>
-                                <span>Due: ${formattedDate}</span>
-                                <span>${assignment.points} pts</span>
-                            </div>
-                            <div class="assignment-description">${assignment.description}</div>
-                            <div class="assignment-actions">
-                                <button class="btn btn-primary" onclick="viewSubmissions('${assignmentId}')">View Submissions</button>
-                                <button class="btn btn-secondary" onclick="editAssignment('${assignmentId}')">Edit</button>
-                            </div>
-                        `;
-                        
-                        assignmentList.appendChild(assignmentCard);
-                    });
+                    const assignmentCard = document.createElement('div');
+                    assignmentCard.className = 'assignment-card';
                     
-                    if (snapshot.empty) {
-                        assignmentList.innerHTML = '<p>No assignments found. Create your first assignment!</p>';
-                    }
-                }, (error) => {
-                    console.error('Error loading assignments: ', error);
-                    assignmentList.innerHTML = '<p>Error loading assignments. Please try again.</p>';
+                    const dueDate = assignment.dueDate ? new Date(assignment.dueDate) : null;
+                    const formattedDate = dueDate ? dueDate.toLocaleDateString() + ' ' + dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No due date';
+                    
+                    assignmentCard.innerHTML = `
+                        <div class="assignment-title">${assignment.title}</div>
+                        <div class="assignment-meta">
+                            <span>${assignment.class}</span>
+                            <span>Due: ${formattedDate}</span>
+                            <span>${assignment.points} pts</span>
+                        </div>
+                        <div class="assignment-description">${assignment.description}</div>
+                        <div class="assignment-actions">
+                            <button class="btn btn-primary" onclick="viewSubmissions('${assignmentId}')">View Submissions</button>
+                            <button class="btn btn-secondary" onclick="editAssignment('${assignmentId}')">Edit</button>
+                        </div>
+                    `;
+                    
+                    assignmentList.appendChild(assignmentCard);
                 });
+                
+                if (snapshot.numChildren() === 0) {
+                    assignmentList.innerHTML = '<p>No assignments found. Create your first assignment!</p>';
+                }
+            }).catch((error) => {
+                console.error('Error loading assignments: ', error);
+                assignmentList.innerHTML = '<p>Error loading assignments. Please try again.</p>';
+            });
         }
 
         function loadGrades() {
             const gradeTableBody = document.getElementById('gradeTableBody');
             gradeTableBody.innerHTML = '';
             
-            // In a real app, this would fetch grades from Firestore
+            // In a real app, this would fetch grades from Firebase
             // For now, we'll use sample data
             const sampleGrades = [
                 {
@@ -2583,96 +2624,90 @@
             const pendingQueries = document.getElementById('pendingQueries');
             pendingQueries.innerHTML = '';
             
-            db.collection('queries').where('status', '==', 'pending').orderBy('createdAt', 'desc')
-                .onSnapshot((snapshot) => {
-                    pendingQueries.innerHTML = '';
+            database.ref('queries').orderByChild('status').equalTo('pending').once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const query = childSnapshot.val();
+                    const queryId = childSnapshot.key;
                     
-                    snapshot.forEach((doc) => {
-                        const query = doc.data();
-                        const queryId = doc.id;
-                        
-                        const queryItem = document.createElement('div');
-                        queryItem.className = 'query-item';
-                        
-                        const date = query.createdAt ? new Date(query.createdAt.toDate()) : new Date();
-                        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        
-                        queryItem.innerHTML = `
-                            <div class="query-header">
-                                <div class="query-title">${query.title}</div>
-                                <div class="query-status status-pending">Pending</div>
-                            </div>
-                            <div class="query-content">${query.content}</div>
-                            <div class="query-meta">
-                                <span>${query.studentName} (${query.studentId})</span>
-                                <span>${query.class}</span>
-                                <span>${formattedDate}</span>
-                            </div>
-                            <div class="query-actions">
-                                <button class="btn btn-primary" onclick="respondToQuery('${queryId}')">Respond</button>
-                                <button class="btn btn-secondary" onclick="markQueryAsResolved('${queryId}')">Mark as Resolved</button>
-                            </div>
-                        `;
-                        
-                        pendingQueries.appendChild(queryItem);
-                    });
+                    const queryItem = document.createElement('div');
+                    queryItem.className = 'query-item';
                     
-                    if (snapshot.empty) {
-                        pendingQueries.innerHTML = '<p>No pending queries.</p>';
-                    }
-                }, (error) => {
-                    console.error('Error loading pending queries: ', error);
-                    pendingQueries.innerHTML = '<p>Error loading queries. Please try again.</p>';
+                    const date = new Date(query.createdAt);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    queryItem.innerHTML = `
+                        <div class="query-header">
+                            <div class="query-title">${query.title}</div>
+                            <div class="query-status status-pending">Pending</div>
+                        </div>
+                        <div class="query-content">${query.content}</div>
+                        <div class="query-meta">
+                            <span>${query.studentName} (${query.studentId})</span>
+                            <span>${query.class}</span>
+                            <span>${formattedDate}</span>
+                        </div>
+                        <div class="query-actions">
+                            <button class="btn btn-primary" onclick="respondToQuery('${queryId}')">Respond</button>
+                            <button class="btn btn-secondary" onclick="markQueryAsResolved('${queryId}')">Mark as Resolved</button>
+                        </div>
+                    `;
+                    
+                    pendingQueries.appendChild(queryItem);
                 });
+                
+                if (snapshot.numChildren() === 0) {
+                    pendingQueries.innerHTML = '<p>No pending queries.</p>';
+                }
+            }).catch((error) => {
+                console.error('Error loading pending queries: ', error);
+                pendingQueries.innerHTML = '<p>Error loading queries. Please try again.</p>';
+            });
             
             // Load resolved queries
             const resolvedQueries = document.getElementById('resolvedQueries');
             resolvedQueries.innerHTML = '';
             
-            db.collection('queries').where('status', '==', 'resolved').orderBy('resolvedAt', 'desc')
-                .onSnapshot((snapshot) => {
-                    resolvedQueries.innerHTML = '';
+            database.ref('queries').orderByChild('status').equalTo('resolved').once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const query = childSnapshot.val();
+                    const queryId = childSnapshot.key;
                     
-                    snapshot.forEach((doc) => {
-                        const query = doc.data();
-                        const queryId = doc.id;
-                        
-                        const queryItem = document.createElement('div');
-                        queryItem.className = 'query-item';
-                        
-                        const date = query.createdAt ? new Date(query.createdAt.toDate()) : new Date();
-                        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        
-                        const resolvedDate = query.resolvedAt ? new Date(query.resolvedAt.toDate()) : new Date();
-                        const formattedResolvedDate = resolvedDate.toLocaleDateString() + ' ' + resolvedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        
-                        queryItem.innerHTML = `
-                            <div class="query-header">
-                                <div class="query-title">${query.title}</div>
-                                <div class="query-status status-resolved">Resolved</div>
-                            </div>
-                            <div class="query-content">${query.content}</div>
-                            <div class="query-response">
-                                <strong>Response:</strong> ${query.response || 'No response provided'}
-                            </div>
-                            <div class="query-meta">
-                                <span>Resolved on: ${formattedResolvedDate}</span>
-                            </div>
-                            <div class="query-actions">
-                                <button class="btn btn-secondary" onclick="viewQueryDetails('${queryId}')">View Details</button>
-                            </div>
-                        `;
-                        
-                        resolvedQueries.appendChild(queryItem);
-                    });
+                    const queryItem = document.createElement('div');
+                    queryItem.className = 'query-item';
                     
-                    if (snapshot.empty) {
-                        resolvedQueries.innerHTML = '<p>No resolved queries.</p>';
-                    }
-                }, (error) => {
-                    console.error('Error loading resolved queries: ', error);
-                    resolvedQueries.innerHTML = '<p>Error loading queries. Please try again.</p>';
+                    const date = new Date(query.createdAt);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    const resolvedDate = new Date(query.resolvedAt);
+                    const formattedResolvedDate = resolvedDate.toLocaleDateString() + ' ' + resolvedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    queryItem.innerHTML = `
+                        <div class="query-header">
+                            <div class="query-title">${query.title}</div>
+                            <div class="query-status status-resolved">Resolved</div>
+                        </div>
+                        <div class="query-content">${query.content}</div>
+                        <div class="query-response">
+                            <strong>Response:</strong> ${query.response || 'No response provided'}
+                        </div>
+                        <div class="query-meta">
+                            <span>Resolved on: ${formattedResolvedDate}</span>
+                        </div>
+                        <div class="query-actions">
+                            <button class="btn btn-secondary" onclick="viewQueryDetails('${queryId}')">View Details</button>
+                        </div>
+                    `;
+                    
+                    resolvedQueries.appendChild(queryItem);
                 });
+                
+                if (snapshot.numChildren() === 0) {
+                    resolvedQueries.innerHTML = '<p>No resolved queries.</p>';
+                }
+            }).catch((error) => {
+                console.error('Error loading resolved queries: ', error);
+                resolvedQueries.innerHTML = '<p>Error loading queries. Please try again.</p>';
+            });
         }
 
         function loadContacts(tabType) {
@@ -2681,28 +2716,28 @@
             
             // Detach any existing listener
             if (contactsListener) {
-                contactsListener();
+                database.ref('conversations').off('value', contactsListener);
             }
             
             // Get conversations based on tab type
             let query;
             if (tabType === 'students') {
                 // Show class group conversation
-                query = db.collection('conversations').where('id', '==', 'class-group');
+                query = database.ref('conversations').orderByChild('id').equalTo('class-group');
             } else if (tabType === 'hod') {
                 // Show HOD conversation
-                query = db.collection('conversations').where('id', '==', 'faculty-hod');
+                query = database.ref('conversations').orderByChild('id').equalTo('faculty-hod');
             } else if (tabType === 'faculty') {
                 // Show faculty group conversation
-                query = db.collection('conversations').where('id', '==', 'faculty-cse');
+                query = database.ref('conversations').orderByChild('id').equalTo('faculty-cse');
             }
             
-            contactsListener = query.onSnapshot((snapshot) => {
+            contactsListener = query.on('value', (snapshot) => {
                 contactList.innerHTML = '';
                 
-                snapshot.forEach((doc) => {
-                    const conversation = doc.data();
-                    const conversationId = doc.id;
+                snapshot.forEach((childSnapshot) => {
+                    const conversation = childSnapshot.val();
+                    const conversationId = childSnapshot.key;
                     
                     const contactItem = document.createElement('div');
                     contactItem.className = 'contact-item';
@@ -2716,7 +2751,7 @@
                         lastMessageText = conversation.lastMessage;
                         
                         if (conversation.lastMessageTime) {
-                            const date = conversation.lastMessageTime.toDate();
+                            const date = new Date(conversation.lastMessageTime);
                             lastMessageTime = formatMessageTime(date);
                         }
                     }
@@ -2744,7 +2779,7 @@
                     contactList.appendChild(contactItem);
                 });
                 
-                if (snapshot.empty) {
+                if (snapshot.numChildren() === 0) {
                     contactList.innerHTML = '<p>No conversations found.</p>';
                 }
             }, (error) => {
@@ -2779,30 +2814,27 @@
             
             // Detach any existing message listener
             if (messageListener) {
-                messageListener();
+                database.ref('messages').orderByChild('conversationId').equalTo(conversationId).off('value', messageListener);
             }
             
-            // Load messages from Firestore
-            messageListener = db.collection('messages')
-                .where('conversationId', '==', conversationId)
-                .orderBy('timestamp', 'asc')
-                .onSnapshot((snapshot) => {
-                    chatMessages.innerHTML = '';
-                    
-                    snapshot.forEach((doc) => {
-                        const message = doc.data();
-                        addMessageToChat(message);
-                    });
-                    
-                    // Scroll to bottom
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                    
-                    // Mark messages as seen
-                    markMessagesAsSeen(conversationId);
-                }, (error) => {
-                    console.error('Error loading messages: ', error);
-                    chatMessages.innerHTML = '<p>Error loading messages. Please try again.</p>';
+            // Load messages from Firebase
+            messageListener = database.ref('messages').orderByChild('conversationId').equalTo(conversationId).on('value', (snapshot) => {
+                chatMessages.innerHTML = '';
+                
+                snapshot.forEach((childSnapshot) => {
+                    const message = childSnapshot.val();
+                    addMessageToChat(message);
                 });
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Mark messages as seen
+                markMessagesAsSeen(conversationId);
+            }, (error) => {
+                console.error('Error loading messages: ', error);
+                chatMessages.innerHTML = '<p>Error loading messages. Please try again.</p>';
+            });
         }
 
         function addMessageToChat(message) {
@@ -2811,7 +2843,7 @@
             const messageEl = document.createElement('div');
             messageEl.className = `message ${message.senderId === currentUser.id ? 'sent' : 'received'}`;
             
-            const date = message.timestamp ? new Date(message.timestamp.toDate()) : new Date();
+            const date = message.timestamp ? new Date(message.timestamp) : new Date();
             const timeString = formatMessageTime(date);
             
             // Get sender name
@@ -2876,22 +2908,23 @@
                 conversationId: currentConversation.id,
                 senderId: currentUser.id,
                 content: message,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
                 status: {
                     delivered: false,
                     seen: false
                 }
             };
             
-            // Add to Firestore
-            db.collection('messages').add(messageObj)
-                .then((docRef) => {
-                    console.log('Message sent with ID: ', docRef.id);
+            // Add to Firebase
+            const newMessageRef = database.ref('messages').push();
+            newMessageRef.set(messageObj)
+                .then(() => {
+                    console.log('Message sent successfully');
                     
                     // Update conversation with last message
-                    db.collection('conversations').doc(currentConversation.id).update({
+                    database.ref('conversations/' + currentConversation.id).update({
                         lastMessage: message,
-                        lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
+                        lastMessageTime: firebase.database.ServerValue.TIMESTAMP
                     });
                     
                     // Clear input
@@ -2899,7 +2932,7 @@
                     
                     // Update message status to delivered after a short delay
                     setTimeout(() => {
-                        updateMessageStatus(docRef.id, 'delivered', true);
+                        updateMessageStatus(newMessageRef.key, 'delivered', true);
                     }, 1000);
                 })
                 .catch((error) => {
@@ -2909,37 +2942,30 @@
         }
 
         function updateMessageStatus(messageId, statusType, value) {
-            db.collection('messages').doc(messageId).update({
-                [`status.${statusType}`]: value
-            }).catch(error => {
-                console.error('Error updating message status: ', error);
-            });
+            database.ref('messages/' + messageId + '/status/' + statusType).set(value)
+                .catch(error => {
+                    console.error('Error updating message status: ', error);
+                });
         }
 
         function markMessagesAsSeen(conversationId) {
             // Mark all messages in the conversation as seen by the current user
-            db.collection('messages')
-                .where('conversationId', '==', conversationId)
-                .where('senderId', '!=', currentUser.id)
-                .get()
-                .then((snapshot) => {
-                    const batch = db.batch();
-                    
-                    snapshot.forEach((doc) => {
-                        const messageRef = db.collection('messages').doc(doc.id);
-                        batch.update(messageRef, {
-                            'status.seen': true
-                        });
-                    });
-                    
-                    return batch.commit();
-                })
-                .then(() => {
-                    console.log('Messages marked as seen');
-                })
-                .catch((error) => {
-                    console.error('Error marking messages as seen: ', error);
+            database.ref('messages').orderByChild('conversationId').equalTo(conversationId).once('value').then((snapshot) => {
+                const updates = {};
+                
+                snapshot.forEach((childSnapshot) => {
+                    const message = childSnapshot.val();
+                    if (message.senderId !== currentUser.id) {
+                        updates[childSnapshot.key + '/status/seen'] = true;
+                    }
                 });
+                
+                return database.ref('messages').update(updates);
+            }).then(() => {
+                console.log('Messages marked as seen');
+            }).catch((error) => {
+                console.error('Error marking messages as seen: ', error);
+            });
         }
 
         function handleFileUpload(e) {
@@ -2968,29 +2994,26 @@
                             content: `Shared a file: ${file.name}`,
                             fileUrl: downloadURL,
                             fileName: file.name,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            timestamp: firebase.database.ServerValue.TIMESTAMP,
                             status: {
                                 delivered: false,
                                 seen: false
                             }
                         };
                         
-                        return db.collection('messages').add(messageObj);
+                        const newMessageRef = database.ref('messages').push();
+                        return newMessageRef.set(messageObj);
                     }
                 })
-                .then((docRef) => {
-                    if (docRef) {
-                        console.log('File message sent with ID: ', docRef.id);
-                        
-                        // Update conversation with last message
-                        db.collection('conversations').doc(currentConversation.id).update({
-                            lastMessage: `Shared a file: ${file.name}`,
-                            lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        
-                        // Show notification
-                        showToast(`File "${file.name}" uploaded successfully!`, 'success');
-                    }
+                .then(() => {
+                    // Update conversation with last message
+                    database.ref('conversations/' + currentConversation.id).update({
+                        lastMessage: `Shared a file: ${file.name}`,
+                        lastMessageTime: firebase.database.ServerValue.TIMESTAMP
+                    });
+                    
+                    // Show notification
+                    showToast(`File "${file.name}" uploaded successfully!`, 'success');
                 })
                 .catch((error) => {
                     console.error('Error uploading file: ', error);
@@ -3097,7 +3120,7 @@
                 'F': 0
             };
             
-            // In a real app, this would fetch grades from Firestore
+            // In a real app, this would fetch grades from Firebase
             // For now, we'll use sample data
             const sampleGrades = ['A', 'B', 'C', 'D', 'A', 'B', 'C', 'A', 'B', 'A'];
             
@@ -3252,9 +3275,9 @@
         }
 
         function markQueryAsResolved(queryId) {
-            db.collection('queries').doc(queryId).update({
+            database.ref('queries/' + queryId).update({
                 status: 'resolved',
-                resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                resolvedAt: firebase.database.ServerValue.TIMESTAMP,
                 resolvedBy: currentUser.id
             }).then(() => {
                 showToast('Query marked as resolved', 'success');
@@ -3267,6 +3290,21 @@
         function viewQueryDetails(queryId) {
             showToast('Viewing details for query ' + queryId, 'info');
             // In a real app, this would open a details view
+        }
+
+        function scheduleClass(classId) {
+            showToast('Scheduling class ' + classId, 'info');
+            // In a real app, this would open a scheduling form
+        }
+
+        function takeAttendance(classId) {
+            showToast('Taking attendance for class ' + classId, 'info');
+            // In a real app, this would open an attendance form
+        }
+
+        function viewMaterials(classId) {
+            showToast('Viewing materials for class ' + classId, 'info');
+            // In a real app, this would open a materials view
         }
     </script>
 </body>
