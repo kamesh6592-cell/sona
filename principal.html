@@ -1660,21 +1660,8 @@
                         <i class="fas fa-bell"></i>
                         Notifications
                     </h3>
-                    <div class="notification-list">
-                        <div class="list-item">
-                            <div class="list-item-header">
-                                <h4 class="list-item-title">Assignment Reminder</h4>
-                                <span class="list-item-meta">2 hours ago</span>
-                            </div>
-                            <p>Database Design Project due in 3 days</p>
-                        </div>
-                        <div class="list-item">
-                            <div class="list-item-header">
-                                <h4 class="list-item-title">Class Cancellation</h4>
-                                <span class="list-item-meta">1 day ago</span>
-                            </div>
-                            <p>Tomorrow's Algorithm Analysis class is cancelled</p>
-                        </div>
+                    <div class="notification-list" id="notificationList">
+                        <!-- Notifications will be loaded here -->
                     </div>
                 </div>
                 
@@ -1683,21 +1670,8 @@
                         <i class="fas fa-calendar-check"></i>
                         Upcoming Deadlines
                     </h3>
-                    <div class="deadline-list">
-                        <div class="list-item">
-                            <div class="list-item-header">
-                                <h4 class="list-item-title">Database Design Project</h4>
-                                <span class="list-item-meta">Oct 15, 2025</span>
-                            </div>
-                            <p>Submit final project report</p>
-                        </div>
-                        <div class="list-item">
-                            <div class="list-item-header">
-                                <h4 class="list-item-title">Web Development Quiz</h4>
-                                <span class="list-item-meta">Oct 18, 2025</span>
-                            </div>
-                            <p>Covering JavaScript and React</p>
-                        </div>
+                    <div class="deadline-list" id="deadlineList">
+                        <!-- Deadlines will be loaded here -->
                     </div>
                 </div>
                 
@@ -1829,6 +1803,8 @@
         const navItems = document.querySelectorAll('.nav-item');
         const notifications = document.getElementById('notifications');
         const notificationCount = document.getElementById('notificationCount');
+        const notificationList = document.getElementById('notificationList');
+        const deadlineList = document.getElementById('deadlineList');
         
         // Messages functionality
         const messagesSection = document.getElementById('messagesSection');
@@ -1844,6 +1820,199 @@
         
         let currentConversationId = null;
         let messagesListener = null;
+        
+        // Initialize sample data in Firebase
+        function initializeSampleData() {
+            // Create sample users
+            const sampleUsers = [
+                { id: 'faculty001', name: 'Dr. Rajesh Sharma', role: 'faculty', department: 'Computer Science', email: 'rajesh.sharma@sonatech.ac.in' },
+                { id: 'faculty002', name: 'Prof. Priya Patel', role: 'faculty', department: 'Computer Science', email: 'priya.patel@sonatech.ac.in' },
+                { id: 'hod001', name: 'Dr. Anand Kumar', role: 'hod', department: 'Computer Science', email: 'anand.kumar@sonatech.ac.in' },
+                { id: 'principal001', name: 'Dr. Meena Reddy', role: 'principal', department: 'Administration', email: 'meena.reddy@sonatech.ac.in' },
+                { id: 'student002', name: 'Priya Singh', role: 'student', department: 'Computer Science', email: 'priya.singh@sonatech.ac.in' }
+            ];
+            
+            sampleUsers.forEach(userData => {
+                db.collection('users').doc(userData.id).set(userData, { merge: true });
+            });
+            
+            // Create sample conversations
+            const sampleConversations = [
+                {
+                    participants: ['student001', 'faculty001'],
+                    lastMessage: {
+                        text: 'Please check the assignment submission',
+                        senderId: 'faculty001',
+                        timestamp: new Date()
+                    },
+                    updatedAt: new Date()
+                },
+                {
+                    participants: ['student001', 'hod001'],
+                    lastMessage: {
+                        text: 'Meeting tomorrow at 10 AM',
+                        senderId: 'hod001',
+                        timestamp: new Date(Date.now() - 86400000)
+                    },
+                    updatedAt: new Date(Date.now() - 86400000)
+                }
+            ];
+            
+            sampleConversations.forEach((convData, index) => {
+                db.collection('conversations').add(convData).then(docRef => {
+                    // Add sample messages
+                    const sampleMessages = [
+                        {
+                            senderId: convData.participants[1],
+                            senderName: sampleUsers.find(u => u.id === convData.participants[1]).name,
+                            text: convData.lastMessage.text,
+                            timestamp: convData.lastMessage.timestamp,
+                            read: false
+                        }
+                    ];
+                    
+                    sampleMessages.forEach(msg => {
+                        docRef.collection('messages').add(msg);
+                    });
+                });
+            });
+            
+            // Create sample notifications
+            const sampleNotifications = [
+                {
+                    title: 'Assignment Reminder',
+                    message: 'Database Design Project due in 3 days',
+                    timestamp: new Date(Date.now() - 7200000),
+                    read: false,
+                    type: 'assignment'
+                },
+                {
+                    title: 'Class Cancellation',
+                    message: 'Tomorrow\'s Algorithm Analysis class is cancelled',
+                    timestamp: new Date(Date.now() - 86400000),
+                    read: false,
+                    type: 'announcement'
+                }
+            ];
+            
+            sampleNotifications.forEach(notif => {
+                db.collection('notifications').add(notif);
+            });
+            
+            // Create sample deadlines
+            const sampleDeadlines = [
+                {
+                    title: 'Database Design Project',
+                    dueDate: new Date('2025-10-15'),
+                    description: 'Submit final project report'
+                },
+                {
+                    title: 'Web Development Quiz',
+                    dueDate: new Date('2025-10-18'),
+                    description: 'Covering JavaScript and React'
+                }
+            ];
+            
+            sampleDeadlines.forEach(deadline => {
+                db.collection('deadlines').add(deadline);
+            });
+        }
+        
+        // Load notifications from Firebase
+        function loadNotifications() {
+            notificationList.innerHTML = '<div class="loading">Loading notifications...</div>';
+            
+            db.collection('notifications')
+                .orderBy('timestamp', 'desc')
+                .limit(5)
+                .onSnapshot(snapshot => {
+                    notificationList.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        notificationList.innerHTML = '<div class="no-notifications">No notifications</div>';
+                        return;
+                    }
+                    
+                    let unreadCount = 0;
+                    
+                    snapshot.forEach(doc => {
+                        const notification = doc.data();
+                        const notificationEl = createNotificationElement(notification);
+                        notificationList.appendChild(notificationEl);
+                        
+                        if (!notification.read) {
+                            unreadCount++;
+                        }
+                    });
+                    
+                    // Update notification count
+                    notificationCount.textContent = unreadCount.toString();
+                }, error => {
+                    console.error('Error loading notifications:', error);
+                    notificationList.innerHTML = '<div class="error">Error loading notifications</div>';
+                });
+        }
+        
+        function createNotificationElement(notification) {
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            
+            const time = notification.timestamp ? new Date(notification.timestamp.toDate()).toLocaleDateString() : '';
+            
+            item.innerHTML = `
+                <div class="list-item-header">
+                    <h4 class="list-item-title">${notification.title}</h4>
+                    <span class="list-item-meta">${time}</span>
+                </div>
+                <p>${notification.message}</p>
+            `;
+            
+            return item;
+        }
+        
+        // Load deadlines from Firebase
+        function loadDeadlines() {
+            deadlineList.innerHTML = '<div class="loading">Loading deadlines...</div>';
+            
+            db.collection('deadlines')
+                .where('dueDate', '>=', new Date())
+                .orderBy('dueDate', 'asc')
+                .limit(5)
+                .onSnapshot(snapshot => {
+                    deadlineList.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        deadlineList.innerHTML = '<div class="no-deadlines">No upcoming deadlines</div>';
+                        return;
+                    }
+                    
+                    snapshot.forEach(doc => {
+                        const deadline = doc.data();
+                        const deadlineEl = createDeadlineElement(deadline);
+                        deadlineList.appendChild(deadlineEl);
+                    });
+                }, error => {
+                    console.error('Error loading deadlines:', error);
+                    deadlineList.innerHTML = '<div class="error">Error loading deadlines</div>';
+                });
+        }
+        
+        function createDeadlineElement(deadline) {
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            
+            const dueDate = deadline.dueDate ? new Date(deadline.dueDate.toDate()).toLocaleDateString() : '';
+            
+            item.innerHTML = `
+                <div class="list-item-header">
+                    <h4 class="list-item-title">${deadline.title}</h4>
+                    <span class="list-item-meta">${dueDate}</span>
+                </div>
+                <p>${deadline.description}</p>
+            `;
+            
+            return item;
+        }
         
         // Load conversations when messages section is shown
         function loadConversations() {
@@ -2457,6 +2626,13 @@
         
         // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize sample data
+            initializeSampleData();
+            
+            // Load notifications and deadlines
+            loadNotifications();
+            loadDeadlines();
+            
             // Initialize progress bars with animation
             const progressFills = document.querySelectorAll('.progress-fill');
             progressFills.forEach(fill => {
