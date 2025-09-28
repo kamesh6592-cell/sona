@@ -1328,6 +1328,44 @@
                 animation-duration: 0.01ms !important;
             }
         }
+        
+        /* Loading Spinner */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--spacing-lg);
+        }
+        
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-yellow);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Error Message */
+        .error {
+            color: var(--error);
+            text-align: center;
+            padding: var(--spacing-lg);
+        }
+        
+        /* Empty State */
+        .no-notifications,
+        .no-deadlines,
+        .no-conversations,
+        .no-messages {
+            text-align: center;
+            padding: var(--spacing-lg);
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -1422,25 +1460,25 @@
                                 <i class="fas fa-graduation-cap"></i>
                                 Academic Overview
                             </h2>
-                            <button class="card-action" aria-label="Refresh Overview">
+                            <button class="card-action" aria-label="Refresh Overview" id="refreshOverview">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
                         </div>
                         <div class="kpi-grid">
                             <div class="kpi-card">
-                                <div class="kpi-value">87%</div>
+                                <div class="kpi-value" id="attendanceValue">87%</div>
                                 <div class="kpi-label">Attendance</div>
                             </div>
                             <div class="kpi-card">
-                                <div class="kpi-value">3.7</div>
+                                <div class="kpi-value" id="gpaValue">3.7</div>
                                 <div class="kpi-label">GPA</div>
                             </div>
                             <div class="kpi-card">
-                                <div class="kpi-value">4</div>
+                                <div class="kpi-value" id="coursesValue">4</div>
                                 <div class="kpi-label">Courses</div>
                             </div>
                             <div class="kpi-card">
-                                <div class="kpi-value">2</div>
+                                <div class="kpi-value" id="pendingValue">2</div>
                                 <div class="kpi-label">Pending</div>
                             </div>
                         </div>
@@ -1481,11 +1519,14 @@
                                 <i class="fas fa-chalkboard-teacher"></i>
                                 Today's Classes
                             </h2>
-                            <button class="card-action" aria-label="View Full Timetable">
+                            <button class="card-action" aria-label="View Full Timetable" id="viewFullTimetable">
                                 <i class="fas fa-ellipsis-h"></i>
                             </button>
                         </div>
-                        <table class="timetable">
+                        <div class="loading" id="timetableLoading">
+                            <div class="spinner"></div>
+                        </div>
+                        <table class="timetable" id="timetableTable" style="display: none;">
                             <thead>
                                 <tr>
                                     <th>Time</th>
@@ -1493,22 +1534,8 @@
                                     <th>Location</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="time">9:00 - 10:00</td>
-                                    <td class="subject">Data Structures</td>
-                                    <td class="location">Room 301</td>
-                                </tr>
-                                <tr>
-                                    <td class="time">10:30 - 11:30</td>
-                                    <td class="subject">Database Systems</td>
-                                    <td class="location">Lab 205</td>
-                                </tr>
-                                <tr>
-                                    <td class="time">1:30 - 2:30</td>
-                                    <td class="subject">Web Development</td>
-                                    <td class="location">Room 402</td>
-                                </tr>
+                            <tbody id="timetableBody">
+                                <!-- Timetable data will be loaded here -->
                             </tbody>
                         </table>
                     </div>
@@ -1520,32 +1547,15 @@
                                 <i class="fas fa-tasks"></i>
                                 Assignment Status
                             </h2>
-                            <button class="card-action" aria-label="View All Assignments">
+                            <button class="card-action" aria-label="View All Assignments" id="viewAllAssignments">
                                 <i class="fas fa-ellipsis-h"></i>
                             </button>
                         </div>
-                        <div class="assignment-list">
-                            <div class="assignment-item">
-                                <div class="assignment-info">
-                                    <div class="assignment-title">Database Design Project</div>
-                                    <div class="assignment-meta">Due: Oct 15, 2025</div>
-                                </div>
-                                <span class="assignment-status status-pending">Pending</span>
-                            </div>
-                            <div class="assignment-item">
-                                <div class="assignment-info">
-                                    <div class="assignment-title">Algorithm Analysis</div>
-                                    <div class="assignment-meta">Due: Oct 10, 2025</div>
-                                </div>
-                                <span class="assignment-status status-submitted">Submitted</span>
-                            </div>
-                            <div class="assignment-item">
-                                <div class="assignment-info">
-                                    <div class="assignment-title">Web Development Lab</div>
-                                    <div class="assignment-meta">Due: Oct 5, 2025</div>
-                                </div>
-                                <span class="assignment-status status-graded">Graded (A)</span>
-                            </div>
+                        <div class="loading" id="assignmentsLoading">
+                            <div class="spinner"></div>
+                        </div>
+                        <div class="assignment-list" id="assignmentList" style="display: none;">
+                            <!-- Assignment data will be loaded here -->
                         </div>
                     </div>
                     
@@ -1556,25 +1566,15 @@
                                 <i class="fas fa-bullhorn"></i>
                                 Recent Announcements
                             </h2>
-                            <button class="card-action" aria-label="View All Announcements">
+                            <button class="card-action" aria-label="View All Announcements" id="viewAllAnnouncements">
                                 <i class="fas fa-ellipsis-h"></i>
                             </button>
                         </div>
-                        <div class="announcement-list">
-                            <div class="list-item">
-                                <div class="list-item-header">
-                                    <h4 class="list-item-title">College Annual Day - Oct 15, 2025</h4>
-                                    <span class="list-item-meta">2 days ago</span>
-                                </div>
-                                <p>All students are requested to attend the college annual day function...</p>
-                            </div>
-                            <div class="list-item">
-                                <div class="list-item-header">
-                                    <h4 class="list-item-title">Library Timings Extended</h4>
-                                    <span class="list-item-meta">1 week ago</span>
-                                </div>
-                                <p>The college library will now remain open until 9 PM on weekdays...</p>
-                            </div>
+                        <div class="loading" id="announcementsLoading">
+                            <div class="spinner"></div>
+                        </div>
+                        <div class="announcement-list" id="announcementList" style="display: none;">
+                            <!-- Announcement data will be loaded here -->
                         </div>
                     </div>
                     
@@ -1585,47 +1585,15 @@
                                 <i class="fas fa-chart-line"></i>
                                 Grade Progress
                             </h2>
-                            <button class="card-action" aria-label="View Detailed Grades">
+                            <button class="card-action" aria-label="View Detailed Grades" id="viewDetailedGrades">
                                 <i class="fas fa-ellipsis-h"></i>
                             </button>
                         </div>
-                        <div class="progress-list">
-                            <div class="progress-item">
-                                <div class="progress-header">
-                                    <span class="progress-title">Data Structures</span>
-                                    <span class="progress-value">85%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 85%"></div>
-                                </div>
-                            </div>
-                            <div class="progress-item">
-                                <div class="progress-header">
-                                    <span class="progress-title">Database Systems</span>
-                                    <span class="progress-value">92%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 92%"></div>
-                                </div>
-                            </div>
-                            <div class="progress-item">
-                                <div class="progress-header">
-                                    <span class="progress-title">Web Development</span>
-                                    <span class="progress-value">78%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 78%"></div>
-                                </div>
-                            </div>
-                            <div class="progress-item">
-                                <div class="progress-header">
-                                    <span class="progress-title">Algorithm Analysis</span>
-                                    <span class="progress-value">88%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 88%"></div>
-                                </div>
-                            </div>
+                        <div class="loading" id="gradesLoading">
+                            <div class="spinner"></div>
+                        </div>
+                        <div class="progress-list" id="progressList" style="display: none;">
+                            <!-- Grade progress data will be loaded here -->
                         </div>
                     </div>
                 </div>
@@ -1641,7 +1609,9 @@
                                 </button>
                             </div>
                             <div class="conversations" id="conversationsList">
-                                <!-- Conversations will be loaded here -->
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                </div>
                             </div>
                         </div>
                         <div class="conversation-view" id="conversationView">
@@ -1661,7 +1631,9 @@
                         Notifications
                     </h3>
                     <div class="notification-list" id="notificationList">
-                        <!-- Notifications will be loaded here -->
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
                     </div>
                 </div>
                 
@@ -1671,7 +1643,9 @@
                         Upcoming Deadlines
                     </h3>
                     <div class="deadline-list" id="deadlineList">
-                        <!-- Deadlines will be loaded here -->
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
                     </div>
                 </div>
                 
@@ -1771,156 +1745,543 @@
         const socket = io('http://localhost:3000');
         
         // User Authentication
-        let user = JSON.parse(localStorage.getItem('user'));
-        if (!user || user.role !== 'student') {
-            // For demo purposes, set a default user
-            user = {
-                id: 'student001',
-                name: 'Suresh Kumar',
-                role: 'student',
-                email: 'suresh.kumar@sonatech.ac.in',
-                department: 'Computer Science',
-                year: '3rd Year'
-            };
-            localStorage.setItem('user', JSON.stringify(user));
-        }
+        let user = null;
         
-        // Update UI with user info
-        document.getElementById('userName').textContent = user.name;
-        document.getElementById('userRole').textContent = user.department;
-        document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('');
-        
-        // Log analytics event
-        analytics.logEvent('dashboard_loaded', {
-            user_role: user.role,
-            user_id: user.id
+        // Check if user is authenticated
+        auth.onAuthStateChanged(authUser => {
+            if (authUser) {
+                // User is signed in
+                db.collection('users').doc(authUser.uid).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            user = doc.data();
+                            user.id = authUser.uid;
+                        } else {
+                            // Create a new user document
+                            user = {
+                                id: authUser.uid,
+                                name: authUser.displayName || authUser.email,
+                                email: authUser.email,
+                                role: 'student',
+                                department: 'Computer Science'
+                            };
+                            db.collection('users').doc(authUser.uid).set(user);
+                        }
+                        
+                        // Update UI with user info
+                        updateUserUI(user);
+                        
+                        // Initialize the app
+                        initializeApp(user);
+                    })
+                    .catch(error => {
+                        console.error('Error getting user document:', error);
+                        // Use a default user for demo
+                        user = {
+                            id: 'student001',
+                            name: 'Suresh Kumar',
+                            role: 'student',
+                            email: 'suresh.kumar@sonatech.ac.in',
+                            department: 'Computer Science',
+                            year: '3rd Year'
+                        };
+                        updateUserUI(user);
+                        initializeApp(user);
+                    });
+            } else {
+                // User is signed out
+                // For demo, use a default user
+                user = {
+                    id: 'student001',
+                    name: 'Suresh Kumar',
+                    role: 'student',
+                    email: 'suresh.kumar@sonatech.ac.in',
+                    department: 'Computer Science',
+                    year: '3rd Year'
+                };
+                updateUserUI(user);
+                initializeApp(user);
+            }
         });
         
-        // DOM Elements
-        const sidebar = document.getElementById('sidebar');
-        const toggleSidebarBtn = document.getElementById('toggleSidebar');
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const navItems = document.querySelectorAll('.nav-item');
-        const notifications = document.getElementById('notifications');
-        const notificationCount = document.getElementById('notificationCount');
-        const notificationList = document.getElementById('notificationList');
-        const deadlineList = document.getElementById('deadlineList');
+        function updateUserUI(user) {
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userRole').textContent = user.department;
+            document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('');
+        }
         
-        // Messages functionality
-        const messagesSection = document.getElementById('messagesSection');
-        const conversationsList = document.getElementById('conversationsList');
-        const conversationView = document.getElementById('conversationView');
-        const newMessageBtn = document.getElementById('newMessageBtn');
-        const newMessageModal = document.getElementById('newMessageModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const createConversationForm = document.getElementById('createConversationForm');
-        const recipientSelect = document.getElementById('recipientSelect');
-        const messageSubject = document.getElementById('messageSubject');
-        const messageText = document.getElementById('messageText');
-        
-        let currentConversationId = null;
-        let messagesListener = null;
+        function initializeApp(user) {
+            // Initialize sample data in Firebase (for demo purposes)
+            initializeSampleData();
+            
+            // Load dashboard data
+            loadDashboardData();
+            
+            // Load notifications and deadlines
+            loadNotifications();
+            loadDeadlines();
+            
+            // Set up real-time listeners
+            setupRealtimeListeners();
+            
+            // Initialize progress bars with animation
+            setTimeout(() => {
+                const progressFills = document.querySelectorAll('.progress-fill');
+                progressFills.forEach(fill => {
+                    const width = fill.style.width;
+                    fill.style.width = '0';
+                    setTimeout(() => {
+                        fill.style.width = width;
+                    }, 300);
+                });
+            }, 500);
+            
+            // Register FCM token
+            if (messaging) {
+                messaging.getToken({ vapidKey: 'YOUR_VAPID_KEY' })
+                    .then(token => {
+                        console.log('FCM Token:', token);
+                        if (user && user.id) {
+                            db.collection('users').doc(user.id).update({
+                                fcmToken: token
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error getting FCM token:', error);
+                    });
+            }
+        }
         
         // Initialize sample data in Firebase
         function initializeSampleData() {
-            // Create sample users
-            const sampleUsers = [
-                { id: 'faculty001', name: 'Dr. Rajesh Sharma', role: 'faculty', department: 'Computer Science', email: 'rajesh.sharma@sonatech.ac.in' },
-                { id: 'faculty002', name: 'Prof. Priya Patel', role: 'faculty', department: 'Computer Science', email: 'priya.patel@sonatech.ac.in' },
-                { id: 'hod001', name: 'Dr. Anand Kumar', role: 'hod', department: 'Computer Science', email: 'anand.kumar@sonatech.ac.in' },
-                { id: 'principal001', name: 'Dr. Meena Reddy', role: 'principal', department: 'Administration', email: 'meena.reddy@sonatech.ac.in' },
-                { id: 'student002', name: 'Priya Singh', role: 'student', department: 'Computer Science', email: 'priya.singh@sonatech.ac.in' }
-            ];
-            
-            sampleUsers.forEach(userData => {
-                db.collection('users').doc(userData.id).set(userData, { merge: true });
-            });
-            
-            // Create sample conversations
-            const sampleConversations = [
-                {
-                    participants: ['student001', 'faculty001'],
-                    lastMessage: {
-                        text: 'Please check the assignment submission',
-                        senderId: 'faculty001',
-                        timestamp: new Date()
-                    },
-                    updatedAt: new Date()
-                },
-                {
-                    participants: ['student001', 'hod001'],
-                    lastMessage: {
-                        text: 'Meeting tomorrow at 10 AM',
-                        senderId: 'hod001',
-                        timestamp: new Date(Date.now() - 86400000)
-                    },
-                    updatedAt: new Date(Date.now() - 86400000)
-                }
-            ];
-            
-            sampleConversations.forEach((convData, index) => {
-                db.collection('conversations').add(convData).then(docRef => {
-                    // Add sample messages
-                    const sampleMessages = [
-                        {
-                            senderId: convData.participants[1],
-                            senderName: sampleUsers.find(u => u.id === convData.participants[1]).name,
-                            text: convData.lastMessage.text,
-                            timestamp: convData.lastMessage.timestamp,
-                            read: false
-                        }
-                    ];
-                    
-                    sampleMessages.forEach(msg => {
-                        docRef.collection('messages').add(msg);
-                    });
+            // Check if sample data already exists
+            db.collection('users').limit(1).get()
+                .then(snapshot => {
+                    if (snapshot.empty) {
+                        // Create sample users
+                        const sampleUsers = [
+                            { id: 'faculty001', name: 'Dr. Rajesh Sharma', role: 'faculty', department: 'Computer Science', email: 'rajesh.sharma@sonatech.ac.in' },
+                            { id: 'faculty002', name: 'Prof. Priya Patel', role: 'faculty', department: 'Computer Science', email: 'priya.patel@sonatech.ac.in' },
+                            { id: 'hod001', name: 'Dr. Anand Kumar', role: 'hod', department: 'Computer Science', email: 'anand.kumar@sonatech.ac.in' },
+                            { id: 'principal001', name: 'Dr. Meena Reddy', role: 'principal', department: 'Administration', email: 'meena.reddy@sonatech.ac.in' },
+                            { id: 'student002', name: 'Priya Singh', role: 'student', department: 'Computer Science', email: 'priya.singh@sonatech.ac.in' }
+                        ];
+                        
+                        sampleUsers.forEach(userData => {
+                            db.collection('users').doc(userData.id).set(userData);
+                        });
+                        
+                        // Create sample conversations
+                        const sampleConversations = [
+                            {
+                                participants: ['student001', 'faculty001'],
+                                lastMessage: {
+                                    text: 'Please check the assignment submission',
+                                    senderId: 'faculty001',
+                                    timestamp: new Date()
+                                },
+                                updatedAt: new Date()
+                            },
+                            {
+                                participants: ['student001', 'hod001'],
+                                lastMessage: {
+                                    text: 'Meeting tomorrow at 10 AM',
+                                    senderId: 'hod001',
+                                    timestamp: new Date(Date.now() - 86400000)
+                                },
+                                updatedAt: new Date(Date.now() - 86400000)
+                            }
+                        ];
+                        
+                        sampleConversations.forEach((convData, index) => {
+                            db.collection('conversations').add(convData).then(docRef => {
+                                // Add sample messages
+                                const sampleMessages = [
+                                    {
+                                        senderId: convData.participants[1],
+                                        senderName: sampleUsers.find(u => u.id === convData.participants[1]).name,
+                                        text: convData.lastMessage.text,
+                                        timestamp: convData.lastMessage.timestamp,
+                                        read: false
+                                    }
+                                ];
+                                
+                                sampleMessages.forEach(msg => {
+                                    docRef.collection('messages').add(msg);
+                                });
+                            });
+                        });
+                        
+                        // Create sample notifications
+                        const sampleNotifications = [
+                            {
+                                title: 'Assignment Reminder',
+                                message: 'Database Design Project due in 3 days',
+                                timestamp: new Date(Date.now() - 7200000),
+                                read: false,
+                                type: 'assignment'
+                            },
+                            {
+                                title: 'Class Cancellation',
+                                message: 'Tomorrow\'s Algorithm Analysis class is cancelled',
+                                timestamp: new Date(Date.now() - 86400000),
+                                read: false,
+                                type: 'announcement'
+                            }
+                        ];
+                        
+                        sampleNotifications.forEach(notif => {
+                            db.collection('notifications').add(notif);
+                        });
+                        
+                        // Create sample deadlines
+                        const sampleDeadlines = [
+                            {
+                                title: 'Database Design Project',
+                                dueDate: new Date('2025-10-15'),
+                                description: 'Submit final project report'
+                            },
+                            {
+                                title: 'Web Development Quiz',
+                                dueDate: new Date('2025-10-18'),
+                                description: 'Covering JavaScript and React'
+                            }
+                        ];
+                        
+                        sampleDeadlines.forEach(deadline => {
+                            db.collection('deadlines').add(deadline);
+                        });
+                        
+                        // Create sample timetable
+                        const sampleTimetable = [
+                            { time: '9:00 - 10:00', subject: 'Data Structures', location: 'Room 301' },
+                            { time: '10:30 - 11:30', subject: 'Database Systems', location: 'Lab 205' },
+                            { time: '1:30 - 2:30', subject: 'Web Development', location: 'Room 402' }
+                        ];
+                        
+                        sampleTimetable.forEach(entry => {
+                            db.collection('timetable').add(entry);
+                        });
+                        
+                        // Create sample assignments
+                        const sampleAssignments = [
+                            {
+                                title: 'Database Design Project',
+                                dueDate: new Date('2025-10-15'),
+                                status: 'pending',
+                                description: 'Design and implement a database system'
+                            },
+                            {
+                                title: 'Algorithm Analysis',
+                                dueDate: new Date('2025-10-10'),
+                                status: 'submitted',
+                                description: 'Analyze sorting algorithms'
+                            },
+                            {
+                                title: 'Web Development Lab',
+                                dueDate: new Date('2025-10-05'),
+                                status: 'graded',
+                                grade: 'A',
+                                description: 'Create a responsive website'
+                            }
+                        ];
+                        
+                        sampleAssignments.forEach(assignment => {
+                            db.collection('assignments').add(assignment);
+                        });
+                        
+                        // Create sample grades
+                        const sampleGrades = [
+                            { subject: 'Data Structures', grade: 85 },
+                            { subject: 'Database Systems', grade: 92 },
+                            { subject: 'Web Development', grade: 78 },
+                            { subject: 'Algorithm Analysis', grade: 88 }
+                        ];
+                        
+                        sampleGrades.forEach(grade => {
+                            db.collection('grades').add(grade);
+                        });
+                        
+                        // Create sample announcements
+                        const sampleAnnouncements = [
+                            {
+                                title: 'College Annual Day - Oct 15, 2025',
+                                message: 'All students are requested to attend the college annual day function...',
+                                timestamp: new Date(Date.now() - 172800000)
+                            },
+                            {
+                                title: 'Library Timings Extended',
+                                message: 'The college library will now remain open until 9 PM on weekdays...',
+                                timestamp: new Date(Date.now() - 604800000)
+                            }
+                        ];
+                        
+                        sampleAnnouncements.forEach(announcement => {
+                            db.collection('announcements').add(announcement);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking for existing data:', error);
                 });
-            });
+        }
+        
+        // Load dashboard data
+        function loadDashboardData() {
+            // Load timetable
+            loadTimetable();
             
-            // Create sample notifications
-            const sampleNotifications = [
-                {
-                    title: 'Assignment Reminder',
-                    message: 'Database Design Project due in 3 days',
-                    timestamp: new Date(Date.now() - 7200000),
-                    read: false,
-                    type: 'assignment'
-                },
-                {
-                    title: 'Class Cancellation',
-                    message: 'Tomorrow\'s Algorithm Analysis class is cancelled',
-                    timestamp: new Date(Date.now() - 86400000),
-                    read: false,
-                    type: 'announcement'
-                }
-            ];
+            // Load assignments
+            loadAssignments();
             
-            sampleNotifications.forEach(notif => {
-                db.collection('notifications').add(notif);
-            });
+            // Load announcements
+            loadAnnouncements();
             
-            // Create sample deadlines
-            const sampleDeadlines = [
-                {
-                    title: 'Database Design Project',
-                    dueDate: new Date('2025-10-15'),
-                    description: 'Submit final project report'
-                },
-                {
-                    title: 'Web Development Quiz',
-                    dueDate: new Date('2025-10-18'),
-                    description: 'Covering JavaScript and React'
-                }
-            ];
+            // Load grades
+            loadGrades();
             
-            sampleDeadlines.forEach(deadline => {
-                db.collection('deadlines').add(deadline);
-            });
+            // Load academic overview
+            loadAcademicOverview();
+        }
+        
+        // Load timetable data
+        function loadTimetable() {
+            const timetableLoading = document.getElementById('timetableLoading');
+            const timetableTable = document.getElementById('timetableTable');
+            const timetableBody = document.getElementById('timetableBody');
+            
+            db.collection('timetable').get()
+                .then(snapshot => {
+                    timetableLoading.style.display = 'none';
+                    timetableTable.style.display = 'table';
+                    timetableBody.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        timetableBody.innerHTML = '<tr><td colspan="3" class="error">No timetable data available</td></tr>';
+                        return;
+                    }
+                    
+                    snapshot.forEach(doc => {
+                        const entry = doc.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="time">${entry.time}</td>
+                            <td class="subject">${entry.subject}</td>
+                            <td class="location">${entry.location}</td>
+                        `;
+                        timetableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading timetable:', error);
+                    timetableLoading.style.display = 'none';
+                    timetableTable.style.display = 'table';
+                    timetableBody.innerHTML = '<tr><td colspan="3" class="error">Error loading timetable</td></tr>';
+                });
+        }
+        
+        // Load assignments data
+        function loadAssignments() {
+            const assignmentsLoading = document.getElementById('assignmentsLoading');
+            const assignmentList = document.getElementById('assignmentList');
+            
+            db.collection('assignments').orderBy('dueDate').get()
+                .then(snapshot => {
+                    assignmentsLoading.style.display = 'none';
+                    assignmentList.style.display = 'block';
+                    assignmentList.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        assignmentList.innerHTML = '<div class="error">No assignments available</div>';
+                        return;
+                    }
+                    
+                    snapshot.forEach(doc => {
+                        const assignment = doc.data();
+                        const item = document.createElement('div');
+                        item.className = 'assignment-item';
+                        
+                        let statusClass = '';
+                        let statusText = '';
+                        
+                        if (assignment.status === 'pending') {
+                            statusClass = 'status-pending';
+                            statusText = 'Pending';
+                        } else if (assignment.status === 'submitted') {
+                            statusClass = 'status-submitted';
+                            statusText = 'Submitted';
+                        } else if (assignment.status === 'graded') {
+                            statusClass = 'status-graded';
+                            statusText = `Graded (${assignment.grade})`;
+                        }
+                        
+                        item.innerHTML = `
+                            <div class="assignment-info">
+                                <div class="assignment-title">${assignment.title}</div>
+                                <div class="assignment-meta">Due: ${new Date(assignment.dueDate.toDate()).toLocaleDateString()}</div>
+                            </div>
+                            <span class="assignment-status ${statusClass}">${statusText}</span>
+                        `;
+                        
+                        assignmentList.appendChild(item);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading assignments:', error);
+                    assignmentsLoading.style.display = 'none';
+                    assignmentList.style.display = 'block';
+                    assignmentList.innerHTML = '<div class="error">Error loading assignments</div>';
+                });
+        }
+        
+        // Load announcements data
+        function loadAnnouncements() {
+            const announcementsLoading = document.getElementById('announcementsLoading');
+            const announcementList = document.getElementById('announcementList');
+            
+            db.collection('announcements').orderBy('timestamp', 'desc').get()
+                .then(snapshot => {
+                    announcementsLoading.style.display = 'none';
+                    announcementList.style.display = 'block';
+                    announcementList.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        announcementList.innerHTML = '<div class="error">No announcements available</div>';
+                        return;
+                    }
+                    
+                    snapshot.forEach(doc => {
+                        const announcement = doc.data();
+                        const item = document.createElement('div');
+                        item.className = 'list-item';
+                        
+                        const time = announcement.timestamp ? new Date(announcement.timestamp.toDate()).toLocaleDateString() : '';
+                        
+                        item.innerHTML = `
+                            <div class="list-item-header">
+                                <h4 class="list-item-title">${announcement.title}</h4>
+                                <span class="list-item-meta">${time}</span>
+                            </div>
+                            <p>${announcement.message}</p>
+                        `;
+                        
+                        announcementList.appendChild(item);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading announcements:', error);
+                    announcementsLoading.style.display = 'none';
+                    announcementList.style.display = 'block';
+                    announcementList.innerHTML = '<div class="error">Error loading announcements</div>';
+                });
+        }
+        
+        // Load grades data
+        function loadGrades() {
+            const gradesLoading = document.getElementById('gradesLoading');
+            const progressList = document.getElementById('progressList');
+            
+            db.collection('grades').get()
+                .then(snapshot => {
+                    gradesLoading.style.display = 'none';
+                    progressList.style.display = 'block';
+                    progressList.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        progressList.innerHTML = '<div class="error">No grades available</div>';
+                        return;
+                    }
+                    
+                    snapshot.forEach(doc => {
+                        const grade = doc.data();
+                        const item = document.createElement('div');
+                        item.className = 'progress-item';
+                        
+                        item.innerHTML = `
+                            <div class="progress-header">
+                                <span class="progress-title">${grade.subject}</span>
+                                <span class="progress-value">${grade.grade}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${grade.grade}%"></div>
+                            </div>
+                        `;
+                        
+                        progressList.appendChild(item);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading grades:', error);
+                    gradesLoading.style.display = 'none';
+                    progressList.style.display = 'block';
+                    progressList.innerHTML = '<div class="error">Error loading grades</div>';
+                });
+        }
+        
+        // Load academic overview
+        function loadAcademicOverview() {
+            // Calculate attendance
+            db.collection('attendance').get()
+                .then(snapshot => {
+                    let totalClasses = 0;
+                    let attendedClasses = 0;
+                    
+                    snapshot.forEach(doc => {
+                        const attendance = doc.data();
+                        totalClasses += attendance.total;
+                        attendedClasses += attendance.attended;
+                    });
+                    
+                    const attendancePercentage = totalClasses > 0 ? Math.round((attendedClasses / totalClasses) * 100) : 0;
+                    document.getElementById('attendanceValue').textContent = attendancePercentage + '%';
+                })
+                .catch(error => {
+                    console.error('Error loading attendance:', error);
+                });
+            
+            // Calculate GPA
+            db.collection('grades').get()
+                .then(snapshot => {
+                    let totalGradePoints = 0;
+                    let totalCredits = 0;
+                    
+                    snapshot.forEach(doc => {
+                        const grade = doc.data();
+                        const gradePoint = grade.grade / 25; // Convert percentage to 4.0 scale
+                        totalGradePoints += gradePoint * 3; // Assuming 3 credits per course
+                        totalCredits += 3;
+                    });
+                    
+                    const gpa = totalCredits > 0 ? (totalGradePoints / totalCredits).toFixed(1) : 0;
+                    document.getElementById('gpaValue').textContent = gpa;
+                })
+                .catch(error => {
+                    console.error('Error loading grades for GPA:', error);
+                });
+            
+            // Count courses
+            db.collection('courses').get()
+                .then(snapshot => {
+                    document.getElementById('coursesValue').textContent = snapshot.size;
+                })
+                .catch(error => {
+                    console.error('Error loading courses:', error);
+                });
+            
+            // Count pending assignments
+            db.collection('assignments').where('status', '==', 'pending').get()
+                .then(snapshot => {
+                    document.getElementById('pendingValue').textContent = snapshot.size;
+                })
+                .catch(error => {
+                    console.error('Error loading pending assignments:', error);
+                });
         }
         
         // Load notifications from Firebase
         function loadNotifications() {
-            notificationList.innerHTML = '<div class="loading">Loading notifications...</div>';
+            const notificationList = document.getElementById('notificationList');
             
             db.collection('notifications')
                 .orderBy('timestamp', 'desc')
@@ -1946,7 +2307,7 @@
                     });
                     
                     // Update notification count
-                    notificationCount.textContent = unreadCount.toString();
+                    document.getElementById('notificationCount').textContent = unreadCount.toString();
                 }, error => {
                     console.error('Error loading notifications:', error);
                     notificationList.innerHTML = '<div class="error">Error loading notifications</div>';
@@ -1972,7 +2333,7 @@
         
         // Load deadlines from Firebase
         function loadDeadlines() {
-            deadlineList.innerHTML = '<div class="loading">Loading deadlines...</div>';
+            const deadlineList = document.getElementById('deadlineList');
             
             db.collection('deadlines')
                 .where('dueDate', '>=', new Date())
@@ -2014,9 +2375,88 @@
             return item;
         }
         
+        // Setup real-time listeners
+        function setupRealtimeListeners() {
+            // Listen for new messages
+            socket.on('connect', () => {
+                console.log('Connected to server');
+                
+                // Join room based on user role
+                if (user) {
+                    socket.emit('join-room', user.role);
+                    if (user.department) {
+                        socket.emit('join-room', user.department);
+                    }
+                }
+            });
+            
+            socket.on('new-message', (data) => {
+                console.log('New message received:', data);
+                
+                // Check if this message is for the current user
+                if (user && user.role === 'student' && 
+                    (data.recipient === 'all' || data.recipient === 'students')) {
+                    
+                    showToast(`New message from ${data.message.sender}: ${data.message.subject}`, 'info');
+                    
+                    // Update notification count
+                    const currentCount = parseInt(document.getElementById('notificationCount').textContent) || 0;
+                    document.getElementById('notificationCount').textContent = (currentCount + 1).toString();
+                }
+            });
+            
+            socket.on('emergency-alert', (data) => {
+                console.log('Emergency alert received:', data);
+                showToast(`EMERGENCY ALERT from ${data.sender}: ${data.message}`, 'error');
+                
+                // Play alert sound if available
+                const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+                audio.play().catch(e => console.log('Audio play failed:', e));
+            });
+            
+            // Listen for new assignments
+            db.collection('assignments').onSnapshot(snapshot => {
+                const changes = snapshot.docChanges();
+                
+                changes.forEach(change => {
+                    if (change.type === 'added') {
+                        const assignment = change.doc.data();
+                        showToast(`New assignment: ${assignment.title}`, 'info');
+                    }
+                });
+            });
+            
+            // Listen for new announcements
+            db.collection('announcements').onSnapshot(snapshot => {
+                const changes = snapshot.docChanges();
+                
+                changes.forEach(change => {
+                    if (change.type === 'added') {
+                        const announcement = change.doc.data();
+                        showToast(`New announcement: ${announcement.title}`, 'info');
+                    }
+                });
+            });
+        }
+        
+        // Messages functionality
+        const messagesSection = document.getElementById('messagesSection');
+        const conversationsList = document.getElementById('conversationsList');
+        const conversationView = document.getElementById('conversationView');
+        const newMessageBtn = document.getElementById('newMessageBtn');
+        const newMessageModal = document.getElementById('newMessageModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const createConversationForm = document.getElementById('createConversationForm');
+        const recipientSelect = document.getElementById('recipientSelect');
+        const messageSubject = document.getElementById('messageSubject');
+        const messageText = document.getElementById('messageText');
+        
+        let currentConversationId = null;
+        let messagesListener = null;
+        
         // Load conversations when messages section is shown
         function loadConversations() {
-            conversationsList.innerHTML = '<div class="loading">Loading conversations...</div>';
+            conversationsList.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
             
             // Query conversations where the current user is a participant
             db.collection('conversations')
@@ -2101,7 +2541,7 @@
                     </div>
                 </div>
                 <div class="messages-list" id="messagesList">
-                    <div class="loading">Loading messages...</div>
+                    <div class="loading"><div class="spinner"></div></div>
                 </div>
                 <div class="message-input-container">
                     <textarea class="message-input" id="messageInput" placeholder="Type your message..."></textarea>
@@ -2219,11 +2659,6 @@
                     
                     // Focus back on the input
                     messageInput.focus();
-                    
-                    // Log analytics event
-                    analytics.logEvent('message_sent', {
-                        conversation_id: currentConversationId
-                    });
                 })
                 .catch(error => {
                     console.error('Error sending message:', error);
@@ -2429,29 +2864,26 @@
         });
         
         // Toggle Sidebar
+        const toggleSidebarBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        
         toggleSidebarBtn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
             const icon = toggleSidebarBtn.querySelector('i');
             icon.classList.toggle('fa-angle-left');
             icon.classList.toggle('fa-angle-right');
-            
-            // Log analytics event
-            analytics.logEvent('sidebar_toggle', {
-                collapsed: sidebar.classList.contains('collapsed')
-            });
         });
         
         // Mobile Menu Toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        
         mobileMenuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('open');
-            
-            // Log analytics event
-            analytics.logEvent('mobile_menu_toggle', {
-                opened: sidebar.classList.contains('open')
-            });
         });
         
         // Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        
         navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -2462,11 +2894,6 @@
                 if (window.innerWidth <= 1024) {
                     sidebar.classList.remove('open');
                 }
-                
-                // Log analytics event
-                analytics.logEvent('navigation_click', {
-                    section: item.dataset.section
-                });
                 
                 // Handle navigation to different sections
                 const section = item.dataset.section;
@@ -2491,30 +2918,49 @@
         // Quick Action Buttons
         document.getElementById('viewTimetableBtn').addEventListener('click', () => {
             showToast('Opening full timetable...', 'info');
-            
-            // Log analytics event
-            analytics.logEvent('view_timetable_click');
         });
         
         document.getElementById('submitAssignmentBtn').addEventListener('click', () => {
             showToast('Opening assignment submission...', 'info');
-            
-            // Log analytics event
-            analytics.logEvent('submit_assignment_click');
         });
         
         document.getElementById('viewGradesBtn').addEventListener('click', () => {
             showToast('Loading detailed grades...', 'info');
-            
-            // Log analytics event
-            analytics.logEvent('view_grades_click');
         });
         
         document.getElementById('libraryBtn').addEventListener('click', () => {
             showToast('Opening library resources...', 'info');
-            
-            // Log analytics event
-            analytics.logEvent('library_click');
+        });
+        
+        // Refresh Overview Button
+        document.getElementById('refreshOverview').addEventListener('click', () => {
+            loadAcademicOverview();
+            showToast('Overview refreshed', 'success');
+        });
+        
+        // View Full Timetable Button
+        document.getElementById('viewFullTimetable').addEventListener('click', () => {
+            showToast('Opening full timetable...', 'info');
+        });
+        
+        // View All Assignments Button
+        document.getElementById('viewAllAssignments').addEventListener('click', () => {
+            showToast('Opening all assignments...', 'info');
+        });
+        
+        // View All Announcements Button
+        document.getElementById('viewAllAnnouncements').addEventListener('click', () => {
+            showToast('Opening all announcements...', 'info');
+        });
+        
+        // View Detailed Grades Button
+        document.getElementById('viewDetailedGrades').addEventListener('click', () => {
+            showToast('Opening detailed grades...', 'info');
+        });
+        
+        // Notifications click handler
+        document.getElementById('notifications').addEventListener('click', () => {
+            showToast('You have new notifications', 'info');
         });
         
         // Toast Notification System
@@ -2566,102 +3012,6 @@
             }, 300);
         }
         
-        // Notifications click handler
-        notifications.addEventListener('click', () => {
-            showToast('You have new notifications', 'info');
-            
-            // Log analytics event
-            analytics.logEvent('notifications_click');
-        });
-        
-        // Socket.io for real-time updates
-        socket.on('connect', () => {
-            console.log('Connected to server');
-            
-            // Join room based on user role
-            socket.emit('join-room', user.role);
-            if (user.department) {
-                socket.emit('join-room', user.department);
-            }
-            
-            // Log analytics event
-            analytics.logEvent('socket_connected');
-        });
-        
-        socket.on('new-message', (data) => {
-            console.log('New message received:', data);
-            
-            // Check if this message is for the current user
-            if (user.role === 'student' && 
-                (data.recipient === 'all' || data.recipient === 'students')) {
-                
-                showToast(`New message from ${data.message.sender}: ${data.message.subject}`, 'info');
-                
-                // Update notification count
-                const currentCount = parseInt(notificationCount.textContent) || 0;
-                notificationCount.textContent = (currentCount + 1).toString();
-                
-                // Log analytics event
-                analytics.logEvent('new_message_received', {
-                    sender: data.message.sender,
-                    recipient: data.recipient
-                });
-            }
-        });
-        
-        socket.on('emergency-alert', (data) => {
-            console.log('Emergency alert received:', data);
-            showToast(`EMERGENCY ALERT from ${data.sender}: ${data.message}`, 'error');
-            
-            // Play alert sound if available
-            const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
-            audio.play().catch(e => console.log('Audio play failed:', e));
-            
-            // Log analytics event
-            analytics.logEvent('emergency_alert_received', {
-                sender: data.sender,
-                alert_type: data.type
-            });
-        });
-        
-        // Initialize Dashboard
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize sample data
-            initializeSampleData();
-            
-            // Load notifications and deadlines
-            loadNotifications();
-            loadDeadlines();
-            
-            // Initialize progress bars with animation
-            const progressFills = document.querySelectorAll('.progress-fill');
-            progressFills.forEach(fill => {
-                const width = fill.style.width;
-                fill.style.width = '0';
-                setTimeout(() => {
-                    fill.style.width = width;
-                }, 300);
-            });
-            
-            // Simulate real-time updates
-            setInterval(() => {
-                // Update random KPI
-                const kpiValues = document.querySelectorAll('.kpi-value');
-                if (kpiValues.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * kpiValues.length);
-                    const currentValue = parseInt(kpiValues[randomIndex].textContent);
-                    const change = Math.floor(Math.random() * 5) - 2; // Random change between -2 and +2
-                    const newValue = Math.max(0, Math.min(100, currentValue + change));
-                    
-                    if (randomIndex === 1) { // GPA
-                        kpiValues[randomIndex].textContent = (newValue / 25).toFixed(1);
-                    } else {
-                        kpiValues[randomIndex].textContent = newValue + '%';
-                    }
-                }
-            }, 10000); // Update every 10 seconds
-        });
-        
         // Request notification permission
         if ('Notification' in window && Notification.permission === 'default') {
             Notification.requestPermission();
@@ -2672,36 +3022,9 @@
             navigator.serviceWorker.register('/service-worker.js')
                 .then(registration => {
                     console.log('Service Worker registered with scope:', registration.scope);
-                    
-                    // Get FCM token
-                    messaging.getToken({ vapidKey: 'YOUR_VAPID_KEY' })
-                        .then(token => {
-                            console.log('FCM Token:', token);
-                            // Save token to user profile in Firebase
-                            if (user && user.id) {
-                                db.collection('users').doc(user.id).update({
-                                    fcmToken: token
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error getting FCM token:', error);
-                            
-                            // Log analytics event
-                            analytics.logEvent('error', {
-                                error_type: 'fcm_token',
-                                error_message: error.message
-                            });
-                        });
                 })
                 .catch(error => {
                     console.error('Service Worker registration failed:', error);
-                    
-                    // Log analytics event
-                    analytics.logEvent('error', {
-                        error_type: 'service_worker',
-                        error_message: error.message
-                    });
                 });
         }
         
@@ -2715,20 +3038,17 @@
             showToast(body, 'info', title);
             
             // Update notification count
-            const currentCount = parseInt(notificationCount.textContent) || 0;
-            notificationCount.textContent = (currentCount + 1).toString();
-            
-            // Log analytics event
-            analytics.logEvent('foreground_notification_received', {
-                title: title
-            });
+            const currentCount = parseInt(document.getElementById('notificationCount').textContent) || 0;
+            document.getElementById('notificationCount').textContent = (currentCount + 1).toString();
         });
         
         // Set user properties in analytics
-        analytics.setUserProperties({
-            role: user.role,
-            department: user.department || 'N/A'
-        });
+        if (user) {
+            analytics.setUserProperties({
+                role: user.role,
+                department: user.department || 'N/A'
+            });
+        }
     </script>
 </body>
 </html>
