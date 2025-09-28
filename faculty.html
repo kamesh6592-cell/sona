@@ -11,6 +11,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+    
     <style>
         :root {
             /* Premium Dark Blue & Yellow Theme */
@@ -1067,6 +1074,28 @@
             margin-top: var(--spacing-xs);
         }
 
+        .message-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .message-status i {
+            font-size: 0.8rem;
+        }
+
+        .message-status.sent {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .message-status.delivered {
+            color: var(--info);
+        }
+
+        .message-status.seen {
+            color: var(--primary-yellow);
+        }
+
         .encryption-indicator {
             display: flex;
             align-items: center;
@@ -1645,13 +1674,21 @@
                 <i class="fas fa-bell"></i>
                 <span class="badge-count">3</span>
             </div>
-            <div class="profile-menu">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-avatar">
-                <div class="profile-info">
-                    <div class="profile-name">Dr. John Doe</div>
-                    <div class="profile-role">Professor</div>
+            <div class="dropdown">
+                <div class="profile-menu" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-avatar">
+                    <div class="profile-info">
+                        <div class="profile-name">Dr. John Doe</div>
+                        <div class="profile-role">Professor</div>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
                 </div>
-                <i class="fas fa-chevron-down"></i>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+                </ul>
             </div>
         </div>
     </header>
@@ -1927,41 +1964,18 @@
                                 </div>
                             </div>
                             
-                            <div class="contact-list">
-                                <div class="contact-item active" data-contact="class-group">
-                                    <div class="contact-avatar">CG</div>
-                                    <div class="contact-info">
-                                        <div class="contact-name">Class Group</div>
-                                        <div class="contact-status">142 members</div>
-                                    </div>
-                                    <div class="contact-time">10:30 AM</div>
-                                </div>
-                                <div class="contact-item" data-contact="hod-science">
-                                    <div class="contact-avatar">HS</div>
-                                    <div class="contact-info">
-                                        <div class="contact-name">HOD Science</div>
-                                        <div class="contact-status">Online</div>
-                                    </div>
-                                    <div class="contact-time">Yesterday</div>
-                                </div>
-                                <div class="contact-item" data-contact="faculty-cse">
-                                    <div class="contact-avatar">FC</div>
-                                    <div class="contact-info">
-                                        <div class="contact-name">Faculty CSE</div>
-                                        <div class="contact-status">24 members</div>
-                                    </div>
-                                    <div class="contact-time">2 days ago</div>
-                                </div>
+                            <div class="contact-list" id="contactList">
+                                <!-- Contacts will be loaded here -->
                             </div>
                         </div>
                         
                         <div class="messaging-main">
-                            <div class="chat-header">
+                            <div class="chat-header" id="chatHeader">
                                 <div class="chat-info">
-                                    <div class="chat-avatar">CG</div>
+                                    <div class="chat-avatar" id="chatAvatar">CG</div>
                                     <div class="chat-details">
-                                        <div class="chat-name">Class Group</div>
-                                        <div class="chat-status">142 members, 12 online</div>
+                                        <div class="chat-name" id="chatName">Select a contact</div>
+                                        <div class="chat-status" id="chatStatus">Start a conversation</div>
                                     </div>
                                 </div>
                                 <div class="chat-actions">
@@ -2147,253 +2161,145 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAUmR-p_bJ970GK9CevtzgfAm99nvLvSaE",
+            authDomain: "sona-da878.firebaseapp.com",
+            databaseURL: "https://sona-da878-default-rtdb.firebaseio.com",
+            projectId: "sona-da878",
+            storageBucket: "sona-da878.firebasestorage.app",
+            messagingSenderId: "963825066019",
+            appId: "1:963825066019:web:c1a095c0972a8874195196",
+            measurementId: "G-ED8CHJSJGH"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+        const storage = firebase.storage();
+
         // Global variables
         let currentPage = 'dashboard';
-        let socket;
-        let user = {
+        let currentUser = {
             id: 'faculty-001',
             name: 'Dr. John Doe',
             role: 'faculty',
-            avatar: 'JD'
+            avatar: 'JD',
+            email: 'john.doe@sonatech.ac.in'
         };
-        
-        // Sample data
-        const sampleData = {
-            assignments: [
-                {
-                    id: 'a1',
-                    title: 'Programming Assignment #3',
-                    class: 'CS101',
-                    dueDate: '2025-09-27T23:59:00',
-                    points: 100,
-                    description: 'Implement a sorting algorithm and analyze its time complexity.',
-                    file: null
-                },
-                {
-                    id: 'a2',
-                    title: 'Data Structures Project',
-                    class: 'CS201',
-                    dueDate: '2025-10-05T23:59:00',
-                    points: 150,
-                    description: 'Design and implement a library management system using appropriate data structures.',
-                    file: 'project-guidelines.pdf'
-                },
-                {
-                    id: 'a3',
-                    title: 'Algorithm Analysis',
-                    class: 'CS301',
-                    dueDate: '2025-10-10T23:59:00',
-                    points: 100,
-                    description: 'Analyze the time and space complexity of given algorithms.',
-                    file: null
-                }
-            ],
-            grades: [
-                {
-                    studentId: 'CS2021001',
-                    name: 'John Doe',
-                    class: 'CS101',
-                    assignment: 'Programming Assignment #3',
-                    grade: 'A',
-                    score: 92,
-                    status: 'Submitted'
-                },
-                {
-                    studentId: 'CS2021002',
-                    name: 'Jane Smith',
-                    class: 'CS101',
-                    assignment: 'Programming Assignment #3',
-                    grade: 'B',
-                    score: 85,
-                    status: 'Submitted'
-                },
-                {
-                    studentId: 'CS2021003',
-                    name: 'Robert Johnson',
-                    class: 'CS101',
-                    assignment: 'Programming Assignment #3',
-                    grade: 'C',
-                    score: 78,
-                    status: 'Submitted'
-                },
-                {
-                    studentId: 'CS2021004',
-                    name: 'Emily Davis',
-                    class: 'CS101',
-                    assignment: 'Programming Assignment #3',
-                    grade: 'D',
-                    score: 65,
-                    status: 'Submitted'
-                }
-            ],
-            queries: {
-                pending: [
-                    {
-                        id: 'q1',
-                        title: 'Question about Assignment #3',
-                        student: 'John Doe',
-                        studentId: 'CS2021001',
-                        class: 'CS101',
-                        content: 'I\'m having trouble understanding the requirements for the third assignment. Could you please clarify what is expected in the algorithm analysis section?',
-                        date: '2025-09-21T10:30:00'
-                    },
-                    {
-                        id: 'q2',
-                        title: 'Request for Extension',
-                        student: 'Jane Smith',
-                        studentId: 'CS2021002',
-                        class: 'CS101',
-                        content: 'Due to personal reasons, I would like to request a 2-day extension for the Data Structures project due on October 5th.',
-                        date: '2025-09-20T14:15:00'
-                    }
-                ],
-                resolved: [
-                    {
-                        id: 'q3',
-                        title: 'Question about Lecture 5',
-                        student: 'Robert Johnson',
-                        studentId: 'CS2021003',
-                        class: 'CS101',
-                        content: 'Could you please explain the concept of dynamic programming again? I didn\'t quite understand it in class.',
-                        date: '2025-09-18T09:45:00',
-                        response: 'Dynamic programming is a method for solving complex problems by breaking them down into simpler subproblems. We\'ll cover this in more detail in the next lecture.',
-                        resolvedDate: '2025-09-18T11:30:00'
-                    }
-                ]
-            },
-            messages: {
-                'class-group': [
-                    {
-                        id: 'm1',
-                        sender: 'John Doe',
-                        senderId: 'CS2021001',
-                        content: 'Hello professor, I have a question about the assignment.',
-                        timestamp: '2025-09-21T10:30:00',
-                        sent: false
-                    },
-                    {
-                        id: 'm2',
-                        sender: 'You',
-                        senderId: user.id,
-                        content: 'Sure, what would you like to know?',
-                        timestamp: '2025-09-21T10:32:00',
-                        sent: true
-                    },
-                    {
-                        id: 'm3',
-                        sender: 'John Doe',
-                        senderId: 'CS2021001',
-                        content: 'I\'m not sure about the requirements for the algorithm analysis section.',
-                        timestamp: '2025-09-21T10:35:00',
-                        sent: false
-                    }
-                ],
-                'hod-science': [
-                    {
-                        id: 'm4',
-                        sender: 'HOD Science',
-                        senderId: 'hod-001',
-                        content: 'Please submit your mid-term exam papers by Friday.',
-                        timestamp: '2025-09-20T09:15:00',
-                        sent: false
-                    },
-                    {
-                        id: 'm5',
-                        sender: 'You',
-                        senderId: user.id,
-                        content: 'Will do, thank you for the reminder.',
-                        timestamp: '2025-09-20T09:20:00',
-                        sent: true
-                    }
-                ],
-                'faculty-cse': [
-                    {
-                        id: 'm6',
-                        sender: 'Dr. Smith',
-                        senderId: 'faculty-002',
-                        content: 'Are we still meeting tomorrow to discuss the curriculum?',
-                        timestamp: '2025-09-19T14:30:00',
-                        sent: false
-                    },
-                    {
-                        id: 'm7',
-                        sender: 'You',
-                        senderId: user.id,
-                        content: 'Yes, 2 PM in the faculty lounge.',
-                        timestamp: '2025-09-19T14:35:00',
-                        sent: true
-                    }
-                ]
-            }
-        };
-        
+        let currentContact = null;
+        let messagesRef = null;
+        let contactsRef = null;
+        let assignmentsRef = null;
+        let queriesRef = null;
+        let gradesRef = null;
+
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
         });
-        
+
         function initializeApp() {
-            // Initialize socket connection
-            socket = io('http://localhost:3000');
-            
-            // Set up socket event listeners
-            setupSocketListeners();
-            
-            // Set up navigation
-            setupNavigation();
-            
-            // Set up sidebar toggle
-            setupSidebarToggle();
-            
-            // Set up quick actions
-            setupQuickActions();
-            
-            // Set up messaging
-            setupMessaging();
-            
-            // Set up assignment form
-            setupAssignmentForm();
-            
-            // Load initial data
-            loadDashboardData();
-            loadAssignments();
-            loadGrades();
-            loadQueries();
-            
-            // Initialize calendar
-            initializeCalendar();
-            
-            // Initialize grade chart
-            initializeGradeChart();
-        }
-        
-        function setupSocketListeners() {
-            socket.on('connect', function() {
-                console.log('Connected to server');
-                
-                // Join faculty room
-                socket.emit('joinRoom', { room: 'faculty', userId: user.id });
+            // Check authentication state
+            auth.onAuthStateChanged(function(user) {
+                if (user) {
+                    // User is signed in
+                    currentUser.id = user.uid;
+                    currentUser.email = user.email;
+                    
+                    // Get user data from database
+                    database.ref('users/' + user.uid).once('value').then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const userData = snapshot.val();
+                            currentUser.name = userData.name;
+                            currentUser.role = userData.role;
+                            currentUser.avatar = userData.avatar;
+                        }
+                        
+                        // Update UI with user info
+                        updateProfileUI();
+                        
+                        // Set up Firebase references
+                        setupFirebaseReferences();
+                        
+                        // Set up navigation
+                        setupNavigation();
+                        
+                        // Set up sidebar toggle
+                        setupSidebarToggle();
+                        
+                        // Set up quick actions
+                        setupQuickActions();
+                        
+                        // Set up messaging
+                        setupMessaging();
+                        
+                        // Set up assignment form
+                        setupAssignmentForm();
+                        
+                        // Set up logout button
+                        setupLogoutButton();
+                        
+                        // Load initial data
+                        loadDashboardData();
+                        loadContacts();
+                        loadAssignments();
+                        loadGrades();
+                        loadQueries();
+                        
+                        // Initialize calendar
+                        initializeCalendar();
+                        
+                        // Initialize grade chart
+                        initializeGradeChart();
+                    });
+                } else {
+                    // User is signed out, redirect to login page
+                    window.location.href = 'index.html';
+                }
             });
+        }
+
+        function setupFirebaseReferences() {
+            messagesRef = database.ref('messages');
+            contactsRef = database.ref('contacts');
+            assignmentsRef = database.ref('assignments');
+            queriesRef = database.ref('queries');
+            gradesRef = database.ref('grades');
             
-            socket.on('newMessage', function(data) {
-                console.log('New message received:', data);
+            // Set up Firebase listeners
+            setupFirebaseListeners();
+        }
+
+        function setupFirebaseListeners() {
+            // Listen for new messages
+            messagesRef.on('child_added', function(snapshot) {
+                const message = snapshot.val();
+                const messageId = snapshot.key;
                 
-                // If we're in the messaging view, add the message to the chat
-                if (currentPage === 'messaging') {
-                    addMessageToChat(data);
+                // If we're in the messaging view and this message is for the current contact, add it to the chat
+                if (currentPage === 'messaging' && currentContact && 
+                    ((message.recipientId === currentUser.id && message.senderId === currentContact.id) ||
+                     (message.senderId === currentUser.id && message.recipientId === currentContact.id) ||
+                     (message.groupId && currentContact.groupId === message.groupId))) {
+                    addMessageToChat(message);
                 }
                 
                 // Update notification badge
                 updateNotificationBadge();
                 
-                // Show notification
-                showToast('New message from ' + data.senderName, 'info');
+                // Show notification if message is not from current user
+                if (message.senderId !== currentUser.id) {
+                    showToast(`New message from ${message.senderName}`, 'info');
+                }
             });
             
-            socket.on('newAssignment', function(data) {
-                console.log('New assignment created:', data);
+            // Listen for new assignments
+            assignmentsRef.on('child_added', function(snapshot) {
+                const assignment = snapshot.val();
                 
                 // If we're in the assignments view, refresh the list
                 if (currentPage === 'assignments') {
@@ -2401,11 +2307,12 @@
                 }
                 
                 // Show notification
-                showToast('New assignment created: ' + data.title, 'success');
+                showToast('New assignment created: ' + assignment.title, 'success');
             });
             
-            socket.on('newQuery', function(data) {
-                console.log('New query received:', data);
+            // Listen for new queries
+            queriesRef.on('child_added', function(snapshot) {
+                const query = snapshot.val();
                 
                 // If we're in the queries view, refresh the list
                 if (currentPage === 'queries') {
@@ -2416,10 +2323,30 @@
                 updateNotificationBadge();
                 
                 // Show notification
-                showToast('New query from ' + data.studentName, 'warning');
+                showToast('New query from ' + query.studentName, 'warning');
             });
         }
-        
+
+        function updateProfileUI() {
+            // Update profile info in header
+            document.querySelector('.profile-name').textContent = currentUser.name;
+            document.querySelector('.profile-role').textContent = getRoleDisplayName(currentUser.role);
+            
+            // Update profile info in sidebar
+            document.querySelector('.user-name').textContent = currentUser.name;
+            document.querySelector('.user-role').textContent = getRoleDisplayName(currentUser.role) + ', CSE';
+            document.querySelector('.user-avatar').textContent = currentUser.avatar;
+        }
+
+        function getRoleDisplayName(role) {
+            switch(role) {
+                case 'faculty': return 'Professor';
+                case 'hod': return 'Head of Department';
+                case 'student': return 'Student';
+                default: return role;
+            }
+        }
+
         function setupNavigation() {
             const navItems = document.querySelectorAll('.nav-item');
             
@@ -2432,7 +2359,7 @@
                 });
             });
         }
-        
+
         function setupSidebarToggle() {
             const toggleBtn = document.getElementById('toggleSidebar');
             const sidebar = document.getElementById('sidebar');
@@ -2441,7 +2368,7 @@
                 sidebar.classList.toggle('collapsed');
             });
         }
-        
+
         function setupQuickActions() {
             const quickActions = document.querySelectorAll('.quick-action');
             
@@ -2466,7 +2393,7 @@
                 });
             });
         }
-        
+
         function setupMessaging() {
             // Message tabs
             const messageTabs = document.querySelectorAll('.message-tab');
@@ -2477,25 +2404,8 @@
                     this.classList.add('active');
                     
                     const tabType = this.getAttribute('data-tab');
-                    loadContacts(tabType);
+                    loadContactsByType(tabType);
                 });
-            });
-            
-            // Contact items
-            document.addEventListener('click', function(e) {
-                if (e.target.closest('.contact-item')) {
-                    const contactItem = e.target.closest('.contact-item');
-                    const contactId = contactItem.getAttribute('data-contact');
-                    
-                    // Update active contact
-                    document.querySelectorAll('.contact-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    contactItem.classList.add('active');
-                    
-                    // Load messages for this contact
-                    loadMessages(contactId);
-                }
             });
             
             // Send message
@@ -2513,7 +2423,7 @@
             const fileInput = document.getElementById('fileInput');
             fileInput.addEventListener('change', handleFileUpload);
         }
-        
+
         function setupAssignmentForm() {
             const assignmentForm = document.getElementById('assignmentForm');
             
@@ -2521,32 +2431,46 @@
                 e.preventDefault();
                 
                 const formData = {
-                    id: 'a' + (sampleData.assignments.length + 1),
+                    id: assignmentsRef.push().key,
                     title: document.getElementById('assignmentTitle').value,
                     class: document.getElementById('assignmentClass').value,
                     dueDate: document.getElementById('assignmentDueDate').value,
                     points: parseInt(document.getElementById('assignmentPoints').value),
                     description: document.getElementById('assignmentDescription').value,
-                    file: document.getElementById('assignmentFile').files[0]?.name || null
+                    file: document.getElementById('assignmentFile').files[0]?.name || null,
+                    createdBy: currentUser.id,
+                    createdByName: currentUser.name,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
                 };
                 
-                // Add to sample data
-                sampleData.assignments.push(formData);
-                
-                // Emit via socket
-                socket.emit('createAssignment', formData);
+                // Save to Firebase
+                assignmentsRef.child(formData.id).set(formData);
                 
                 // Reset form
                 assignmentForm.reset();
-                
-                // Refresh assignment list
-                loadAssignments();
                 
                 // Show notification
                 showToast('Assignment created successfully!', 'success');
             });
         }
-        
+
+        function setupLogoutButton() {
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                auth.signOut().then(() => {
+                    // Sign-out successful, redirect to login page
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    // An error happened
+                    console.error('Logout error:', error);
+                    showToast('Logout failed. Please try again.', 'error');
+                });
+            });
+        }
+
         function navigateToPage(page) {
             // Hide all pages
             document.querySelectorAll('.page').forEach(p => {
@@ -2569,217 +2493,256 @@
             if (page === 'dashboard') {
                 initializeDashboardCalendar();
             } else if (page === 'messaging') {
-                // Load default messages
-                loadMessages('class-group');
+                // Load default contacts
+                loadContactsByType('students');
             } else if (page === 'grades') {
                 initializeGradeChart();
             } else if (page === 'calendar') {
                 initializeFullCalendar();
             }
         }
-        
+
         function loadDashboardData() {
             // Initialize dashboard calendar
             initializeDashboardCalendar();
         }
-        
-        function loadAssignments() {
-            const assignmentList = document.getElementById('assignmentList');
-            assignmentList.innerHTML = '';
+
+        function loadContactsByType(type) {
+            const contactList = document.getElementById('contactList');
+            contactList.innerHTML = '';
             
-            sampleData.assignments.forEach(assignment => {
-                const assignmentCard = document.createElement('div');
-                assignmentCard.className = 'assignment-card';
-                
-                const dueDate = new Date(assignment.dueDate);
-                const formattedDate = dueDate.toLocaleDateString() + ' ' + dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
-                assignmentCard.innerHTML = `
-                    <div class="assignment-title">${assignment.title}</div>
-                    <div class="assignment-meta">
-                        <span>${assignment.class}</span>
-                        <span>Due: ${formattedDate}</span>
-                        <span>${assignment.points} pts</span>
-                    </div>
-                    <div class="assignment-description">${assignment.description}</div>
-                    <div class="assignment-actions">
-                        <button class="btn btn-primary">View Submissions</button>
-                        <button class="btn btn-secondary">Edit</button>
-                    </div>
-                `;
-                
-                assignmentList.appendChild(assignmentCard);
-            });
-        }
-        
-        function loadGrades() {
-            const gradeTableBody = document.getElementById('gradeTableBody');
-            gradeTableBody.innerHTML = '';
-            
-            sampleData.grades.forEach(grade => {
-                const row = document.createElement('tr');
-                
-                let gradeClass = '';
-                if (grade.grade === 'A') gradeClass = 'grade-excellent';
-                else if (grade.grade === 'B') gradeClass = 'grade-good';
-                else if (grade.grade === 'C') gradeClass = 'grade-average';
-                else if (grade.grade === 'D') gradeClass = 'grade-poor';
-                
-                row.innerHTML = `
-                    <td>${grade.studentId}</td>
-                    <td>${grade.name}</td>
-                    <td>${grade.class}</td>
-                    <td>${grade.assignment}</td>
-                    <td><span class="grade-badge ${gradeClass}">${grade.grade} (${grade.score}%)</span></td>
-                    <td>${grade.status}</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm">Message</button>
-                    </td>
-                `;
-                
-                gradeTableBody.appendChild(row);
-            });
-        }
-        
-        function loadQueries() {
-            // Load pending queries
-            const pendingQueries = document.getElementById('pendingQueries');
-            pendingQueries.innerHTML = '';
-            
-            sampleData.queries.pending.forEach(query => {
-                const queryItem = document.createElement('div');
-                queryItem.className = 'query-item';
-                
-                const date = new Date(query.date);
-                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
-                queryItem.innerHTML = `
-                    <div class="query-header">
-                        <div class="query-title">${query.title}</div>
-                        <div class="query-status status-pending">Pending</div>
-                    </div>
-                    <div class="query-content">${query.content}</div>
-                    <div class="query-meta">
-                        <span>${query.student} (${query.studentId})</span>
-                        <span>${query.class}</span>
-                        <span>${formattedDate}</span>
-                    </div>
-                    <div class="query-actions">
-                        <button class="btn btn-primary" data-query-id="${query.id}">Respond</button>
-                        <button class="btn btn-secondary" data-query-id="${query.id}">Mark as Resolved</button>
-                    </div>
-                `;
-                
-                pendingQueries.appendChild(queryItem);
-            });
-            
-            // Load resolved queries
-            const resolvedQueries = document.getElementById('resolvedQueries');
-            resolvedQueries.innerHTML = '';
-            
-            sampleData.queries.resolved.forEach(query => {
-                const queryItem = document.createElement('div');
-                queryItem.className = 'query-item';
-                
-                const date = new Date(query.date);
-                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
-                const resolvedDate = new Date(query.resolvedDate);
-                const formattedResolvedDate = resolvedDate.toLocaleDateString() + ' ' + resolvedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
-                queryItem.innerHTML = `
-                    <div class="query-header">
-                        <div class="query-title">${query.title}</div>
-                        <div class="query-status status-resolved">Resolved</div>
-                    </div>
-                    <div class="query-content">${query.content}</div>
-                    <div class="query-response">
-                        <strong>Response:</strong> ${query.response}
-                    </div>
-                    <div class="query-meta">
-                        <span>Resolved on: ${formattedResolvedDate}</span>
-                    </div>
-                    <div class="query-actions">
-                        <button class="btn btn-secondary" data-query-id="${query.id}">View Details</button>
-                    </div>
-                `;
-                
-                resolvedQueries.appendChild(queryItem);
-            });
-            
-            // Add event listeners to query action buttons
-            document.querySelectorAll('.query-actions button').forEach(button => {
-                button.addEventListener('click', function() {
-                    const queryId = this.getAttribute('data-query-id');
-                    const action = this.textContent.trim();
-                    
-                    if (action === 'Respond') {
-                        showToast('Response feature coming soon!', 'info');
-                    } else if (action === 'Mark as Resolved') {
-                        markQueryAsResolved(queryId);
-                    } else if (action === 'View Details') {
-                        showToast('Query details feature coming soon!', 'info');
-                    }
-                });
-            });
-        }
-        
-        function markQueryAsResolved(queryId) {
-            // Find the query in pending list
-            const queryIndex = sampleData.queries.pending.findIndex(q => q.id === queryId);
-            
-            if (queryIndex !== -1) {
-                const query = sampleData.queries.pending[queryIndex];
-                
-                // Move to resolved list
-                query.response = 'This query has been resolved.';
-                query.resolvedDate = new Date().toISOString();
-                
-                sampleData.queries.resolved.push(query);
-                sampleData.queries.pending.splice(queryIndex, 1);
-                
-                // Refresh queries
-                loadQueries();
-                
-                // Show notification
-                showToast('Query marked as resolved!', 'success');
+            // Query contacts based on type
+            let query;
+            if (type === 'students') {
+                query = contactsRef.orderByChild('type').equalTo('student');
+            } else if (type === 'faculty') {
+                query = contactsRef.orderByChild('type').equalTo('faculty');
+            } else if (type === 'hod') {
+                query = contactsRef.orderByChild('type').equalTo('hod');
             }
+            
+            query.once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const contact = childSnapshot.val();
+                    const contactId = childSnapshot.key;
+                    
+                    const contactItem = document.createElement('div');
+                    contactItem.className = 'contact-item';
+                    contactItem.setAttribute('data-contact-id', contactId);
+                    
+                    contactItem.innerHTML = `
+                        <div class="contact-avatar">${contact.avatar}</div>
+                        <div class="contact-info">
+                            <div class="contact-name">${contact.name}</div>
+                            <div class="contact-status">${contact.online ? 'Online' : 'Offline'}</div>
+                        </div>
+                        <div class="contact-time">${formatTime(contact.lastMessageTime)}</div>
+                    `;
+                    
+                    contactItem.addEventListener('click', function() {
+                        selectContact(contactId, contact);
+                    });
+                    
+                    contactList.appendChild(contactItem);
+                });
+                
+                // Also load groups
+                if (type === 'students') {
+                    loadGroupContacts();
+                } else if (type === 'faculty') {
+                    loadFacultyGroupContacts();
+                }
+            });
         }
-        
-        function loadContacts(tabType) {
-            // In a real app, this would fetch contacts based on the tab type
-            // For now, we'll just use the existing contact list
-            console.log('Loading contacts for tab:', tabType);
+
+        function loadGroupContacts() {
+            const contactList = document.getElementById('contactList');
+            
+            // Add class group
+            const classGroup = {
+                id: 'class-group',
+                name: 'Class Group',
+                type: 'group',
+                avatar: 'CG',
+                memberCount: 142,
+                lastMessageTime: new Date().toISOString()
+            };
+            
+            const contactItem = document.createElement('div');
+            contactItem.className = 'contact-item';
+            contactItem.setAttribute('data-contact-id', classGroup.id);
+            
+            contactItem.innerHTML = `
+                <div class="contact-avatar">${classGroup.avatar}</div>
+                <div class="contact-info">
+                    <div class="contact-name">${classGroup.name}</div>
+                    <div class="contact-status">${classGroup.memberCount} members</div>
+                </div>
+                <div class="contact-time">${formatTime(classGroup.lastMessageTime)}</div>
+            `;
+            
+            contactItem.addEventListener('click', function() {
+                selectGroupContact(classGroup);
+            });
+            
+            contactList.appendChild(contactItem);
         }
-        
+
+        function loadFacultyGroupContacts() {
+            const contactList = document.getElementById('contactList');
+            
+            // Add faculty group
+            const facultyGroup = {
+                id: 'faculty-cse',
+                name: 'Faculty CSE',
+                type: 'group',
+                avatar: 'FC',
+                memberCount: 24,
+                lastMessageTime: new Date().toISOString()
+            };
+            
+            const contactItem = document.createElement('div');
+            contactItem.className = 'contact-item';
+            contactItem.setAttribute('data-contact-id', facultyGroup.id);
+            
+            contactItem.innerHTML = `
+                <div class="contact-avatar">${facultyGroup.avatar}</div>
+                <div class="contact-info">
+                    <div class="contact-name">${facultyGroup.name}</div>
+                    <div class="contact-status">${facultyGroup.memberCount} members</div>
+                </div>
+                <div class="contact-time">${formatTime(facultyGroup.lastMessageTime)}</div>
+            `;
+            
+            contactItem.addEventListener('click', function() {
+                selectGroupContact(facultyGroup);
+            });
+            
+            contactList.appendChild(contactItem);
+        }
+
+        function selectContact(contactId, contact) {
+            // Update active contact
+            document.querySelectorAll('.contact-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-contact-id="${contactId}"]`).classList.add('active');
+            
+            // Set current contact
+            currentContact = {
+                id: contactId,
+                name: contact.name,
+                avatar: contact.avatar,
+                type: 'individual'
+            };
+            
+            // Update chat header
+            document.getElementById('chatAvatar').textContent = contact.avatar;
+            document.getElementById('chatName').textContent = contact.name;
+            document.getElementById('chatStatus').textContent = contact.online ? 'Online' : 'Offline';
+            
+            // Load messages for this contact
+            loadMessages(contactId);
+        }
+
+        function selectGroupContact(group) {
+            // Update active contact
+            document.querySelectorAll('.contact-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-contact-id="${group.id}"]`).classList.add('active');
+            
+            // Set current contact
+            currentContact = {
+                id: group.id,
+                name: group.name,
+                avatar: group.avatar,
+                type: 'group',
+                groupId: group.id
+            };
+            
+            // Update chat header
+            document.getElementById('chatAvatar').textContent = group.avatar;
+            document.getElementById('chatName').textContent = group.name;
+            document.getElementById('chatStatus').textContent = `${group.memberCount} members`;
+            
+            // Load messages for this group
+            loadGroupMessages(group.id);
+        }
+
         function loadMessages(contactId) {
             const chatMessages = document.getElementById('chat-messages');
             chatMessages.innerHTML = '';
             
-            const messages = sampleData.messages[contactId] || [];
-            
-            messages.forEach(message => {
-                addMessageToChat(message);
+            // Query messages between current user and contact
+            messagesRef.orderByChild('timestamp').once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const message = childSnapshot.val();
+                    const messageId = childSnapshot.key;
+                    
+                    // Check if message is between current user and contact
+                    if ((message.senderId === currentUser.id && message.recipientId === contactId) ||
+                        (message.senderId === contactId && message.recipientId === currentUser.id)) {
+                        addMessageToChat(message);
+                    }
+                });
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             });
-            
-            // Scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-        
+
+        function loadGroupMessages(groupId) {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = '';
+            
+            // Query messages for this group
+            messagesRef.orderByChild('groupId').equalTo(groupId).once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const message = childSnapshot.val();
+                    addMessageToChat(message);
+                });
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
         function addMessageToChat(message) {
             const chatMessages = document.getElementById('chat-messages');
             
             const messageEl = document.createElement('div');
-            messageEl.className = `message ${message.sent ? 'sent' : 'received'}`;
+            messageEl.className = `message ${message.senderId === currentUser.id ? 'sent' : 'received'}`;
             
             const date = new Date(message.timestamp);
             const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
+            let statusHtml = '';
+            if (message.senderId === currentUser.id) {
+                let statusClass = 'sent';
+                let statusIcon = 'fa-check';
+                
+                if (message.status === 'delivered') {
+                    statusClass = 'delivered';
+                    statusIcon = 'fa-check-double';
+                } else if (message.status === 'seen') {
+                    statusClass = 'seen';
+                    statusIcon = 'fa-check-double';
+                }
+                
+                statusHtml = `
+                    <div class="message-status ${statusClass}">
+                        <i class="fas ${statusIcon}"></i>
+                    </div>
+                `;
+            }
+            
             messageEl.innerHTML = `
-                <div class="message-sender">${message.sender}</div>
+                <div class="message-sender">${message.senderName}</div>
                 <div class="message-bubble">${message.content}</div>
                 <div class="message-meta">
                     <span>${timeString}</span>
+                    ${statusHtml}
                     <div class="encryption-indicator">
                         <i class="fas fa-lock"></i>
                         <span>Encrypted</span>
@@ -2791,35 +2754,39 @@
             
             // Scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // If message is from someone else and we're viewing the chat, mark as seen
+            if (message.senderId !== currentUser.id && currentContact && 
+                (message.senderId === currentContact.id || 
+                 (message.groupId && currentContact.groupId === message.groupId))) {
+                markMessageAsSeen(message.id);
+            }
         }
-        
+
         function sendMessage() {
             const messageInput = document.getElementById('messageInput');
             const message = messageInput.value.trim();
             
-            if (message === '') return;
-            
-            // Get active contact
-            const activeContact = document.querySelector('.contact-item.active');
-            if (!activeContact) return;
-            
-            const contactId = activeContact.getAttribute('data-contact');
+            if (message === '' || !currentContact) return;
             
             // Create message object
             const messageObj = {
-                id: 'm' + Date.now(),
-                sender: user.name,
-                senderId: user.id,
+                id: messagesRef.push().key,
+                senderId: currentUser.id,
+                senderName: currentUser.name,
                 content: message,
-                timestamp: new Date().toISOString(),
-                sent: true
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                status: 'sent'
             };
             
-            // Add to sample data
-            if (!sampleData.messages[contactId]) {
-                sampleData.messages[contactId] = [];
+            if (currentContact.type === 'individual') {
+                messageObj.recipientId = currentContact.id;
+            } else if (currentContact.type === 'group') {
+                messageObj.groupId = currentContact.groupId;
             }
-            sampleData.messages[contactId].push(messageObj);
+            
+            // Save to Firebase
+            messagesRef.child(messageObj.id).set(messageObj);
             
             // Add to chat
             addMessageToChat(messageObj);
@@ -2827,28 +2794,268 @@
             // Clear input
             messageInput.value = '';
             
-            // Emit via socket
-            socket.emit('sendMessage', {
-                recipient: contactId,
-                message: message,
-                timestamp: messageObj.timestamp
-            });
+            // Update contact's last message time
+            if (currentContact.type === 'individual') {
+                contactsRef.child(currentContact.id).update({
+                    lastMessageTime: firebase.database.ServerValue.TIMESTAMP
+                });
+            }
         }
-        
+
         function handleFileUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
             
-            // In a real application, you would upload the file to the server
-            console.log('File uploaded:', file.name);
+            // Upload file to Firebase Storage
+            const storageRef = storage.ref();
+            const fileRef = storageRef.child(`files/${currentUser.id}/${file.name}`);
             
-            // Show notification
-            showToast(`File "${file.name}" uploaded successfully!`, 'success');
+            fileRef.put(file).then((snapshot) => {
+                // Get file URL
+                snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    // Create message with file
+                    const messageObj = {
+                        id: messagesRef.push().key,
+                        senderId: currentUser.id,
+                        senderName: currentUser.name,
+                        content: `Shared a file: ${file.name}`,
+                        fileUrl: downloadURL,
+                        fileName: file.name,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP,
+                        status: 'sent'
+                    };
+                    
+                    if (currentContact.type === 'individual') {
+                        messageObj.recipientId = currentContact.id;
+                    } else if (currentContact.type === 'group') {
+                        messageObj.groupId = currentContact.groupId;
+                    }
+                    
+                    // Save to Firebase
+                    messagesRef.child(messageObj.id).set(messageObj);
+                    
+                    // Add to chat
+                    addMessageToChat(messageObj);
+                    
+                    // Show notification
+                    showToast(`File "${file.name}" uploaded successfully!`, 'success');
+                });
+            }).catch((error) => {
+                console.error('File upload error:', error);
+                showToast('File upload failed. Please try again.', 'error');
+            });
             
             // Reset the file input
             e.target.value = '';
         }
-        
+
+        function markMessageAsSeen(messageId) {
+            // Update message status to seen
+            messagesRef.child(messageId).update({
+                status: 'seen',
+                seenAt: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
+
+        function loadAssignments() {
+            const assignmentList = document.getElementById('assignmentList');
+            assignmentList.innerHTML = '';
+            
+            assignmentsRef.once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const assignment = childSnapshot.val();
+                    const assignmentId = childSnapshot.key;
+                    
+                    const assignmentCard = document.createElement('div');
+                    assignmentCard.className = 'assignment-card';
+                    
+                    const dueDate = new Date(assignment.dueDate);
+                    const formattedDate = dueDate.toLocaleDateString() + ' ' + dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    assignmentCard.innerHTML = `
+                        <div class="assignment-title">${assignment.title}</div>
+                        <div class="assignment-meta">
+                            <span>${assignment.class}</span>
+                            <span>Due: ${formattedDate}</span>
+                            <span>${assignment.points} pts</span>
+                        </div>
+                        <div class="assignment-description">${assignment.description}</div>
+                        <div class="assignment-actions">
+                            <button class="btn btn-primary" onclick="viewAssignmentSubmissions('${assignmentId}')">View Submissions</button>
+                            <button class="btn btn-secondary" onclick="editAssignment('${assignmentId}')">Edit</button>
+                        </div>
+                    `;
+                    
+                    assignmentList.appendChild(assignmentCard);
+                });
+            });
+        }
+
+        function viewAssignmentSubmissions(assignmentId) {
+            // Navigate to submissions page for this assignment
+            showToast(`Viewing submissions for assignment ${assignmentId}`, 'info');
+        }
+
+        function editAssignment(assignmentId) {
+            // Navigate to edit page for this assignment
+            showToast(`Editing assignment ${assignmentId}`, 'info');
+        }
+
+        function loadGrades() {
+            const gradeTableBody = document.getElementById('gradeTableBody');
+            gradeTableBody.innerHTML = '';
+            
+            gradesRef.once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const grade = childSnapshot.val();
+                    const gradeId = childSnapshot.key;
+                    
+                    const row = document.createElement('tr');
+                    
+                    let gradeClass = '';
+                    if (grade.grade === 'A') gradeClass = 'grade-excellent';
+                    else if (grade.grade === 'B') gradeClass = 'grade-good';
+                    else if (grade.grade === 'C') gradeClass = 'grade-average';
+                    else if (grade.grade === 'D') gradeClass = 'grade-poor';
+                    
+                    row.innerHTML = `
+                        <td>${grade.studentId}</td>
+                        <td>${grade.studentName}</td>
+                        <td>${grade.class}</td>
+                        <td>${grade.assignmentName}</td>
+                        <td><span class="grade-badge ${gradeClass}">${grade.grade} (${grade.score}%)</span></td>
+                        <td>${grade.status}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="messageStudent('${grade.studentId}', '${grade.studentName}')">Message</button>
+                        </td>
+                    `;
+                    
+                    gradeTableBody.appendChild(row);
+                });
+            });
+        }
+
+        function messageStudent(studentId, studentName) {
+            // Navigate to messaging page and select the student
+            navigateToPage('messaging');
+            
+            // Find the student in contacts and select them
+            setTimeout(() => {
+                const studentContact = document.querySelector(`[data-contact-id="${studentId}"]`);
+                if (studentContact) {
+                    studentContact.click();
+                } else {
+                    showToast(`Contact for ${studentName} not found`, 'warning');
+                }
+            }, 500);
+        }
+
+        function loadQueries() {
+            // Load pending queries
+            const pendingQueries = document.getElementById('pendingQueries');
+            pendingQueries.innerHTML = '';
+            
+            queriesRef.orderByChild('status').equalTo('pending').once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const query = childSnapshot.val();
+                    const queryId = childSnapshot.key;
+                    
+                    const queryItem = document.createElement('div');
+                    queryItem.className = 'query-item';
+                    
+                    const date = new Date(query.date);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    queryItem.innerHTML = `
+                        <div class="query-header">
+                            <div class="query-title">${query.title}</div>
+                            <div class="query-status status-pending">Pending</div>
+                        </div>
+                        <div class="query-content">${query.content}</div>
+                        <div class="query-meta">
+                            <span>${query.studentName} (${query.studentId})</span>
+                            <span>${query.class}</span>
+                            <span>${formattedDate}</span>
+                        </div>
+                        <div class="query-actions">
+                            <button class="btn btn-primary" onclick="respondToQuery('${queryId}')">Respond</button>
+                            <button class="btn btn-secondary" onclick="markQueryAsResolved('${queryId}')">Mark as Resolved</button>
+                        </div>
+                    `;
+                    
+                    pendingQueries.appendChild(queryItem);
+                });
+            });
+            
+            // Load resolved queries
+            const resolvedQueries = document.getElementById('resolvedQueries');
+            resolvedQueries.innerHTML = '';
+            
+            queriesRef.orderByChild('status').equalTo('resolved').once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const query = childSnapshot.val();
+                    const queryId = childSnapshot.key;
+                    
+                    const queryItem = document.createElement('div');
+                    queryItem.className = 'query-item';
+                    
+                    const date = new Date(query.date);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    const resolvedDate = new Date(query.resolvedDate);
+                    const formattedResolvedDate = resolvedDate.toLocaleDateString() + ' ' + resolvedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    queryItem.innerHTML = `
+                        <div class="query-header">
+                            <div class="query-title">${query.title}</div>
+                            <div class="query-status status-resolved">Resolved</div>
+                        </div>
+                        <div class="query-content">${query.content}</div>
+                        <div class="query-response">
+                            <strong>Response:</strong> ${query.response}
+                        </div>
+                        <div class="query-meta">
+                            <span>Resolved on: ${formattedResolvedDate}</span>
+                        </div>
+                        <div class="query-actions">
+                            <button class="btn btn-secondary" onclick="viewQueryDetails('${queryId}')">View Details</button>
+                        </div>
+                    `;
+                    
+                    resolvedQueries.appendChild(queryItem);
+                });
+            });
+        }
+
+        function respondToQuery(queryId) {
+            // Navigate to messaging page and select the student
+            queriesRef.child(queryId).once('value').then((snapshot) => {
+                const query = snapshot.val();
+                messageStudent(query.studentId, query.studentName);
+            });
+        }
+
+        function markQueryAsResolved(queryId) {
+            // Update query status to resolved
+            queriesRef.child(queryId).update({
+                status: 'resolved',
+                resolvedDate: firebase.database.ServerValue.TIMESTAMP,
+                resolvedBy: currentUser.id,
+                resolvedByName: currentUser.name
+            }).then(() => {
+                showToast('Query marked as resolved!', 'success');
+                loadQueries();
+            }).catch((error) => {
+                console.error('Error updating query:', error);
+                showToast('Failed to update query. Please try again.', 'error');
+            });
+        }
+
+        function viewQueryDetails(queryId) {
+            // Show query details in a modal or new page
+            showToast(`Viewing details for query ${queryId}`, 'info');
+        }
+
         function initializeDashboardCalendar() {
             const calendarEl = document.getElementById('calendar');
             if (!calendarEl) return;
@@ -2884,7 +3091,7 @@
             
             calendar.render();
         }
-        
+
         function initializeFullCalendar() {
             const calendarEl = document.getElementById('full-calendar');
             if (!calendarEl) return;
@@ -2931,94 +3138,97 @@
             
             calendar.render();
         }
-        
+
         function initializeGradeChart() {
             const ctx = document.getElementById('gradeChart');
             if (!ctx) return;
             
-            // Calculate grade distribution
-            const gradeDistribution = {
-                'A': 0,
-                'B': 0,
-                'C': 0,
-                'D': 0,
-                'F': 0
-            };
-            
-            sampleData.grades.forEach(grade => {
-                gradeDistribution[grade.grade]++;
-            });
-            
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['A', 'B', 'C', 'D', 'F'],
-                    datasets: [{
-                        label: 'Number of Students',
-                        data: [
-                            gradeDistribution['A'],
-                            gradeDistribution['B'],
-                            gradeDistribution['C'],
-                            gradeDistribution['D'],
-                            gradeDistribution['F']
-                        ],
-                        backgroundColor: [
-                            'rgba(76, 175, 80, 0.7)',
-                            'rgba(3, 169, 244, 0.7)',
-                            'rgba(255, 152, 0, 0.7)',
-                            'rgba(244, 67, 54, 0.7)',
-                            'rgba(158, 158, 158, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(76, 175, 80, 1)',
-                            'rgba(3, 169, 244, 1)',
-                            'rgba(255, 152, 0, 1)',
-                            'rgba(244, 67, 54, 1)',
-                            'rgba(158, 158, 158, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0,
-                                color: 'rgba(255, 255, 255, 0.7)'
+            // Get grade data from Firebase
+            gradesRef.once('value').then((snapshot) => {
+                const gradeData = {
+                    'A': 0,
+                    'B': 0,
+                    'C': 0,
+                    'D': 0,
+                    'F': 0
+                };
+                
+                snapshot.forEach((childSnapshot) => {
+                    const grade = childSnapshot.val();
+                    gradeData[grade.grade]++;
+                });
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['A', 'B', 'C', 'D', 'F'],
+                        datasets: [{
+                            label: 'Number of Students',
+                            data: [
+                                gradeData['A'],
+                                gradeData['B'],
+                                gradeData['C'],
+                                gradeData['D'],
+                                gradeData['F']
+                            ],
+                            backgroundColor: [
+                                'rgba(76, 175, 80, 0.7)',
+                                'rgba(3, 169, 244, 0.7)',
+                                'rgba(255, 152, 0, 0.7)',
+                                'rgba(244, 67, 54, 0.7)',
+                                'rgba(158, 158, 158, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(76, 175, 80, 1)',
+                                'rgba(3, 169, 244, 1)',
+                                'rgba(255, 152, 0, 1)',
+                                'rgba(244, 67, 54, 1)',
+                                'rgba(158, 158, 158, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0,
+                                    color: 'rgba(255, 255, 255, 0.7)'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
                             },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                            x: {
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.7)'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
                             }
                         },
-                        x: {
-                            ticks: {
-                                color: 'rgba(255, 255, 255, 0.7)'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: 'rgba(255, 255, 255, 0.7)'
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: 'rgba(255, 255, 255, 0.7)'
+                                }
                             }
                         }
                     }
-                }
+                });
             });
         }
-        
+
         function updateNotificationBadge() {
             const badge = document.querySelector('.badge-count');
             const currentCount = parseInt(badge.textContent);
             badge.textContent = currentCount + 1;
         }
-        
+
         function showToast(message, type = 'info') {
             const toastContainer = document.getElementById('toastContainer');
             
@@ -3056,6 +3266,23 @@
                     toast.remove();
                 }, 300);
             });
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} min ago`;
+            
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) return `${diffHours} hr ago`;
+            
+            return date.toLocaleDateString();
         }
     </script>
 </body>
